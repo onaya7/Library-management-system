@@ -1,0 +1,25 @@
+# Python
+*.pyc
+__pycache__/
+venv/
+*.env
+
+# IDE/Editor
+.vscode/
+.idea/
+
+# Flask
+instance/
+webapp.db
+
+# Logs
+*.log
+
+# Miscellaneous
+.DS_Store
+*.swp
+*.swo
+*.bak
+
+# Environment
+.env
