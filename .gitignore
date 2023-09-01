@@ -4,6 +4,7 @@ __pycache__/
 venv/
 *.env
 
+
 # IDE/Editor
 .vscode/
 .idea/
@@ -23,3 +24,4 @@ webapp.db
 
 # Environment
 .env
+env/
