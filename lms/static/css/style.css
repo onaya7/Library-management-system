@@ -55,10 +55,26 @@ section{
 .auth .form-floating{
     width: 100%;
     padding-bottom: 25px;
+    display: flex;
 }
 
+.auth .form-floating .eye-slash{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 15px;
+    background-color: var(--blue-colour);
+    border-radius:0px 20px 20px 0px ;
+}
+.eye-slash i{
+    color: var(--white-colour);
+}
 .auth .form-floating input, .auth form button {
     border-radius: 20px;
+}
+
+.auth .form-floating .f{
+   border-radius: 20px 0px 0px 20px ;
 }
 
 
