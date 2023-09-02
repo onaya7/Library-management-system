@@ -21,7 +21,7 @@ class Book(db.Model):
     def __repr__(self):
         return f"Book(id:'{self.id}', author_id:'{self.author_id}', title:'{self.title}')"
     
-    
+
 class BookCategory(db.Model):
     __tablename__ = "book_category"
     __table_args__ = {'extend_existing': True} 
