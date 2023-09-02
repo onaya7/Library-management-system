@@ -1,1 +1,40 @@
 {% extends 'auth/base.html' %}
+{% block content %}
+<section class="auth">
+    <div class="container">
+        <div class="wrapper">
+            <form>
+                <img class="mb-4" src="{{ url_for('static', filename='img/logo.png')}}" alt="logo" width="50"
+                    height="57">
+                <h1 class="h3 mb-3 fw-normal"">Admin Login</h1>
+
+            <div class=" form-floating">
+                    <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com">
+                    <label for="floatingInput">Email address</label>
+        </div>
+        <div class="form-floating">
+            <input type="password" class="form-control" id="floatingPassword" placeholder="Password">
+            <label for="floatingPassword">Password</label>
+        </div>
+        <button class="btn btn-primary w-100 py-2" type="submit">Sign in</button>
+        </form>
+
+
+        <div class="auth-footer">
+            <div class="form-check text-start my-3">
+                <input class="form-check-input" type="checkbox" value="remember-me" id="flexCheckDefault">
+                <label class="form-check-label" for="flexCheckDefault">
+                    Remember me
+                </label>
+            </div>
+
+            <a href="#">Forgot password ?</a>
+        </div>
+
+
+        <p class="mt-5 mb-3 text-body-secondary">©Library management system (Unicross) 2023</p>
+
+    </div>
+    </div>
+</section>
+{% endblock %}

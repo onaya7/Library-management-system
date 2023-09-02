@@ -19,18 +19,66 @@
 }
 
 body{
-    background-color: var(--white-colour);
     color: var(--text-colour)
 }
 
 section{
+    background-color: var(--white-colour);
+
     display: flex;
     align-items: center;
     justify-content: center;
     height: 100vh;
 }
-/* 
-.auth .container form{
-   
-} */
+.auth .container{
+    width: 100%;
+}
 
+.auth .container p{
+    font-size: 14px;
+    text-align: center;
+}
+
+.auth form{
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+
+.auth form h1{
+  padding-bottom: 38px;
+  color: var(--blue-colour);
+  font-weight: 500;
+  font-size: 25px;
+}
+
+.auth .form-floating{
+    width: 100%;
+    padding-bottom: 25px;
+}
+
+.auth .form-floating input, .auth form button {
+    border-radius: 20px;
+}
+
+
+.auth .form-floating label{
+    color: var(--text-colour);
+}
+
+
+.auth .form-check label{
+    color: var(--blue-colour);
+}
+
+.auth-footer{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.auth-footer a{
+    color: var(--light-red-colour);
+    font-size: 15px;
+    text-decoration: none;
+}
