@@ -22,3 +22,15 @@ body{
     background-color: var(--white-colour);
     color: var(--text-colour)
 }
+
+section{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+/* 
+.auth .container form{
+   
+} */
+
