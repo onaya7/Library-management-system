@@ -1,7 +1,6 @@
 *{
     margin: 0;
     padding: 0;
-    list-style: none;
     outline: none;
     text-decoration: none;
     box-sizing: border-box;
@@ -24,7 +23,6 @@ body{
 
 section{
     background-color: var(--white-colour);
-
     display: flex;
     align-items: center;
     justify-content: center;
@@ -54,7 +52,7 @@ section{
 
 .auth .form-floating{
     width: 100%;
-    padding-bottom: 25px;
+    padding-bottom: 20px;
     display: flex;
 }
 
@@ -69,7 +67,7 @@ section{
 .eye-slash i{
     color: var(--white-colour);
 }
-.auth .form-floating input, .auth form button {
+.auth .form-floating input, .auth form .btn {
     border-radius: 20px;
 }
 
@@ -82,7 +80,9 @@ section{
     color: var(--text-colour);
 }
 
-
+.auth .form-check{
+    align-self: flex-start;
+}
 .auth .form-check label{
     color: var(--blue-colour);
 }
@@ -91,10 +91,16 @@ section{
     display: flex;
     align-items: center;
     justify-content: space-between;
+    width: 100%;
 }
 
 .auth-footer a{
     color: var(--light-red-colour);
     font-size: 15px;
     text-decoration: none;
+}
+.errors{
+    align-self: flex-start;
+    color: var(--light-red-colour);
+    font-size: 13px;
 }

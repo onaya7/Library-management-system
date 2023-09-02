@@ -3,36 +3,52 @@
 <section class="auth">
     <div class="container">
         <div class="wrapper">
-            <form>
-                <img class="mb-4" src="{{ url_for('static', filename='img/logo.png')}}" alt="logo" width="50"
-                    height="57">
+            <form action="{{ url_for('auth.librarian_sign_in') }}" method="post"> 
+                {{ form.hidden_tag() }}                    
+                <img class="mb-4" src="{{ url_for('static', filename='img/logo.png')}}" alt="logo" width="50" height="57">
                 <h1 class="h3 mb-3 fw-normal"">Librarian Login</h1>
 
-            <div class=" form-floating">
-                    <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com">
-                    <label for="floatingInput">Email address</label>
-        </div>
-        <div class="form-floating" id="form-floating">
-            <input type="password" class="form-control f" id="floatingPassword" placeholder="Password">
-            <label for="floatingPassword">Password</label>
-            <div class="eye-slash">
-                <a href=""><i class="fa fa-eye-slash" aria-hidden="true"></i></a>
-            </div>
-        </div>
-        <button class="btn btn-primary w-100 py-2" type="submit">Sign in</button>
-        </form>
+                <div class=" form-floating">
+                    {{ form.email(class="form-control" ,id="floatingInput", placeholder="name@example.com")}}
+                    {{ form.email.label(for="floatingInput")}}
+                </div>
+                {% if form.email.errors %}
+                <ul class="errors">
+                {% for error in form.email.errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+                </ul>
+                {% endif %}
+
+                <div class="form-floating" id="form-floating">
+                    {{ form.password(class="form-control f", id="floatingPassword",placeholder="Password")}}
+                    {{ form.password.label(for="floatingPassword")}}
+                    <div class="eye-slash">
+                    <a href=""><i class="fa fa-eye-slash" aria-hidden="true"></i></a>
+                    </div>
+                </div>
+                {% if form.password.errors %}
+                <ul class="errors">
+                {% for error in form.password.errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+                </ul>
+                {% endif %}
 
 
-        <div class="auth-footer">
-            <div class="form-check text-start my-3">
-                <input class="form-check-input" type="checkbox" value="remember-me" id="flexCheckDefault">
-                <label class="form-check-label" for="flexCheckDefault">
-                    Remember me
-                </label>
-            </div>
 
-            <a href="#">Forgot password ?</a>
-        </div>
+                <div class="auth-footer">
+                    <div class="form-check text-start my-3">
+                        {{ form.remember(class="form-check-input", id="flexCheckDefault")}}
+                        {{ form.remember.label(class="form-check-label" ,for="flexCheckDefault")}}    
+                    </div>
+        
+                    <a href="#">Forgot password ?</a>
+                </div>
+
+                {{ form.submit(class="btn btn-primary w-100 py-2",type="submit")}}
+
+            </form>
 
 
         <p class="mt-5 mb-3 text-body-secondary">©Library management system (Unicross) 2023</p>
@@ -41,3 +57,4 @@
     </div>
 </section>
 {% endblock %}
+
