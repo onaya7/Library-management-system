@@ -1,0 +1,24 @@
+*{
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    outline: none;
+    text-decoration: none;
+    box-sizing: border-box;
+    scroll-behavior: smooth;
+    font-family: 'Balsamiq Sans', cursive;
+    font-family: 'Poppins', sans-serif;
+}
+
+:root{
+    --white-colour: #F7F8FC;
+    --blue-colour: #0589D2;
+    --ash-colour: #CCD2E3;
+    --light-red-colour: #F67786;
+    --text-colour: #4F5977;
+}
+
+body{
+    background-color: var(--white-colour);
+    color: var(--text-colour)
+}
