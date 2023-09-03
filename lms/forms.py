@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, BooleanField
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, EmailField
 from wtforms.validators import (
     DataRequired,
     Length,
@@ -23,7 +23,7 @@ class StudentLoginForm(FlaskForm):
     submit = SubmitField("Sign in")
     
 class LibrarianLoginForm(FlaskForm):
-    email = StringField(
+    email = EmailField(
         "Email address",
         validators=[
             DataRequired(),
@@ -36,7 +36,7 @@ class LibrarianLoginForm(FlaskForm):
     
     
 class AdminLoginForm(FlaskForm):
-    email = StringField(
+    email = EmailField(
         "Email address",
         validators=[
             DataRequired(),

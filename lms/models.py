@@ -1,5 +1,6 @@
 from lms.extensions import db
 from datetime import datetime, timedelta
+from flask_bcrypt import generate_password_hash
 
 class Book(db.Model):
     __tablename__ = "book"
@@ -48,15 +49,20 @@ class Student(db.Model):
     __table_args__ = {'extend_existing': True}     
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
+    password = db.Column(db.String(60), nullable=False)
     matric_no = db.Column(db.String(20), nullable=False)
     department = db.Column(db.String(50), nullable=False)
     email = db.Column(db.String(50), nullable=False)
-    img_upload = db.Column(db.String(100), nullable=False)
+    img_upload = db.Column(db.String(100), nullable=False, default="profile.png")
     joined_date = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, nullable=True)
     student_status= db.Column(db.Boolean, default=True)
     library_card = db.relationship('LibraryCard', backref='student', uselist=False)
     fine = db.relationship('Fine', backref='student', uselist=False)
+
+    
+    def generate_password_hash(self, password):
+        self.password = generate_password_hash(password)
 
     def __repr__(self):
         return f"Student(id:'{self.id}', name:'{self.name}')"
@@ -67,6 +73,7 @@ class Librarian(db.Model):
     __table_args__ = {'extend_existing': True}     
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
+    password = db.Column(db.String(60), nullable=False)
     email = db.Column(db.String(50), nullable=False)
     phone = db.Column(db.Integer, nullable=False)
     joined_date = db.Column(db.DateTime, default=datetime.utcnow)
@@ -74,6 +81,8 @@ class Librarian(db.Model):
     is_librarian = db.Column(db.Boolean, default=True)
     is_admin = db.Column(db.Boolean, default=False)
 
+    def generate_password_hash(self, password):
+        self.password = generate_password_hash(password)
     
     
     def __repr__(self):
@@ -114,9 +123,21 @@ class Issue(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     student_id = db.Column(db.Integer, db.ForeignKey('student.id'), nullable=False)
     book_id = db.Column(db.Integer, db.ForeignKey('book.id'), nullable=False)
+    fine_id = db.Column(db.Integer, db.ForeignKey('fine.id'), nullable=True)
     librarian_id = db.Column(db.Integer, db.ForeignKey('librarian.id'), nullable=False)
-    issue_date = db.Column(db.DateTime, default=datetime.utcnow)
     transactions = db.relationship('Transaction', backref='issue', lazy=True)
+    issued_date = db.Column(db.DateTime, default=datetime.utcnow)
+    expiry_date = db.Column(db.DateTime, nullable=True)
+    return_date = db.Column(db.DateTime, nullable=True)
+    
+    def __init__(self):
+        self.expiry_date = self.issued_date + timedelta(days=14)  # Adding 14 days
+
+    def has_expired(self):
+        return datetime.utcnow() > self.expiry_date
+    
+    def returned_date(self, date):
+        self.return_date = date
     
     def __repr__(self):
         return f"Issue(id:'{self.id}', book_id:'{self.book_id}', student_id:'{self.student_id}', librarian_id:'{self.librarian_id}')"
@@ -129,20 +150,10 @@ class Transaction(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     book_id = db.Column(db.Integer, db.ForeignKey('book.id'), nullable=False)
     student_id = db.Column(db.Integer, db.ForeignKey('student.id'), nullable=False)
-    fine_id = db.Column(db.Integer, db.ForeignKey('fine.id'), nullable=False)
-    issued_date = db.Column(db.DateTime, default=datetime.utcnow)
-    expiry_date = db.Column(db.DateTime, nullable=True)
-    return_date = db.Column(db.DateTime, nullable=True)
+    issue_id = db.Column(db.Integer, db.ForeignKey('issue.id'), nullable=False)
+    fine_id = db.Column(db.Integer, db.ForeignKey('fine.id'), nullable=True)
+    payment_id = db.Column(db.Integer, db.ForeignKey('payment.id'), nullable=False)
 
-    def __init__(self):
-        self.expiry_date = self.issued_date + timedelta(days=14)  # Adding 14 days
-
-    def has_expired(self):
-        return datetime.utcnow() > self.expiry_date
-    
-    def returned_date(self, date):
-        self.return_date = date
-        
     def __repr__(self):
         return f"Transaction(id:'{self.id}', book_id:'{self.book_id}', student_id:'{self.student_id}', fine_id:'{self.fine_id}')"
     
@@ -153,10 +164,10 @@ class Fine(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     amount = db.Column(db.Float, default=2000)
     student_id = db.Column(db.Integer, db.ForeignKey('student.id'), nullable=False)
-    transactions = db.relationship('Transaction', backref='issue', lazy=True)
+    issue = db.relationship('Issue', backref='fine', lazy=True)
 
     def calculate_fine(self):
-        expiration_date = self.transactions[0].expiry_date
+        expiration_date = self.issue[0].expiry_date
         current_date = datetime.utcnow()
         
         days_overdue = (current_date - expiration_date).days
@@ -176,7 +187,7 @@ class Payment(db.Model):
     __table_args__ = {'extend_existing': True}     
     id = db.Column(db.Integer, primary_key=True)
     student_id = db.Column(db.Integer, db.ForeignKey('student.id'), nullable=False)
-    transactions = db.relationship('Transaction', backref='issue', lazy=True)
+    transactions = db.relationship('Transaction', backref='payment', lazy=True)
     amount = db.Column(db.Float, nullable=False )
     payment_date = db.Column(db.DateTime, default=datetime.utcnow)
     
