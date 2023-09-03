@@ -17,13 +17,14 @@
     --text-colour: #4F5977;
 }
 
-body{
-    color: var(--text-colour)
+.body{
+    background-color: var(--white-colour)
 }
 
 section{
-    background-color: var(--white-colour);
     display: flex;
+    background-color: var(--white-colour);
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     height: 100vh;
@@ -103,4 +104,8 @@ section{
     align-self: flex-start;
     color: var(--light-red-colour);
     font-size: 13px;
+}
+
+.alert{
+    margin: 10px;
 }
