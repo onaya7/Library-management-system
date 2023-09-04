@@ -1,8 +1,9 @@
 from lms.extensions import db
 from datetime import datetime, timedelta
 from flask_bcrypt import generate_password_hash
+from flask_login import UserMixin
 
-class Book(db.Model):
+class Book(UserMixin, db.Model):
     __tablename__ = "book"
     __table_args__ = {'extend_existing': True} 
     id = db.Column(db.Integer, primary_key=True)
@@ -23,7 +24,7 @@ class Book(db.Model):
         return f"Book(id:'{self.id}', author_id:'{self.author_id}', title:'{self.title}')"
     
 
-class BookCategory(db.Model):
+class BookCategory(UserMixin, db.Model):
     __tablename__ = "book_category"
     __table_args__ = {'extend_existing': True} 
     id = db.Column(db.Integer, primary_key=True)
@@ -33,7 +34,7 @@ class BookCategory(db.Model):
     def __repr__(self):
         return f"BookCategory(id:'{self.id}', name:'{self.name}')"
 
-class Author(db.Model):
+class Author(UserMixin, db.Model):
     __tablename__ = "author"
     __table_args__ = {'extend_existing': True}     
     id = db.Column(db.Integer, primary_key=True)
@@ -44,7 +45,7 @@ class Author(db.Model):
         return f"Author(id:'{self.id}', name:'{self.name}')"
     
     
-class Student(db.Model):
+class Student(UserMixin, db.Model):
     __tablename__ = "student"
     __table_args__ = {'extend_existing': True}     
     id = db.Column(db.Integer, primary_key=True)
@@ -63,12 +64,19 @@ class Student(db.Model):
     
     def generate_password_hash(self, password):
         self.password = generate_password_hash(password)
+        
+    
+    def get_id(self):
+        try:
+            return str(self.id)
+        except Exception as e:
+            return e
 
     def __repr__(self):
         return f"Student(id:'{self.id}', name:'{self.name}')"
 
 
-class Librarian(db.Model):
+class Librarian(UserMixin, db.Model):
     __tablename__ = "librarian"
     __table_args__ = {'extend_existing': True}     
     id = db.Column(db.Integer, primary_key=True)
@@ -83,12 +91,18 @@ class Librarian(db.Model):
 
     def generate_password_hash(self, password):
         self.password = generate_password_hash(password)
+        
+    def get_id(self):
+        try:
+            return str(self.id)
+        except Exception as e:
+            return e
     
     
     def __repr__(self):
         return f"Librarian(id:'{self.id}', name:'{self.name}')"
     
-class LibraryCard(db.Model):
+class LibraryCard(UserMixin, db.Model):
     __tablename__ = "librarycard"
     __table_args__ = {'extend_existing': True}     
     id = db.Column(db.Integer, primary_key=True)
@@ -106,7 +120,7 @@ class LibraryCard(db.Model):
         return f"LibraryCard(id:'{self.id}', student_id:'{self.student_id}')"
     
     
-class Reservation(db.Model):
+class Reservation(UserMixin, db.Model):
     __tablename__ = "reservation"
     __table_args__ = {'extend_existing': True}     
     id = db.Column(db.Integer, primary_key=True)
@@ -117,7 +131,7 @@ class Reservation(db.Model):
     def __repr__(self):
         return f"Reservation(id:'{self.id}', book_id:'{self.book_id}', student_id:'{self.student_id}')"
     
-class Issue(db.Model):
+class Issue(UserMixin, db.Model):
     __tablename__ = "issue"
     __table_args__ = {'extend_existing': True}     
     id = db.Column(db.Integer, primary_key=True)
@@ -144,7 +158,7 @@ class Issue(db.Model):
 
 
 
-class Transaction(db.Model):
+class Transaction(UserMixin, db.Model):
     __tablename__ = "transaction"
     __table_args__ = {'extend_existing': True}     
     id = db.Column(db.Integer, primary_key=True)
@@ -158,7 +172,7 @@ class Transaction(db.Model):
         return f"Transaction(id:'{self.id}', book_id:'{self.book_id}', student_id:'{self.student_id}', fine_id:'{self.fine_id}')"
     
 
-class Fine(db.Model):
+class Fine(UserMixin, db.Model):
     __tablename__ = "fine"
     __table_args__ = {'extend_existing': True}     
     id = db.Column(db.Integer, primary_key=True)
@@ -182,7 +196,7 @@ class Fine(db.Model):
         return f"Fine(id:'{self.id}', amount:'{self.amount}', student_id:'{self.student_id}')"
 
 
-class Payment(db.Model):
+class Payment(UserMixin, db.Model):
     __tablename__ = "payment"
     __table_args__ = {'extend_existing': True}     
     id = db.Column(db.Integer, primary_key=True)

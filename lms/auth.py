@@ -48,19 +48,19 @@ def librarian_sign_in():
         print(password)
         print(remember)
 
-        # user = Librarian.query.filter_by(email=email).first()
-        # if user is not None:
-        #     user_password = user.password
-        #     password_check = bcrypt.check_password_hash(user_password, password)
-        #     if password_check:
-        #         login_user(user, remember=remember)
-        #         flash('logged in successfully')
-        #         next_page = request.args.get('next')
-        #         return redirect(next_page) if next_page else redirect(url_for('librarian.dashboard'))
-        #     else:
-        #         flash('Login Unsuccessful. Please check username and password')
-        # else:
-        #     flash('Login Unsuccessful. Please check username and password')
+        user = Librarian.query.filter_by(email=email).first()
+        if user is not None:
+            user_password = user.password
+            password_check = bcrypt.check_password_hash(user_password, password)
+            if password_check:
+                login_user(user, remember=remember)
+                flash('logged in successfully', "success")
+                next_page = request.args.get('next')
+                return redirect(next_page) if next_page else redirect(url_for('librarian.dashboard'))
+            else:
+                flash('Login Unsuccessful. Please check username and password', "danger")
+        else:
+            flash('Login Unsuccessful. Please check username and password', "danger")
     return render_template("auth/librarian-sign-in.html", form=form)
 
 
@@ -76,17 +76,17 @@ def admin_sign_in():
         print(password)
         print(remember)
 
-        # user = Librarian.query.filter_by(email=email).first()
-        # if user is not None:
-        #     user_password = user.password
-        #     password_check = bcrypt.check_password_hash(user_password, password)
-        #     if password_check:
-        #         login_user(user, remember=remember)
-        #         flash('logged in successfully')
-        #         next_page = request.args.get('next')
-        #         return redirect(next_page) if next_page else redirect(url_for('librarian.dashboard'))
-        #     else:
-        #         flash('Login Unsuccessful. Please check username and password')
-        # else:
-        #     flash('Login Unsuccessful. Please check username and password')
+        user = Librarian.query.filter_by(email=email).first()
+        if user is not None:
+            user_password = user.password
+            password_check = bcrypt.check_password_hash(user_password, password)
+            if password_check:
+                login_user(user, remember=remember)
+                flash('logged in successfully', "success")
+                next_page = request.args.get('next')
+                return redirect(next_page) if next_page else redirect(url_for('admin.dashboard'))
+            else:
+                flash('Login Unsuccessful. Please check username and password', "danger")
+        else:
+            flash('Login Unsuccessful. Please check username and password', "danger")
     return render_template("auth/admin-sign-in.html", form=form)

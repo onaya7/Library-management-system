@@ -5,4 +5,4 @@ student = Blueprint("student", __name__, template_folder="templates", static_fol
 
 @student.route('/student/dashboard', methods=["GET"])
 def dashboard():
-    return render_template('views/dashboard.html')
+    return render_template('student/dashboard.html')

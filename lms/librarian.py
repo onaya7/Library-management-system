@@ -5,4 +5,4 @@ librarian = Blueprint("librarian", __name__, template_folder="templates", static
 
 @librarian.route('/librarian/dashboard', methods=["GET"])
 def dashboard():
-    return render_template('views/dashboard.html')
+    return render_template('librarian/dashboard.html')
