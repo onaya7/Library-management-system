@@ -77,7 +77,7 @@ def admin_sign_in():
         print(remember)
 
         user = Librarian.query.filter_by(email=email).first()
-        if user is not None:
+        if user is not None and user.is_admin is True:
             user_password = user.password
             password_check = bcrypt.check_password_hash(user_password, password)
             if password_check:
@@ -90,3 +90,4 @@ def admin_sign_in():
         else:
             flash('Login Unsuccessful. Please check username and password', "danger")
     return render_template("auth/admin-sign-in.html", form=form)
+
