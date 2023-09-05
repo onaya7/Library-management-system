@@ -6,7 +6,7 @@
         <div class="wrapper">
             <form action="{{ url_for('auth.librarian_sign_in') }}" method="post"> 
                 {{ form.hidden_tag() }}                    
-                <img class="mb-4" src="{{ url_for('static', filename='images/logo.png')}}" alt="logo" width="50" height="57">
+                <img class="mb-4" src="{{ url_for('auth.static', filename='images/logo.png')}}" alt="logo" width="50" height="57">
                 <h1 class="h3 mb-3 fw-normal"">Librarian Login</h1>
 
                 <div class=" form-floating">

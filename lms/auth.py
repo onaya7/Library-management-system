@@ -5,7 +5,7 @@ from lms.extensions import bcrypt
 from flask_login import login_required, login_user, logout_user, current_user
 
 
-auth = Blueprint("auth", __name__, template_folder="templates", static_folder="static")
+auth = Blueprint("auth", __name__, template_folder="templates", static_folder="assets")
 
 
 @auth.route("/auth/student/sign-in", methods=["GET", "POST"])
@@ -15,10 +15,6 @@ def student_sign_in():
         matric_no = form.matric_no.data
         password = form.password.data
         remember = form.remember.data
-
-        print(matric_no)
-        print(password)
-        print(remember)
 
         user = Student.query.filter_by(matric_no=matric_no).first()
         if user is not None:
@@ -44,10 +40,6 @@ def librarian_sign_in():
         password = form.password.data
         remember = form.remember.data
 
-        print(email)
-        print(password)
-        print(remember)
-
         user = Librarian.query.filter_by(email=email).first()
         if user is not None:
             user_password = user.password
@@ -71,11 +63,7 @@ def admin_sign_in():
         email = form.email.data
         password = form.password.data
         remember = form.remember.data
-
-        print(email)
-        print(password)
-        print(remember)
-
+        
         user = Librarian.query.filter_by(email=email).first()
         if user is not None and user.is_admin is True:
             user_password = user.password

@@ -6,14 +6,14 @@
     <title>{% block title %}{% endblock%} | LMS Unicross</title>
 
     <!-- favicon -->
-    <link rel="shortcut icon" href="{{ url_for('static', filename='images/logo.png')}}" type="image/x-icon">
+    <link rel="shortcut icon" href="{{ url_for('admin.static', filename='images/logo.png')}}" type="image/x-icon">
 
     <!--css -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}">
+    <link rel="stylesheet" href="{{ url_for('admin.static', filename='css/auth.css') }}">
 
     <!-- external css -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
-    <link rel="stylesheet" href="{{ url_for('static', filename='vendor/font-awesome/css/font-awesome.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('admin.static', filename='vendor/font-awesome/css/font-awesome.min.css') }}">
 
 
     <!-- font -->
@@ -46,7 +46,7 @@
         
     {% endblock %}
 
-    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script src="{{ url_for('admin.static', filename='js/script.js') }}"></script>
     <!-- bootstrap bundle and popper  -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
