@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request, flash, redirect, url_for
 from lms.config import config
 from lms.extensions import db, migrate, login_manager
 from lms.auth import auth
@@ -8,6 +8,7 @@ from lms.student import student
 from lms.admin import admin
 from lms.models import Student, Librarian
 from datetime import timedelta
+from flask_login import current_user
 
  
 
@@ -32,6 +33,23 @@ def create_app(config_name='development'):
     migrate.init_app(app, db, render_as_batch=True)
     login_manager.init_app(app)
     
+    @login_manager.unauthorized_handler
+    def unauthorized_user():
+        # if current_user.is_authenticated:
+        #     return render_template('dashboard/dashboard.html')
+        # else:
+        if request.endpoint == 'admin.dashboard':
+            flash('Sorry only admins are authorized to access this page.', "danger")
+            return redirect(url_for('auth.admin_sign_in'))
+
+        elif request.endpoint == 'librarian.dashboard':
+            flash('Sorry only librarians are authorized to access this page.', "danger")
+            return redirect(url_for('auth.librarian_sign_in'))
+  
+        else:
+            flash('Please log in to access this page.', "danger")
+            return redirect(url_for('auth.student_sign_in'))
+
       
     @login_manager.user_loader
     def load_user(id):

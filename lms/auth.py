@@ -91,3 +91,26 @@ def admin_sign_in():
             flash('Login Unsuccessful. Please check username and password', "danger")
     return render_template("auth/admin-sign-in.html", form=form)
 
+
+@auth.route("/auth/logout", methods=["GET", "POST"])
+@login_required
+def logout_student():
+    logout_user()
+    flash("logged out successfully.", "danger")
+    return redirect(url_for("auth.student_sign_in"))
+
+
+@auth.route("/auth/logout", methods=["GET", "POST"])
+@login_required
+def logout_librarian():
+    logout_user()
+    flash("logged out successfully.", "danger")
+    return redirect(url_for("auth.librarian_sign_in"))
+
+
+@auth.route("/auth/logout", methods=["GET", "POST"])
+@login_required
+def logout_admin():
+    logout_user()
+    flash("logged out successfully.", "danger")
+    return redirect(url_for("auth.admin_sign_in"))
