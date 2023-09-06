@@ -80,7 +80,7 @@ def admin_sign_in():
     return render_template("auth/admin-sign-in.html", form=form)
 
 
-@auth.route("/auth/logout", methods=["GET", "POST"])
+@auth.route("/auth/student/logout", methods=["GET", "POST"])
 @login_required
 def logout_student():
     logout_user()
@@ -88,7 +88,7 @@ def logout_student():
     return redirect(url_for("auth.student_sign_in"))
 
 
-@auth.route("/auth/logout", methods=["GET", "POST"])
+@auth.route("/auth/librarian/logout", methods=["GET", "POST"])
 @login_required
 def logout_librarian():
     logout_user()
@@ -96,7 +96,7 @@ def logout_librarian():
     return redirect(url_for("auth.librarian_sign_in"))
 
 
-@auth.route("/auth/logout", methods=["GET", "POST"])
+@auth.route("/auth/admin/ogout", methods=["GET", "POST"])
 @login_required
 def logout_admin():
     logout_user()
