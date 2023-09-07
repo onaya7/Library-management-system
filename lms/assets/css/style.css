@@ -17,8 +17,14 @@
     --text-colour: #4F5977;
 }
 
-
 .alert{
     margin: 10px;
     text-align: center;
+}
+#nav-img{
+    text-align: center;
+}
+#nav-img img{
+    width: 60px;
+    height: 60px;
 }
