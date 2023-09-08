@@ -96,7 +96,7 @@ def logout_librarian():
     return redirect(url_for("auth.librarian_sign_in"))
 
 
-@auth.route("/auth/admin/ogout", methods=["GET", "POST"])
+@auth.route("/auth/admin/logout", methods=["GET", "POST"])
 @login_required
 def logout_admin():
     logout_user()
