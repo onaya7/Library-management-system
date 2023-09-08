@@ -1,6 +1,9 @@
-from flask import render_template, redirect, url_for
-from flask import Blueprint
+from flask import Blueprint, flash, redirect, render_template, url_for
 from lms.decorator import session_expired_handler
+from lms.forms import AuthorForm, BookCategoryForm
+from lms.models import Author
+from lms.extensions import db
+from flask_login import login_required
 
 librarian = Blueprint("librarian", __name__, template_folder="templates", static_folder="assets")
 
@@ -13,21 +16,58 @@ def dashboard():
 @librarian.route('/librarian/author', methods=["GET", "POST"])
 @session_expired_handler('librarian')
 def author():
-    return render_template('librarian/author.html')
+    author = Author.query.all()
+    return render_template('librarian/author.html', author=author)
 @librarian.route('/librarian/add_author', methods=["GET", "POST"])
 @session_expired_handler('librarian')
 def add_author():
-    return render_template('librarian/add_author.html')
+    form = AuthorForm()
+    if form.validate_on_submit():
+        name = form.name.data
+        author = Author(name=name)
+        db.session.add(author)
+        try:
+            db.session.commit()
+            flash("Author added successfully", 'success')
+            return redirect(url_for("librarian.author"))
+        except Exception as e:
+            flash(f"An error occurred while adding a new author: {str(e)}", 'danger')
+            return redirect(url_for("librarian.add_author"))
+    return render_template('librarian/add_author.html', form=form)
 
 @librarian.route('/librarian/edit_author/<int:author_id>', methods=["GET", "POST"])
 @session_expired_handler('librarian')
 def edit_author(author_id):
-    return render_template('librarian/edit_author.html')
+    author = Author.query.get(author_id)
+    if author is None:
+        flash("Author not found", "danger")
+        return redirect(url_for('librarian.author'))
+    
+    form = AuthorForm()
+    if form.validate_on_submit():
+        try:
+            author.name = form.name.data
+            db.session.commit()
+            flash("Author edited successfully", 'success')
+            return redirect(url_for("librarian.author"))
+        except Exception as e:
+            flash(f"An error occurred while editing Author details: {str(e)}", 'danger')
+            return redirect(url_for("librarian.add_author"))
+    
+    return render_template('librarian/edit_author.html', form=form, id=author.id)
 
 @librarian.route('/librarian/remove_author/<int:author_id>', methods=["GET", "POST"])
 @session_expired_handler('librarian')
 def remove_author(author_id):
-    return render_template('librarian/remove_author.html')
+    author = Author.query.get(author_id)
+    db.session.delete(author)
+    try:
+        db.session.commit()
+        flash(f'Author {author.name} Deleted successfully', 'success')
+        return redirect(url_for("librarian.author"))
+    except Exception as e:
+        flash(f"An error occurred while deleting Author details: {str(e)}", 'danger')
+    return redirect(url_for('librarian.author'))
 
 
 """ Category section"""
