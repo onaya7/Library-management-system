@@ -45,11 +45,20 @@
                 </div>
                 <div class="p-4 row">
                     <!-- Form -->
-                    <form class="d-flex align-items-center col-12 col-md-8 col-lg-3">
+                    <form action="{{ url_for('librarian.search_author') }}" method="post" class="d-flex align-items-center col-12 col-md-8 col-lg-3">
+                        {{ form.hidden_tag() }}                    
                         <span class="position-absolute ps-3 search-icon">
                             <i class="fe fe-search"></i>
                         </span>
-                        <input type="search" class="form-control ps-6" placeholder="Filter Author by name">
+                        {{ form.query(class="form-control ps-6", placeholder="Filter Author by name")}}
+                        {% if form.query.errors %}
+                        <ul class="errors">
+                        {% for error in form.query.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                        </ul>
+                        {% endif %}
+
                     </form>
                 </div>
                 <div>
@@ -75,7 +84,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {% for author in author %}
+                                        {% for author in author.items %}
                                         <!-- Modal -->
                                         <div class="modal fade" id="exampleModal" tabindex="-1"
                                             aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -165,21 +174,29 @@
                     </div>
                     <nav>
                         <ul class="pagination  mb-0 mt-2">
+                            {% if author.has_prev %}
                             <li class="page-item disabled">
-                                <a class="page-link mx-1 rounded" href="#"><i class="mdi mdi-chevron-left"></i></a>
+                                <a class="page-link mx-1 rounded" href="{{ url_for('librarian.author', page=author.prev_num) }}"><i class="mdi mdi-chevron-left"></i></a>
                             </li>
-                            <li class="page-item active">
-                                <a class="page-link mx-1 rounded" href="#">1</a>
-                            </li>
+                            {% endif %}
+                           
+                            {% for number in author.iter_pages() %}
+                                {% if author.page != number %}                                    
+                                    <li class="page-item">
+                                        <a class="page-link mx-1 rounded" href="{{ url_for('librarian.author', page=number) }}">{{ number }}</a>
+                                    </li>
+                                {% else %}
+                                    <li class="page-item active">
+                                        <a class="page-link mx-1 rounded" href="#">{{ number }}</a>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+
+                            {% if author.has_next %}
                             <li class="page-item">
-                                <a class="page-link mx-1 rounded" href="#">2</a>
+                                <a class="page-link mx-1 rounded" href="{{ url_for('librarian.author', page=author.next_num) }}"><i class="mdi mdi-chevron-right"></i></a>
                             </li>
-                            <li class="page-item">
-                                <a class="page-link mx-1 rounded" href="#">3</a>
-                            </li>
-                            <li class="page-item">
-                                <a class="page-link mx-1 rounded" href="#"><i class="mdi mdi-chevron-right"></i></a>
-                            </li>
+                            {% endif %}
                         </ul>
                     </nav>
                 </div>

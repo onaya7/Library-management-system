@@ -19,7 +19,7 @@ def create_app(config_name='development'):
     app.config.from_object(config[config_name])
     config[config_name].init_app(app)
     
-    app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=30)
+    app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=15)
     app.config["REMEMBER_COOKIE_DURATION"] = timedelta(days=1)
 
 

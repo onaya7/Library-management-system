@@ -70,3 +70,8 @@ class BookCategoryForm(FlaskForm):
         category = BookCategory.query.filter_by(name=name.data).first()
         if category:
             raise ValidationError(f"This name {category.name} already exist as Category please use a different one")
+        
+        
+        
+class SearchForm(FlaskForm):
+    query = StringField('Search', validators=[DataRequired()])

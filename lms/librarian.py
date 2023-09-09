@@ -1,6 +1,6 @@
 from flask import Blueprint, flash, redirect, render_template, url_for
 from lms.decorator import session_expired_handler
-from lms.forms import AuthorForm, BookCategoryForm
+from lms.forms import AuthorForm, BookCategoryForm, SearchForm
 from lms.models import Author
 from lms.extensions import db
 from flask_login import login_required
@@ -16,8 +16,9 @@ def dashboard():
 @librarian.route('/librarian/author', methods=["GET", "POST"])
 @session_expired_handler('librarian')
 def author():
-    author = Author.query.all()
-    return render_template('librarian/author.html', author=author)
+    form = SearchForm()
+    author = Author.query.paginate(per_page=3, error_out=False)     
+    return render_template('librarian/author.html', author=author, form=form)
 @librarian.route('/librarian/add_author', methods=["GET", "POST"])
 @session_expired_handler('librarian')
 def add_author():
@@ -138,5 +139,17 @@ def issued_book():
     return render_template('librarian/issued_book.html')
 
 
+
+""" search section"""
+@librarian.route(f'/librarian/author/search?q=', methods=["GET", "POST"])
+@session_expired_handler('librarian')
+def search_author():
+    form = SearchForm()
+    if form.validate_on_submit():
+        query = form.query.data
+        
+        author = Author.query.filter(Author.name.ilike(f'%{query}%')).paginate(per_page=3, error_out=False)   
+        
+    return render_template('librarian/author.html', form=form, author=author)
 
 
