@@ -1,0 +1,67 @@
+{% extends 'admin/base.html' %}
+{% block title %}Add Book Category{% endblock%}
+{% block content %}
+<section class="container-fluid p-4">
+    <div class="row ">
+        <div class="col-lg-12 col-md-12 col-12">
+            <!-- Page header -->
+            <div class="border-bottom pb-3 mb-3 ">
+                <div class="mb-2 mb-lg-0">
+                    <h1 class="mb-0 h2 fw-bold"> Add Book Category </h1>
+                    <!-- Breadcrumb -->
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item">
+                                <a href="{{ url_for('librarian.dashboard')}}">Dashboard</a>
+                            </li>
+                            <li class="breadcrumb-item">
+                                <a href="{{ url_for('librarian.category') }}">Book Category</a>
+                            </li>
+                            <li class="breadcrumb-item active" aria-current="page">
+                                Add Book Category
+                            </li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row ">
+        <div class="offset-xl-3 col-xl-6 col-12">
+            <!-- card -->
+            <form action="{{ url_for('librarian.add_category') }}" method="post">
+                {{ form.hidden_tag() }}                    
+                <div class="card mb-4">
+                    <!-- card body -->
+                    <div class="card-body">
+                        <h4 class="mb-4">Book Category Overview</h4>
+
+                        <!-- row -->
+                        <div class="row gx-3">
+                            <!-- input -->
+                            <div class="mb-3 ">
+                                {{ form.name.label(for="name", class="form-label")}}
+                                {{ form.name(class="form-control" ,id="name", placeholder="Enter Category name")}}
+                                {% if form.name.errors %}
+                                <ul class="errors">
+                                {% for error in form.name.errors %}
+                                    <li>{{ error }}</li>
+                                {% endfor %}
+                                </ul>
+                                {% endif %}
+
+                            </div>     
+                        </div>
+
+                    </div>
+                </div>
+                <div class="d-flex justify-content-end">
+                    <!-- buttons -->
+                    <a href="{{ url_for('librarian.category')}}" class="btn btn-outline-primary me-2">Cancel</a> 
+                    {{ form.submit(class="btn btn-primary",type="submit")}}
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock %}

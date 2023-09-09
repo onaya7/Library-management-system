@@ -1,72 +1,78 @@
-{% extends 'base.html' %}
-{% block title %}Auth{% endblock%}
-{% block content %}
+{% extends 'base.html' %} {% block title %}Auth{% endblock%} {% block content %}
 <!-- Page content -->
 <main>
-    <section class="container d-flex flex-column">
-        <div class="row align-items-center justify-content-center g-0 min-vh-100">
-
-            <div class="col-lg-5 col-md-8 py-8 py-xl-0">
-                <!-- Card -->
-                <div class="card shadow ">
-                    <!-- Card body -->
-                    <div class="card-body p-6">
-                        <div class="mb-4">
-                            <a href="../index-2.html"><img src="../../assets/images/logo.png" class="mb-4"
-                                    alt="logo-icon"></a>
-                            <h1 class="mb-1 fw-bold">Admin Login</h1>
-                        </div>
-                        <!-- Form -->
-                        <form action="{{ url_for('auth.admin_sign_in') }}" method="post">
-                            {{ form.hidden_tag() }}                    
-                            <!-- Username -->
-                            <div class="mb-3">
-                                {{ form.email.label(for="email", class="form-label")}}
-                                {{ form.email(class="form-control" ,id="email", placeholder="name@example.com")}}
-                                {% if form.email.errors %}
-                                <ul class="errors">
-                                {% for error in form.email.errors %}
-                                    <li>{{ error }}</li>
-                                {% endfor %}
-                                </ul>
-                                {% endif %}
-                            </div>
-                            <!-- Password -->
-                            <div class="mb-3">
-                                {{ form.password.label(for="email", class="form-label")}}
-                                {{ form.password(class="form-control" ,id="password", placeholder="**********")}}
-                                {% if form.password.errors %}
-                                <ul class="errors">
-                                {% for error in form.password.errors %}
-                                    <li>{{ error }}</li>
-                                {% endfor %}
-                                </ul>
-                                {% endif %}
-                            </div>
-                            <!-- Checkbox -->
-                            <div class="d-lg-flex justify-content-between align-items-center mb-4">
-                                <div class="form-check">
-                                    {{ form.remember(class="form-check-input", id="rememberme")}}
-                                    {{ form.remember.label(class="form-check-label" ,for="rememberme")}}    
-                                </div>
-                                <div>
-                                    <a href="forget-password.html">Forgot your password?</a>
-                                </div>
-                            </div>
-                            <div>
-                                <!-- Button -->
-                                <div class="d-grid">
-                                    {{ form.submit(class="btn btn-primary w-100 py-2",type="submit")}}
-                                </div>
-                            </div>
-                            <hr class="my-4">
-                         
-                        </form>
-                        <p class="mt-5 mb-3 text-body-secondary">©Library management system (Unicross) 2023</p>
-                    </div>
-                </div>
+  <section class="container d-flex flex-column">
+    <div class="row align-items-center justify-content-center g-0 min-vh-100">
+      <div class="col-lg-5 col-md-8 py-8 py-xl-0">
+        <!-- Card -->
+        <div class="card shadow">
+          <!-- Card body -->
+          <div class="card-body p-6">
+            <div class="mb-4">
+              <a href="../index-2.html"
+                ><img
+                  src="../../assets/images/logo.png"
+                  class="mb-4"
+                  alt="logo-icon"
+              /></a>
+              <h1 class="mb-1 fw-bold">Admin Login</h1>
             </div>
+            <!-- Form -->
+            <form action="{{ url_for('auth.admin_sign_in') }}" method="post">
+              {{ form.hidden_tag() }}
+              <!-- Username -->
+              <div class="mb-3">
+                {{ form.email.label(for="email", class="form-label")}} {{
+                form.email(class="form-control" ,id="email",
+                placeholder="name@example.com")}} {% if form.email.errors %}
+                <ul class="errors">
+                  {% for error in form.email.errors %}
+                  <li>{{ error }}</li>
+                  {% endfor %}
+                </ul>
+                {% endif %}
+              </div>
+              <!-- Password -->
+              <div class="mb-3">
+                {{ form.password.label(for="email", class="form-label")}} {{
+                form.password(class="form-control" ,id="password",
+                placeholder="**********")}} {% if form.password.errors %}
+                <ul class="errors">
+                  {% for error in form.password.errors %}
+                  <li>{{ error }}</li>
+                  {% endfor %}
+                </ul>
+                {% endif %}
+              </div>
+              <!-- Checkbox -->
+              <div
+                class="d-lg-flex justify-content-between align-items-center mb-4"
+              >
+                <div class="form-check">
+                  {{ form.remember(class="form-check-input", id="rememberme")}}
+                  {{ form.remember.label(class="form-check-label"
+                  ,for="rememberme")}}
+                </div>
+                <div>
+                  <a href="forget-password.html">Forgot your password?</a>
+                </div>
+              </div>
+              <div>
+                <!-- Button -->
+                <div class="d-grid">
+                  {{ form.submit(class="btn btn-primary w-100
+                  py-2",type="submit")}}
+                </div>
+              </div>
+              <hr class="my-4" />
+            </form>
+            <p class="mt-5 mb-3 text-body-secondary">
+              ©Library management system (Unicross) 2023
+            </p>
+          </div>
         </div>
-    </section>
+      </div>
+    </div>
+  </section>
 </main>
 {% endblock %}

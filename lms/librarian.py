@@ -1,7 +1,7 @@
 from flask import Blueprint, flash, redirect, render_template, url_for
 from lms.decorator import session_expired_handler
 from lms.forms import AuthorForm, BookCategoryForm, SearchForm
-from lms.models import Author
+from lms.models import Author, BookCategory
 from lms.extensions import db
 from flask_login import login_required
 
@@ -75,21 +75,58 @@ def remove_author(author_id):
 @librarian.route('/librarian/category', methods=["GET", "POST"])
 @session_expired_handler('librarian')
 def category():
-    return render_template('librarian/category.html')
+    form = SearchForm()
+    category = BookCategory.query.paginate(per_page=3, error_out=False)
+    return render_template('librarian/category.html', form=form, category=category)
 @librarian.route('/librarian/add_category', methods=["GET", "POST"])
 @session_expired_handler('librarian')
 def add_category():
-    return render_template('librarian/add_category.html')
+    form = BookCategoryForm()
+    if form.validate_on_submit():
+        name = form.name.data
+        category = BookCategory(name=name)
+        db.session.add(category)
+        try:
+            db.session.commit()
+            flash("Category added successfully", 'success')
+            return redirect(url_for("librarian.category"))
+        except Exception as e:
+            flash(f"An error occurred while adding a new Category: {str(e)}", 'danger')
+            return redirect(url_for("librarian.add_category"))
+    return render_template('librarian/add_category.html', form=form)
 
 @librarian.route('/librarian/edit_category/<int:category_id>', methods=["GET", "POST"])
 @session_expired_handler('librarian')
 def edit_category(category_id):
-    return render_template('librarian/edit_category.html')
+    category = BookCategory.query.get(category_id)
+    if category is None:
+        flash("BookCategory not found", "danger")
+        return redirect(url_for('librarian.categoryr'))
+    
+    form = BookCategoryForm()
+    if form.validate_on_submit():
+        try:
+            category.name = form.name.data
+            db.session.commit()
+            flash("BookCategory edited successfully", 'success')
+            return redirect(url_for("librarian.category"))
+        except Exception as e:
+            flash(f"An error occurred while editing BookCategory details: {str(e)}", 'danger')
+            return redirect(url_for("librarian.add_category"))
+    return render_template('librarian/edit_category.html', id=category.id , form=form)
 
 @librarian.route('/librarian/remove_category/<int:category_id>', methods=["GET", "POST"])
 @session_expired_handler('librarian')
 def remove_category(category_id):
-    return render_template('librarian/remove_category.html')
+    category = BookCategory.query.get(category_id)
+    db.session.delete(category)
+    try:
+        db.session.commit()
+        flash(f'Category {category.name} Deleted successfully', 'success')
+        return redirect(url_for("librarian.category"))
+    except Exception as e:
+        flash(f"An error occurred while deleting Category details: {str(e)}", 'danger')
+    return redirect(url_for('librarian.category'))
 
 """ Book section"""
 @librarian.route('/librarian/books', methods=["GET", "POST"])
@@ -141,15 +178,22 @@ def issued_book():
 
 
 """ search section"""
-@librarian.route(f'/librarian/author/search?q=', methods=["GET", "POST"])
+@librarian.route(f'/librarian/author/searchq=', methods=["GET", "POST"])
 @session_expired_handler('librarian')
 def search_author():
     form = SearchForm()
     if form.validate_on_submit():
         query = form.query.data
-        
-        author = Author.query.filter(Author.name.ilike(f'%{query}%')).paginate(per_page=3, error_out=False)   
-        
+        author = Author.query.filter(Author.name.ilike(f'%{query}%')).paginate(per_page=3, error_out=False) 
     return render_template('librarian/author.html', form=form, author=author)
 
+""" search section"""
+@librarian.route(f'/librarian/category/searchq=', methods=["GET", "POST"])
+@session_expired_handler('librarian')
+def search_category():
+    form = SearchForm()
+    if form.validate_on_submit():
+        query = form.query.data
+        category = BookCategory.query.filter(BookCategory.name.ilike(f'%{query}%')).paginate(per_page=3, error_out=False) 
+    return render_template('librarian/category.html', form=form, category=category)
 
