@@ -1,13 +1,12 @@
-{% extends 'admin/base.html' %}
-{% block title %}Authors{% endblock%}
-{% block content %}
+{% extends 'admin/base.html' %} {% block title %}Authors{% endblock%} {% block
+content %}
 <section class="container-fluid p-4">
-    <div class="row ">
+    <div class="row">
         <div class="col-lg-12 col-md-12 col-12">
             <!-- Page header -->
             <div class="border-bottom pb-3 mb-3 d-md-flex align-items-center justify-content-between">
                 <div class="mb-2 mb-lg-0">
-                    <h1 class="mb-0 h2 fw-bold">Authors </h1>
+                    <h1 class="mb-0 h2 fw-bold">Authors</h1>
                     <!-- Breadcrumb -->
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb">
@@ -25,7 +24,6 @@
                     <a href="{{ url_for('librarian.add_author')}}" class="btn btn-primary me-2">Add Authors</a>
                 </div>
             </div>
-
         </div>
     </div>
     <div class="row">
@@ -43,20 +41,20 @@
                 </div>
                 <div class="p-4 row">
                     <!-- Form -->
-                    <form action="{{ url_for('librarian.search_author') }}" method="post" class="d-flex align-items-center col-12 col-md-8 col-lg-3">
-                        {{ form.hidden_tag() }}                    
+                    <form action="{{ url_for('librarian.search_author') }}" method="post"
+                        class="d-flex align-items-center col-12 col-md-8 col-lg-3">
+                        {{ form.hidden_tag() }}
                         <span class="position-absolute ps-3 search-icon">
                             <i class="fe fe-search"></i>
                         </span>
-                        {{ form.query(class="form-control ps-6", placeholder="Filter Author by name")}}
-                        {% if form.query.errors %}
+                        {{ form.query(class="form-control ps-6", placeholder="Filter Author
+                        by name")}} {% if form.query.errors %}
                         <ul class="errors">
-                        {% for error in form.query.errors %}
+                            {% for error in form.query.errors %}
                             <li>{{ error }}</li>
-                        {% endfor %}
+                            {% endfor %}
                         </ul>
                         {% endif %}
-
                     </form>
                 </div>
                 <div>
@@ -71,7 +69,7 @@
                                         <tr>
                                             <th>
                                                 <div class="form-check">
-                                                    <input type="checkbox" class="form-check-input" id="checkAll">
+                                                    <input type="checkbox" class="form-check-input" id="checkAll" />
                                                     <label class="form-check-label" for="checkAll"></label>
                                                 </div>
                                             </th>
@@ -89,8 +87,9 @@
                                             <div class="modal-dialog">
                                                 <div class="modal-content">
                                                     <div class="modal-header">
-                                                        <h1 class="modal-title fs-5" id="exampleModalLabel">Confirm
-                                                            Delete</h1>
+                                                        <h1 class="modal-title fs-5" id="exampleModalLabel">
+                                                            Confirm Delete
+                                                        </h1>
                                                         <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                             aria-label="Close"></button>
                                                     </div>
@@ -99,7 +98,9 @@
                                                     </div>
                                                     <div class="modal-footer">
                                                         <button type="button" class="btn btn-secondary"
-                                                            data-bs-dismiss="modal">Close</button>
+                                                            data-bs-dismiss="modal">
+                                                            Close
+                                                        </button>
                                                         <a class="btn btn-primary"
                                                             href="{{ url_for('librarian.remove_author', author_id=author.id) }}">Delete</a>
                                                     </div>
@@ -110,7 +111,7 @@
                                         <tr>
                                             <td>
                                                 <div class="form-check">
-                                                    <input type="checkbox" class="form-check-input" id="productOne">
+                                                    <input type="checkbox" class="form-check-input" id="productOne" />
                                                     <label class="form-check-label" for="productOne"></label>
                                                 </div>
                                             </td>
@@ -119,7 +120,7 @@
                                                     <div class="d-flex align-items-center">
                                                         <div>
                                                             <img src="../../assets/images/avatar/01.png" alt=""
-                                                                class="img-4by3-md rounded">
+                                                                class="img-4by3-md rounded" />
                                                         </div>
                                                         <div class="ms-3">
                                                             <h5 class="mb-0 text-primary-hover">
@@ -131,7 +132,6 @@
                                             </td>
                                             <td></td>
                                             <td></td>
-
 
                                             <td>
                                                 <span class="dropdown dropstart">
@@ -155,45 +155,43 @@
                                             </td>
                                         </tr>
                                         {% endfor %}
-
                                     </tbody>
-
                                 </table>
                             </div>
                         </div>
                     </div>
                 </div>
 
-
                 <!-- Card Footer -->
                 <div class="card-footer d-md-flex justify-content-between align-items-center">
                     <div>
-                        <span>Showing authors {{author.first}} to {{author.last}} of {{author.total}}</span>
+                        <span>Showing authors {{author.first}} to {{author.last}} of
+                            {{author.total}}</span>
                     </div>
-                  
+
                     <nav>
-                        <ul class="pagination  mb-0 mt-2">
+                        <ul class="pagination mb-0 mt-2">
                             {% if author.has_prev %}
                             <li class="page-item disabled">
-                                <a class="page-link mx-1 rounded" href="{{ url_for('librarian.author', page=author.prev_num) }}"><i class="mdi mdi-chevron-left"></i></a>
+                                <a class="page-link mx-1 rounded"
+                                    href="{{ url_for('librarian.author', page=author.prev_num) }}"><i
+                                        class="mdi mdi-chevron-left"></i></a>
                             </li>
-                            {% endif %}
-                           
-                            {% for number in author.iter_pages() %}
-                                {% if author.page != number %}                                    
-                                    <li class="page-item">
-                                        <a class="page-link mx-1 rounded" href="{{ url_for('librarian.author', page=number) }}">{{ number }}</a>
-                                    </li>
-                                {% else %}
-                                    <li class="page-item active">
-                                        <a class="page-link mx-1 rounded" href="#">{{ number }}</a>
-                                    </li>
-                                {% endif %}
-                            {% endfor %}
-
-                            {% if author.has_next %}
+                            {% endif %} {% for number in author.iter_pages() %} {% if
+                            author.page != number %}
                             <li class="page-item">
-                                <a class="page-link mx-1 rounded" href="{{ url_for('librarian.author', page=author.next_num) }}"><i class="mdi mdi-chevron-right"></i></a>
+                                <a class="page-link mx-1 rounded"
+                                    href="{{ url_for('librarian.author', page=number) }}">{{ number }}</a>
+                            </li>
+                            {% else %}
+                            <li class="page-item active">
+                                <a class="page-link mx-1 rounded" href="#">{{ number }}</a>
+                            </li>
+                            {% endif %} {% endfor %} {% if author.has_next %}
+                            <li class="page-item">
+                                <a class="page-link mx-1 rounded"
+                                    href="{{ url_for('librarian.author', page=author.next_num) }}"><i
+                                        class="mdi mdi-chevron-right"></i></a>
                             </li>
                             {% endif %}
                         </ul>
