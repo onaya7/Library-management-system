@@ -5,8 +5,8 @@
     text-decoration: none;
     box-sizing: border-box;
     scroll-behavior: smooth;
-    font-family: 'Balsamiq Sans', cursive;
-    font-family: 'Poppins', sans-serif;
+    /* font-family: 'Balsamiq Sans', cursive;
+    font-family: 'Poppins', sans-serif; */
 }
 
 :root{
@@ -31,4 +31,8 @@
 
 .errors{
     color: #F67786;
+}
+
+.txt{
+    text-transform: capitalize;
 }

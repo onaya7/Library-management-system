@@ -1,5 +1,15 @@
+from flask_uploads import IMAGES, UploadSet, configure_uploads
 from flask_wtf import FlaskForm
-from wtforms import BooleanField, EmailField, PasswordField, StringField, SubmitField
+from flask_wtf.file import FileAllowed, FileRequired
+from wtforms import (
+    BooleanField,
+    EmailField,
+    FileField,
+    IntegerField,
+    PasswordField,
+    StringField,
+    SubmitField,
+)
 from wtforms.validators import (
     DataRequired,
     Email,
@@ -9,7 +19,15 @@ from wtforms.validators import (
     ValidationError,
 )
 
-from lms.models import Author, BookCategory, Librarian, Student
+import isbnlib
+
+from lms.models import Author, Book, BookCategory, Librarian, Student
+
+images = UploadSet("images", IMAGES)
+
+
+class SearchForm(FlaskForm):
+    query = StringField("Search", validators=[DataRequired()])
 
 
 class StudentLoginForm(FlaskForm):
@@ -55,10 +73,17 @@ class AuthorForm(FlaskForm):
     submit = SubmitField("Save Author")
 
     def validate_name(self, name):
-        author = Author.query.filter_by(name=name.data).first()
+        author = Author.query.filter_by(name=name.data.lower()).first()
+        existing_author = Author.query.filter_by(name=name.data.upper()).first()
+
         if author:
             raise ValidationError(
                 f"This name {author.name} already exist as an Author please use a different one"
+            )
+
+        elif existing_author:
+            raise ValidationError(
+                f"This name {existing_author.name} already exist as an Author please use a different one"
             )
 
 
@@ -67,12 +92,43 @@ class BookCategoryForm(FlaskForm):
     submit = SubmitField("Save Category")
 
     def validate_name(self, name):
-        category = BookCategory.query.filter_by(name=name.data).first()
+        category = BookCategory.query.filter_by(name=name.data.lower()).first()
+        existing_category = BookCategory.query.filter_by(name=name.data.upper()).first()
+
         if category:
             raise ValidationError(
                 f"This name {category.name} already exist as Category please use a different one"
             )
+        elif existing_category:
+            raise ValidationError(
+                f"This name {existing_category.name} already exist as Category please use a different one"
+            )
 
 
-class SearchForm(FlaskForm):
-    query = StringField("Search", validators=[DataRequired()])
+class BookForm(FlaskForm):
+    title = StringField("Title", validators=[DataRequired()])
+    description = StringField("Description", validators=[DataRequired()])
+    version = StringField(
+        "Version",
+        validators=[
+            DataRequired(),
+            Regexp(r"^v[1-2]$", message='Invalid version format. Use "v1" or "v2".'),
+        ],
+    )
+    publisher = StringField("Publisher", validators=[DataRequired()])
+    isbn = IntegerField("Isbn", validators=[DataRequired()])
+    img_upload = FileField(
+        "Image Upload", validators=[FileRequired(), FileAllowed(images, "Images only!")]
+    )
+
+    submit = SubmitField("Save Book")
+
+    def validate_isbn(self, isbn):
+        isbn = Book.query.filter_by(isbn=isbn).first()
+        if isbn:
+            raise ValidationError(
+                f"This number {isbn.name} already exist as an isbn used to register another book please use a different one"
+            )
+
+
+# write a code validating image upload with flask upload function

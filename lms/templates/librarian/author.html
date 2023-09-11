@@ -47,8 +47,8 @@ content %}
                         <span class="position-absolute ps-3 search-icon">
                             <i class="fe fe-search"></i>
                         </span>
-                        {{ form.query(class="form-control ps-6", placeholder="Filter Author
-                        by name")}} {% if form.query.errors %}
+                        {{ form.query(class="form-control ps-6", placeholder="Filter Author by name")}}
+                        {% if form.query.errors %}
                         <ul class="errors">
                             {% for error in form.query.errors %}
                             <li>{{ error }}</li>
@@ -123,7 +123,7 @@ content %}
                                                                 class="img-4by3-md rounded" />
                                                         </div>
                                                         <div class="ms-3">
-                                                            <h5 class="mb-0 text-primary-hover">
+                                                            <h5 class="mb-0 text-primary-hover txt">
                                                                 {{author.name}}
                                                             </h5>
                                                         </div>
@@ -140,8 +140,7 @@ content %}
                                                         data-bs-offset="-20,20" aria-expanded="false">
                                                         <i class="fe fe-more-vertical"></i>
                                                     </a>
-                                                    <span class="dropdown-menu" aria-labelledby="productDropdown1"
-                                                        style="">
+                                                    <span class="dropdown-menu" aria-labelledby="productDropdown1">
                                                         <span class="dropdown-header">Settings</span>
                                                         <a class="dropdown-item"
                                                             href="{{ url_for('librarian.edit_author', author_id=author.id) }}"><i

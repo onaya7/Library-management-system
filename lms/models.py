@@ -24,6 +24,19 @@ class Book(UserMixin, db.Model):
     available_copies = db.Column(db.Integer, default=0)
     created_date = db.Column(db.DateTime, default=datetime.utcnow)
     updated_date = db.Column(db.DateTime, nullable=True)
+    
+    def add_book_details(self, book_category_id, author_id, title, description, version, publisher, isbn, img_upload, total_copies, available_copies,  updated_date):
+        self.book_category_id = book_category_id
+        self.author_id = author_id
+        self.title = title
+        self.description = description
+        self.version = version
+        self.publisher = publisher
+        self.isbn = isbn
+        self.img_upload = img_upload
+        self.total_copies = total_copies
+        self.available_copies = available_copies
+        self.updated_date = updated_date
 
     def __repr__(self):
         return (

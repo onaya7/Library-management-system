@@ -33,7 +33,7 @@ def author():
 def add_author():
     form = AuthorForm()
     if form.validate_on_submit():
-        name = form.name.data
+        name = form.name.data.lower().strip()
         author = Author(name=name)
         db.session.add(author)
         try:
@@ -57,7 +57,7 @@ def edit_author(author_id):
     form = AuthorForm()
     if form.validate_on_submit():
         try:
-            author.name = form.name.data
+            author.name = form.name.data.lower().strip()
             db.session.commit()
             flash("Author edited successfully", "success")
             return redirect(url_for("librarian.author"))
@@ -98,7 +98,7 @@ def category():
 def add_category():
     form = BookCategoryForm()
     if form.validate_on_submit():
-        name = form.name.data
+        name = form.name.data.lower().strip()
         category = BookCategory(name=name)
         db.session.add(category)
         try:
@@ -122,7 +122,7 @@ def edit_category(category_id):
     form = BookCategoryForm()
     if form.validate_on_submit():
         try:
-            category.name = form.name.data
+            category.name = form.name.data.lower().strip()
             db.session.commit()
             flash("BookCategory edited successfully", "success")
             return redirect(url_for("librarian.category"))
@@ -222,7 +222,7 @@ def issued_book():
 def search_author():
     form = SearchForm()
     if form.validate_on_submit():
-        query = form.query.data
+        query = form.query.data.lower().split()
         author = Author.query.filter(Author.name.ilike(f"%{query}%")).paginate(
             per_page=3, error_out=False
         )
@@ -237,7 +237,7 @@ def search_author():
 def search_category():
     form = SearchForm()
     if form.validate_on_submit():
-        query = form.query.data
+        query = form.query.data.lower().strip()
         category = BookCategory.query.filter(
             BookCategory.name.ilike(f"%{query}%")
         ).paginate(per_page=3, error_out=False)

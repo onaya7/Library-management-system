@@ -12,6 +12,11 @@ from lms.librarian import librarian
 from lms.models import Librarian, Student
 from lms.student import student
 
+from flask_uploads import configure_uploads
+from lms.forms import images
+
+import os
+
 
 def create_app(config_name="development"):
     app = Flask(__name__)
@@ -22,6 +27,13 @@ def create_app(config_name="development"):
 
     app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(minutes=15)
     app.config["REMEMBER_COOKIE_DURATION"] = timedelta(days=1)
+    
+        
+    # flask_uploads
+    app.config['UPLOADED_IMAGES_DEST'] = os.path.join(app.root_path, 'upload')
+    app.config['MAX_CONTENT_LENGTH'] = 1 * 1024 * 1024  # 1MB
+
+    configure_uploads(app, images)
 
     app.register_blueprint(auth)
     app.register_blueprint(home)
