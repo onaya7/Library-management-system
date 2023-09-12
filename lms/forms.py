@@ -9,6 +9,8 @@ from wtforms import (
     PasswordField,
     StringField,
     SubmitField,
+    SelectField,
+    IntegerRangeField
 )
 from wtforms.validators import (
     DataRequired,
@@ -106,6 +108,8 @@ class BookCategoryForm(FlaskForm):
 
 
 class BookForm(FlaskForm):
+    book_category_id = SelectField("Category", validators=[DataRequired()])
+    author_id = SelectField("Author", validators=[DataRequired()])
     title = StringField("Title", validators=[DataRequired()])
     description = StringField("Description", validators=[DataRequired()])
     version = StringField(
@@ -120,15 +124,16 @@ class BookForm(FlaskForm):
     img_upload = FileField(
         "Image Upload", validators=[FileRequired(), FileAllowed(images, "Images only!")]
     )
+    total_copies = IntegerRangeField("Total Copies", validators=[DataRequired()])
 
     submit = SubmitField("Save Book")
 
     def validate_isbn(self, isbn):
-        isbn = Book.query.filter_by(isbn=isbn).first()
+        if not isbnlib.is_isbn10(isbn.data) and not isbnlib.is_isbn13(isbn.data):
+            raise ValidationError("Invalid ISBN number. Please provide a valid ISBN-10 or ISBN-13.")
+        isbn = Book.query.filter_by(isbn=isbn.data).first()
         if isbn:
             raise ValidationError(
                 f"This number {isbn.name} already exist as an isbn used to register another book please use a different one"
             )
 
-
-# write a code validating image upload with flask upload function

@@ -3,8 +3,8 @@ from flask_login import login_required
 
 from lms.decorator import session_expired_handler
 from lms.extensions import db
-from lms.forms import AuthorForm, BookCategoryForm, SearchForm
-from lms.models import Author, BookCategory
+from lms.forms import AuthorForm, BookCategoryForm, SearchForm, BookForm
+from lms.models import Author, Book, BookCategory
 
 librarian = Blueprint(
     "librarian", __name__, template_folder="templates", static_folder="assets"
@@ -157,13 +157,35 @@ def remove_category(category_id):
 @librarian.route("/librarian/books", methods=["GET", "POST"])
 @session_expired_handler("librarian")
 def books():
+    
     return render_template("librarian/books.html")
 
 
 @librarian.route("/librarian/add_book", methods=["GET", "POST"])
 @session_expired_handler("librarian")
 def add_book():
-    return render_template("librarian/add_book.html")
+    form = BookForm()
+    if form.validate_on_submit():
+        book_category_id = form.book_category_id.data
+        author_id = form.author_id.data
+        title = form.title.data.lower().strip()
+        description = form.description.data.strip()
+        version = form.version.data
+        publisher = form.publisher.data.strip()
+        isbn = form.isbn.data
+        img_upload = form.img_upload.data
+        total_copies = form.total_copies.data
+        
+        book = Book(book_category_id=book_category_id, author_id=author_id, title=title, description=description, version=version, publisher=publisher, isbn=isbn,img_upload=img_upload, total_copies=total_copies  )
+        db.session.add(book)
+        try:
+            db.session.commit()
+            flash("Book added successfully", "success")
+            return redirect(url_for("librarian.book"))
+        except Exception as e:
+            flash(f"An error occurred while adding a new book: {str(e)}", "danger")
+            return redirect(url_for("librarian.add_book"))
+    return render_template("librarian/add_book.html", form=form)
 
 
 @librarian.route("/librarian/edit_book/<int:book_id>", methods=["GET", "POST"])
