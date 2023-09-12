@@ -10,7 +10,9 @@ from wtforms import (
     StringField,
     SubmitField,
     SelectField,
-    IntegerRangeField
+    IntegerRangeField,
+    TextAreaField
+    
 )
 from wtforms.validators import (
     DataRequired,
@@ -111,7 +113,7 @@ class BookForm(FlaskForm):
     book_category_id = SelectField("Category", validators=[DataRequired()])
     author_id = SelectField("Author", validators=[DataRequired()])
     title = StringField("Title", validators=[DataRequired()])
-    description = StringField("Description", validators=[DataRequired()])
+    description = TextAreaField("Description", validators=[DataRequired()])
     version = StringField(
         "Version",
         validators=[
@@ -124,7 +126,7 @@ class BookForm(FlaskForm):
     img_upload = FileField(
         "Image Upload", validators=[FileRequired(), FileAllowed(images, "Images only!")]
     )
-    total_copies = IntegerRangeField("Total Copies", validators=[DataRequired()])
+    total_copies = IntegerField("Total Copies", validators=[DataRequired()])
 
     submit = SubmitField("Save Book")
 

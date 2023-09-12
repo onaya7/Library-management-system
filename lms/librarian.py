@@ -3,7 +3,7 @@ from flask_login import login_required
 
 from lms.decorator import session_expired_handler
 from lms.extensions import db
-from lms.forms import AuthorForm, BookCategoryForm, SearchForm, BookForm
+from lms.forms import AuthorForm, BookCategoryForm, BookForm, SearchForm
 from lms.models import Author, Book, BookCategory
 
 librarian = Blueprint(
@@ -157,7 +157,6 @@ def remove_category(category_id):
 @librarian.route("/librarian/books", methods=["GET", "POST"])
 @session_expired_handler("librarian")
 def books():
-    
     return render_template("librarian/books.html")
 
 
@@ -165,6 +164,13 @@ def books():
 @session_expired_handler("librarian")
 def add_book():
     form = BookForm()
+    categories = BookCategory.query.all()
+    authors = Author.query.all()
+
+    form.book_category_id.choices = [(str(category.id), category.name) for category in categories]
+    form.author_id.choices = [(str(author.id), author.name) for author in authors]
+
+
     if form.validate_on_submit():
         book_category_id = form.book_category_id.data
         author_id = form.author_id.data
@@ -175,8 +181,18 @@ def add_book():
         isbn = form.isbn.data
         img_upload = form.img_upload.data
         total_copies = form.total_copies.data
-        
-        book = Book(book_category_id=book_category_id, author_id=author_id, title=title, description=description, version=version, publisher=publisher, isbn=isbn,img_upload=img_upload, total_copies=total_copies  )
+
+        book = Book(
+            book_category_id=book_category_id,
+            author_id=author_id,
+            title=title,
+            description=description,
+            version=version,
+            publisher=publisher,
+            isbn=isbn,
+            img_upload=img_upload,
+            total_copies=total_copies,
+        )
         db.session.add(book)
         try:
             db.session.commit()
