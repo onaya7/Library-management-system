@@ -5,6 +5,11 @@ from lms.decorator import session_expired_handler
 from lms.extensions import db
 from lms.forms import AuthorForm, BookCategoryForm, BookForm, SearchForm
 from lms.models import Author, Book, BookCategory
+from lms.forms import images
+from werkzeug.exceptions import RequestEntityTooLarge
+from flask_uploads import UploadNotAllowed
+from werkzeug.utils import secure_filename
+import secrets
 
 librarian = Blueprint(
     "librarian", __name__, template_folder="templates", static_folder="assets"
@@ -177,30 +182,48 @@ def add_book():
         title = form.title.data.lower().strip()
         description = form.description.data.strip()
         version = form.version.data
-        publisher = form.publisher.data.strip()
+        publisher = form.publisher.data.lower().strip()
         isbn = form.isbn.data
         img_upload = form.img_upload.data
         total_copies = form.total_copies.data
+        
+ 
+        filename = secure_filename(img_upload.filename)
+        img_ext = filename.split(".")[-1].lower()
+        random_number = secrets.token_hex(16)
+        random_filename = f"{random_number}.{img_ext}"
+                
+        images.save(img_upload, name=random_filename)
+        
+        print(book_category_id)
+        print(author_id)
+        print(title)
+        print(description)
+        print(version)
+        print(publisher)
+        print(isbn)
+        print(img_upload)
+        print(total_copies)
 
-        book = Book(
-            book_category_id=book_category_id,
-            author_id=author_id,
-            title=title,
-            description=description,
-            version=version,
-            publisher=publisher,
-            isbn=isbn,
-            img_upload=img_upload,
-            total_copies=total_copies,
-        )
-        db.session.add(book)
-        try:
-            db.session.commit()
-            flash("Book added successfully", "success")
-            return redirect(url_for("librarian.book"))
-        except Exception as e:
-            flash(f"An error occurred while adding a new book: {str(e)}", "danger")
-            return redirect(url_for("librarian.add_book"))
+        # book = Book(
+        #     book_category_id=book_category_id,
+        #     author_id=author_id,
+        #     title=title,
+        #     description=description,
+        #     version=version,
+        #     publisher=publisher,
+        #     isbn=isbn,
+        #     img_upload=img_upload,
+        #     total_copies=total_copies,
+        # )
+        # db.session.add(book)
+        # try:
+        #     db.session.commit()
+        #     flash("Book added successfully", "success")
+        #     return redirect(url_for("librarian.book"))
+        # except Exception as e:
+        #     flash(f"An error occurred while adding a new book: {str(e)}", "danger")
+        #     return redirect(url_for("librarian.add_book"))
     return render_template("librarian/add_book.html", form=form)
 
 

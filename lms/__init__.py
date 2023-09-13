@@ -31,7 +31,6 @@ def create_app(config_name="development"):
         
     # flask_uploads
     app.config['UPLOADED_IMAGES_DEST'] = os.path.join(app.root_path, 'upload')
-    app.config['MAX_CONTENT_LENGTH'] = 1 * 1024 * 1024  # 1MB
 
     configure_uploads(app, images)
 

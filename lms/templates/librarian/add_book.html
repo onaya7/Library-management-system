@@ -29,7 +29,7 @@
     <div class="row ">
         <div class="offset-xl-3 col-xl-6 col-12">
             <!-- card -->
-            <form action="{{ url_for('librarian.add_book') }}" method="post">
+            <form action="{{ url_for('librarian.add_book') }}" method="post" enctype="multipart/form-data">
                 {{ form.hidden_tag() }}
                 <div class="card mb-4">
                     <!-- card body -->
@@ -39,8 +39,8 @@
                         <!-- row -->
                         <div class="row gx-3">
 
-                              <!-- input -->
-                              <div class="mb-3 ">
+                            <!-- input -->
+                            <div class="mb-3 ">
                                 {{ form.book_category_id.label(for="book_category_id", class="form-label")}}
                                 {{ form.book_category_id(class="form-control" ,id="book_category_id")}}
                                 {% if form.book_category_id.errors %}
@@ -65,8 +65,8 @@
                                 {% endif %}
                             </div>
 
-                              <!-- input -->
-                              <div class="mb-3 ">
+                            <!-- input -->
+                            <div class="mb-3 ">
                                 {{ form.title.label(for="title", class="form-label")}}
                                 {{ form.title(class="form-control" ,id="title", placeholder="Enter Book title")}}
                                 {% if form.title.errors %}
@@ -91,8 +91,8 @@
                                 {% endif %}
                             </div>
 
-                              <!-- input -->
-                              <div class="mb-3 ">
+                            <!-- input -->
+                            <div class="mb-3 ">
                                 {{ form.version.label(for="version", class="form-label")}}
                                 {{ form.version(class="form-control" ,id="version", placeholder="Enter Book version")}}
                                 {% if form.version.errors %}
@@ -104,8 +104,8 @@
                                 {% endif %}
                             </div>
 
-                              <!-- input -->
-                              <div class="mb-3 ">
+                            <!-- input -->
+                            <div class="mb-3 ">
                                 {{ form.publisher.label(for="publisher", class="form-label")}}
                                 {{ form.publisher(class="form-control" ,id="publisher", placeholder="Enter Book publisher")}}
                                 {% if form.publisher.errors %}
@@ -117,8 +117,8 @@
                                 {% endif %}
                             </div>
 
-                              <!-- input -->
-                              <div class="mb-3 ">
+                            <!-- input -->
+                            <div class="mb-3 ">
                                 {{ form.isbn.label(for="isbn", class="form-label")}}
                                 {{ form.isbn(class="form-control" ,id="isbn", placeholder="Enter Book isbn")}}
                                 {% if form.isbn.errors %}
@@ -130,10 +130,11 @@
                                 {% endif %}
                             </div>
 
-                              <!-- input -->
-                              <div class="mb-3 ">
+                            <!-- input -->
+                            <div class="mb-3 ">
                                 {{ form.img_upload.label(for="img_upload", class="form-label")}}
-                                {{ form.img_upload(class="form-control" ,id="img_upload", placeholder="Upload Book Cover Image")}}
+                                {{ form.img_upload(class="form-control" ,id="img_upload", placeholder="Upload Book Cover
+                                Image")}}
                                 {% if form.img_upload.errors %}
                                 <ul class="errors">
                                     {% for error in form.img_upload.errors %}
@@ -143,8 +144,8 @@
                                 {% endif %}
                             </div>
 
-                              <!-- input -->
-                              <div class="mb-3 ">
+                            <!-- input -->
+                            <div class="mb-3 ">
                                 {{ form.total_copies.label(for="total_copies", class="form-label")}}
                                 {{ form.total_copies(class="form-control" ,id="total_copies", placeholder="Enter Book total_copies")}}
                                 {% if form.total_copies.errors %}
@@ -155,8 +156,8 @@
                                 </ul>
                                 {% endif %}
                             </div>
-                        
-                            
+
+
                         </div>
                     </div>
                 </div>
