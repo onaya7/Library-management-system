@@ -1,5 +1,265 @@
-{% extends 'base.html' %}
+{% extends 'admin/base.html' %}
 {% block title %}Total Books{% endblock %}
 {% block content %}
-    
+<section class="container-fluid p-4">
+    <div class="row ">
+        <div class="col-lg-12 col-md-12 col-12">
+            <!-- Page header -->
+            <div class="border-bottom pb-3 mb-3 d-md-flex align-items-center justify-content-between">
+                <div class="mb-2 mb-lg-0">
+                    <h1 class="mb-0 h2 fw-bold">Books </h1>
+                    <!-- Breadcrumb -->
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item">
+                                <a href="{{ url_for('librarian.books')}}">Dashboard</a>
+                            </li>
+                            <li class="breadcrumb-item active" aria-current="page">
+                                Books
+                            </li>
+                        </ol>
+                    </nav>
+                </div>
+                <!-- button -->
+                <div>
+                    <a href="{{ url_for('librarian.add_book')}}" class="btn btn-primary me-2">Add New Book</a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12 col-md-12 col-12">
+            <!-- Card -->
+            <div class="card rounded-3">
+                <!-- Card Header -->
+                <div class="card-header border-bottom-0 p-0">
+                    <ul class="nav nav-lb-tab" id="tab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <a class="nav-link active" id="all-tab" data-bs-toggle="pill" href="#all" role="tab"
+                                aria-controls="all" aria-selected="true">All</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="p-4 row">
+                    <!-- Form -->
+                    <form action="{{ url_for('librarian.search_books') }}" method="post" class="d-flex align-items-center col-12 col-md-8 col-lg-3">
+                        {{ form.hidden_tag() }}                    
+                        <span class="position-absolute ps-3 search-icon">
+                            <i class="fe fe-search"></i>
+                        </span>
+                        {{ form.query(class="form-control ps-6", placeholder="Filter Book  by name")}}
+                        {% if form.query.errors %}
+                        <ul class="errors">
+                        {% for error in form.query.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                        </ul>
+                        {% endif %}
+
+                    </form>
+                </div>
+                <div>
+                    <div class="tab-content" id="tabContent">
+                        <!-- Tab -->
+                        <div class="tab-pane fade show active" id="all" role="tabpanel" aria-labelledby="all-tab">
+                            <div class="table-responsive border-0">
+                                <!-- Table -->
+                                <table class="table mb-0 text-nowrap table-hover table-centered table-with-checkbox">
+                                    <!-- Table Head -->
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th></th>
+                                            <th></th>
+                                            <th>Name</th>
+                                            <th>Category</th>
+                                            <th>Isbn</th>
+                                            <th>Version</th>
+                                            <th>Total copies</th>
+                                            <th>Created date</th>
+                                            <th>Updated date</th>
+                                            <th>Action</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for books in books.items %}
+                                       
+                                        <!-- Table body -->
+                                        <tr>
+                                            <td>
+                                                <div class="form-check">
+                                                    <input type="checkbox" class="form-check-input" id="productOne">
+                                                    <label class="form-check-label" for="productOne"></label>
+                                                </div>
+                                            </td>
+
+                                            <td>
+                                                <a href="#" class="text-inherit">
+                                                    <div class="d-flex align-items-center">
+                                                      <div>
+                                                        <img src="{{ url_for('librarian.upload', filename=books.img_upload)}}" alt="" class="img-4by3-md rounded"> 
+                                                      </div>
+                                                    </div>
+                                                  </a>
+                                            </td>
+
+                                            <td>
+                                                <a href="#" class="text-inherit">
+                                                    <div class="d-flex align-items-center">
+                                                        <div class="ms-3">
+                                                            <h5 class="mb-0 text-primary-hover txt">
+                                                                {{books.title}}
+                                                            </h5>
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </td>
+
+                                            <td>
+                                                <a href="#" class="text-inherit">
+                                                    <div class="d-flex align-items-center">
+                                                        <div class="ms-3">
+                                                            <h5 class="mb-0 text-primary-hover txt">
+                                                                {{books.category.name}}
+                                                            </h5>
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </td>
+
+                                            <td>
+                                                <a href="#" class="text-inherit">
+                                                    <div class="d-flex align-items-center">
+                                                        <div class="ms-3">
+                                                            <h5 class="mb-0 text-primary-hover txt">
+                                                                {{books.isbn}}
+                                                            </h5>
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </td>
+
+                                            <td>
+                                                <a href="#" class="text-inherit">
+                                                    <div class="d-flex align-items-center">
+                                                        <div class="ms-3">
+                                                            <h5 class="mb-0 text-primary-hover txt">
+                                                                {{books.version}}
+                                                            </h5>
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </td>
+
+                                            <td>
+                                                <a href="#" class="text-inherit">
+                                                    <div class="d-flex align-items-center">
+                                                        <div class="ms-3">
+                                                            <h5 class="mb-0 text-primary-hover txt">
+                                                                {{books.total_copies}}
+                                                            </h5>
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </td>
+
+                                            <td>
+                                                <a href="#" class="text-inherit">
+                                                    <div class="d-flex align-items-center">
+                                                        <div class="ms-3">
+                                                            <h5 class="mb-0 text-primary-hover txt">
+                                                                {{books.created_date}}
+                                                            </h5>
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </td>
+
+                                            <td>
+                                                <a href="#" class="text-inherit">
+                                                    <div class="d-flex align-items-center">
+                                                        <div class="ms-3">
+                                                            <h5 class="mb-0 text-primary-hover txt">
+                                                                {{books.updated_date}}
+                                                            </h5>
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </td>
+
+
+
+                                            <td>
+                                                <span class="dropdown dropstart">
+                                                    <a class="btn-icon btn btn-ghost btn-sm rounded-circle" href="#"
+                                                        role="button" id="productDropdown1" data-bs-toggle="dropdown"
+                                                        data-bs-offset="-20,20" aria-expanded="false">
+                                                        <i class="fe fe-more-vertical"></i>
+                                                    </a>
+                                                    <span class="dropdown-menu" aria-labelledby="productDropdown1">
+                                                        <span class="dropdown-header">Settings</span>
+                                                        <a class="dropdown-item"
+                                                            href="{{ url_for('librarian.edit_book', book_id=books.id) }}"><i
+                                                                class="fe fe-edit dropdown-item-icon"></i>Edit</a>
+                                                        <button type="button" class="dropdown-item"
+                                                            data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                                            <i class="fe fe-trash dropdown-item-icon"></i>Delete
+                                                        </button>
+                                                    </span>
+                                                </span>
+                                            </td>
+
+                                            <td></td>
+
+                                        </tr>
+                                        {% endfor %}
+
+                                    </tbody>
+
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- Card Footer -->
+                <div class="card-footer d-md-flex justify-content-between align-items-center">
+                    <div>
+                        <span>Showing categorys {{books.first}} to {{books.last}} of {{books.total}}</span>
+                    </div>
+                  
+                    <nav>
+                        <ul class="pagination  mb-0 mt-2">
+                            {% if books.has_prev %}
+                            <li class="page-item disabled">
+                                <a class="page-link mx-1 rounded" href="{{ url_for('librarian.books', page=books.prev_num) }}"><i class="mdi mdi-chevron-left"></i></a>
+                            </li>
+                            {% endif %}
+                           
+                            {% for number in books.iter_pages() %}
+                                {% if books.page != number %}                                    
+                                    <li class="page-item">
+                                        <a class="page-link mx-1 rounded" href="{{ url_for('librarian.books', page=number) }}">{{ number }}</a>
+                                    </li>
+                                {% else %}
+                                    <li class="page-item active">
+                                        <a class="page-link mx-1 rounded" href="#">{{ number }}</a>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+
+                            {% if books.has_next %}
+                            <li class="page-item">
+                                <a class="page-link mx-1 rounded" href="{{ url_for('librarian.books', page=books.next_num) }}"><i class="mdi mdi-chevron-right"></i></a>
+                            </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 {% endblock %}

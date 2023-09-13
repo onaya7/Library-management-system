@@ -1,6 +1,6 @@
 import secrets
 
-from flask import Blueprint, flash, redirect, render_template, url_for
+from flask import Blueprint, flash, redirect, render_template, url_for, current_app, send_from_directory
 from werkzeug.utils import secure_filename
 
 from lms.decorator import session_expired_handler
@@ -20,8 +20,6 @@ def dashboard():
 
 
 """ Author section"""
-
-
 @librarian.route("/librarian/author", methods=["GET", "POST"])
 @session_expired_handler("librarian")
 def author():
@@ -29,6 +27,18 @@ def author():
     author = Author.query.paginate(per_page=3, error_out=False)
     return render_template("librarian/author.html", author=author, form=form)
 
+
+""" search section"""
+@librarian.route(f"/librarian/author/searchq=", methods=["GET", "POST"])
+@session_expired_handler("librarian")
+def search_author():
+    form = SearchForm()
+    if form.validate_on_submit():
+        query = form.query.data.lower().split()
+        author = Author.query.filter(Author.name.ilike(f"%{query}%")).paginate(
+            per_page=3, error_out=False
+        )
+    return render_template("librarian/author.html", form=form, author=author)
 
 @librarian.route("/librarian/add_author", methods=["GET", "POST"])
 @session_expired_handler("librarian")
@@ -95,6 +105,18 @@ def category():
     return render_template("librarian/category.html", form=form, category=category)
 
 
+""" search section"""
+@librarian.route(f"/librarian/category/searchq=", methods=["GET", "POST"])
+@session_expired_handler("librarian")
+def search_category():
+    form = SearchForm()
+    if form.validate_on_submit():
+        query = form.query.data.lower().strip()
+        category = BookCategory.query.filter(
+            BookCategory.name.ilike(f"%{query}%")
+        ).paginate(per_page=3, error_out=False)
+    return render_template("librarian/category.html", form=form, category=category)
+
 @librarian.route("/librarian/add_category", methods=["GET", "POST"])
 @session_expired_handler("librarian")
 def add_category():
@@ -159,9 +181,24 @@ def remove_category(category_id):
 @librarian.route("/librarian/books", methods=["GET", "POST"])
 @session_expired_handler("librarian")
 def books():
-    
-    return render_template("librarian/books.html")
+    form = SearchForm()
+    books = Book.query.paginate(per_page=10, error_out = False)
+    for book in books.items:
+        print (book.category.name)
+    return render_template("librarian/books.html", books=books, form=form)
 
+
+""" search section"""
+@librarian.route(f"/librarian/books/searchq=", methods=["GET", "POST"])
+@session_expired_handler("librarian")
+def search_books():
+    form = SearchForm()
+    if form.validate_on_submit():
+        query = form.query.data.lower().strip()
+        books = Book.query.filter(
+            Book.name.ilike(f"%{query}%")
+        ).paginate(per_page=10, error_out=False)
+    return render_template("librarian/books.html", form=form, books=books)
 
 @librarian.route("/librarian/add_book", methods=["GET", "POST"])
 @session_expired_handler("librarian")
@@ -263,31 +300,12 @@ def issued_book():
     return render_template("librarian/issued_book.html")
 
 
-""" search section"""
 
 
-@librarian.route(f"/librarian/author/searchq=", methods=["GET", "POST"])
+@librarian.route('/upload/<path:filename>')
 @session_expired_handler("librarian")
-def search_author():
-    form = SearchForm()
-    if form.validate_on_submit():
-        query = form.query.data.lower().split()
-        author = Author.query.filter(Author.name.ilike(f"%{query}%")).paginate(
-            per_page=3, error_out=False
-        )
-    return render_template("librarian/author.html", form=form, author=author)
+def upload(filename):
+    return send_from_directory( current_app.config['UPLOADED_IMAGES_DEST'], filename, as_attachment=True
+)
 
 
-""" search section"""
-
-
-@librarian.route(f"/librarian/category/searchq=", methods=["GET", "POST"])
-@session_expired_handler("librarian")
-def search_category():
-    form = SearchForm()
-    if form.validate_on_submit():
-        query = form.query.data.lower().strip()
-        category = BookCategory.query.filter(
-            BookCategory.name.ilike(f"%{query}%")
-        ).paginate(per_page=3, error_out=False)
-    return render_template("librarian/category.html", form=form, category=category)
