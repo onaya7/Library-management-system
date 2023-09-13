@@ -1,15 +1,12 @@
+import secrets
+
 from flask import Blueprint, flash, redirect, render_template, url_for
-from flask_login import login_required
+from werkzeug.utils import secure_filename
 
 from lms.decorator import session_expired_handler
 from lms.extensions import db
-from lms.forms import AuthorForm, BookCategoryForm, BookForm, SearchForm
+from lms.forms import AuthorForm, BookCategoryForm, BookForm, SearchForm, images
 from lms.models import Author, Book, BookCategory
-from lms.forms import images
-from werkzeug.exceptions import RequestEntityTooLarge
-from flask_uploads import UploadNotAllowed
-from werkzeug.utils import secure_filename
-import secrets
 
 librarian = Blueprint(
     "librarian", __name__, template_folder="templates", static_folder="assets"
@@ -162,6 +159,7 @@ def remove_category(category_id):
 @librarian.route("/librarian/books", methods=["GET", "POST"])
 @session_expired_handler("librarian")
 def books():
+    
     return render_template("librarian/books.html")
 
 
@@ -172,9 +170,10 @@ def add_book():
     categories = BookCategory.query.all()
     authors = Author.query.all()
 
-    form.book_category_id.choices = [(str(category.id), category.name) for category in categories]
+    form.book_category_id.choices = [
+        (str(category.id), category.name) for category in categories
+    ]
     form.author_id.choices = [(str(author.id), author.name) for author in authors]
-
 
     if form.validate_on_submit():
         book_category_id = form.book_category_id.data
@@ -186,44 +185,33 @@ def add_book():
         isbn = form.isbn.data
         img_upload = form.img_upload.data
         total_copies = form.total_copies.data
-        
- 
+
         filename = secure_filename(img_upload.filename)
         img_ext = filename.split(".")[-1].lower()
-        random_number = secrets.token_hex(16)
+        random_number = secrets.token_hex(10)
         random_filename = f"{random_number}.{img_ext}"
-                
-        images.save(img_upload, name=random_filename)
-        
-        print(book_category_id)
-        print(author_id)
-        print(title)
-        print(description)
-        print(version)
-        print(publisher)
-        print(isbn)
-        print(img_upload)
-        print(total_copies)
 
-        # book = Book(
-        #     book_category_id=book_category_id,
-        #     author_id=author_id,
-        #     title=title,
-        #     description=description,
-        #     version=version,
-        #     publisher=publisher,
-        #     isbn=isbn,
-        #     img_upload=img_upload,
-        #     total_copies=total_copies,
-        # )
-        # db.session.add(book)
-        # try:
-        #     db.session.commit()
-        #     flash("Book added successfully", "success")
-        #     return redirect(url_for("librarian.book"))
-        # except Exception as e:
-        #     flash(f"An error occurred while adding a new book: {str(e)}", "danger")
-        #     return redirect(url_for("librarian.add_book"))
+        images.save(img_upload, name=random_filename)
+
+        book = Book(
+            book_category_id=book_category_id,
+            author_id=author_id,
+            title=title,
+            description=description,
+            version=version,
+            publisher=publisher,
+            isbn=isbn,
+            img_upload=random_filename,
+            total_copies=total_copies,
+        )
+        db.session.add(book)
+        try:
+            db.session.commit()
+            flash("Book added successfully", "success")
+            return redirect(url_for("librarian.books"))
+        except Exception as e:
+            flash(f"An error occurred while adding a new book: {str(e)}", "danger")
+            return redirect(url_for("librarian.add_book"))
     return render_template("librarian/add_book.html", form=form)
 
 

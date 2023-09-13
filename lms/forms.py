@@ -125,9 +125,8 @@ class BookForm(FlaskForm):
         isbn = Book.query.filter_by(isbn=isbn.data).first()
         if isbn:
             raise ValidationError(
-                f"This number {isbn.name} already exist as an isbn used to register another book please use a different one"
+                f"This number {isbn_str} already exist as an isbn used to register another book please use a different one"
             )
-
     
     def validate_img_upload(self, img_upload):
         img_ext = img_upload.data.filename.split(".")[-1].lower()
