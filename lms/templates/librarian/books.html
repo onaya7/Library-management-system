@@ -43,12 +43,12 @@
                 </div>
                 <div class="p-4 row">
                     <!-- Form -->
-                    <form action="{{ url_for('librarian.search_books') }}" method="post" class="d-flex align-items-center col-12 col-md-8 col-lg-3">
+                    <form action="{{ url_for('librarian.search_books', query=query) }}" method="post" class="d-flex align-items-center col-12 col-md-8 col-lg-3">
                         {{ form.hidden_tag() }}                    
                         <span class="position-absolute ps-3 search-icon">
                             <i class="fe fe-search"></i>
                         </span>
-                        {{ form.query(class="form-control ps-6", placeholder="Filter Book  by name")}}
+                        {{ form.query(class="form-control ps-6", placeholder="Filter Book by name")}}
                         {% if form.query.errors %}
                         <ul class="errors">
                         {% for error in form.query.errors %}
@@ -227,7 +227,7 @@
                 <!-- Card Footer -->
                 <div class="card-footer d-md-flex justify-content-between align-items-center">
                     <div>
-                        <span>Showing categorys {{books.first}} to {{books.last}} of {{books.total}}</span>
+                        <span>Showing books {{books.first}} to {{books.last}} of {{books.total}}</span>
                     </div>
                   
                     <nav>

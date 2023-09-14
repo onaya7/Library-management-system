@@ -1,6 +1,14 @@
 import secrets
 
-from flask import Blueprint, flash, redirect, render_template, url_for, current_app, send_from_directory
+from flask import (
+    Blueprint,
+    current_app,
+    flash,
+    redirect,
+    render_template,
+    send_from_directory,
+    url_for,
+)
 from werkzeug.utils import secure_filename
 
 from lms.decorator import session_expired_handler
@@ -20,6 +28,8 @@ def dashboard():
 
 
 """ Author section"""
+
+
 @librarian.route("/librarian/author", methods=["GET", "POST"])
 @session_expired_handler("librarian")
 def author():
@@ -29,6 +39,8 @@ def author():
 
 
 """ search section"""
+
+
 @librarian.route(f"/librarian/author/searchq=", methods=["GET", "POST"])
 @session_expired_handler("librarian")
 def search_author():
@@ -39,6 +51,7 @@ def search_author():
             per_page=3, error_out=False
         )
     return render_template("librarian/author.html", form=form, author=author)
+
 
 @librarian.route("/librarian/add_author", methods=["GET", "POST"])
 @session_expired_handler("librarian")
@@ -106,6 +119,8 @@ def category():
 
 
 """ search section"""
+
+
 @librarian.route(f"/librarian/category/searchq=", methods=["GET", "POST"])
 @session_expired_handler("librarian")
 def search_category():
@@ -116,6 +131,7 @@ def search_category():
             BookCategory.name.ilike(f"%{query}%")
         ).paginate(per_page=3, error_out=False)
     return render_template("librarian/category.html", form=form, category=category)
+
 
 @librarian.route("/librarian/add_category", methods=["GET", "POST"])
 @session_expired_handler("librarian")
@@ -176,27 +192,36 @@ def remove_category(category_id):
 
 
 """ Book section"""
+
+
 @librarian.route("/librarian/books", methods=["GET", "POST"])
 @session_expired_handler("librarian")
 def books():
     form = SearchForm()
-    books = Book.query.paginate(per_page=10, error_out = False)
+    books = Book.query.paginate(per_page=10, error_out=False)
     return render_template("librarian/books.html", books=books, form=form)
 
 
 """ search section"""
-@librarian.route(f"/librarian/books/searchq=", methods=["GET", "POST"])
+
+
+@librarian.route("/librarian/books/q=<string:query>", methods=["GET", "POST"])
 @session_expired_handler("librarian")
-def search_books():
+def search_books(query):
+    print(query)
+    books = Book.query.filter(
+        Book.title.ilike(f"%{query}%"),
+    ).paginate(per_page=10, error_out=False)
+
     form = SearchForm()
     if form.validate_on_submit():
         query = form.query.data.lower().strip()
-        print(query)
         books = Book.query.filter(
             Book.title.ilike(f"%{query}%"),
         ).paginate(per_page=10, error_out=False)
-        
-    return render_template("librarian/books.html", form=form, books=books)
+
+    return render_template("librarian/books.html", form=form, books=books, query=query)
+
 
 @librarian.route("/librarian/add_book", methods=["GET", "POST"])
 @session_expired_handler("librarian")
@@ -298,12 +323,9 @@ def issued_book():
     return render_template("librarian/issued_book.html")
 
 
-
-
-@librarian.route('/upload/<path:filename>')
+@librarian.route("/upload/<path:filename>")
 @session_expired_handler("librarian")
 def upload(filename):
-    return send_from_directory( current_app.config['UPLOADED_IMAGES_DEST'], filename, as_attachment=True
-)
-
-
+    return send_from_directory(
+        current_app.config["UPLOADED_IMAGES_DEST"], filename, as_attachment=True
+    )
