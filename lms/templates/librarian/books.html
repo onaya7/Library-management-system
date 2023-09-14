@@ -43,12 +43,12 @@
                 </div>
                 <div class="p-4 row">
                     <!-- Form -->
-                    <form action="{{ url_for('librarian.search_books', query=query) }}" method="post" class="d-flex align-items-center col-12 col-md-8 col-lg-3">
+                    <form action="{{ url_for('librarian.search_books') }}" method="post" class="d-flex align-items-center col-12 col-md-8 col-lg-3">
                         {{ form.hidden_tag() }}                    
                         <span class="position-absolute ps-3 search-icon">
                             <i class="fe fe-search"></i>
                         </span>
-                        {{ form.query(class="form-control ps-6", placeholder="Filter Book by name")}}
+                        {{ form.query(class="form-control ps-6", placeholder="Filter Book by isbn number")}}
                         {% if form.query.errors %}
                         <ul class="errors">
                         {% for error in form.query.errors %}
@@ -83,8 +83,35 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {% for books in books.items %}
-                                       
+                                        {% if books is none %}
+                                        <tr>
+                                            <td>No books found for the search query.</td>
+                                        </tr>
+                                        {% else %}
+                                         {% for books in books.items %}
+                                          <!-- Modal -->
+                                          <div class="modal fade" id="exampleModal" tabindex="-1"
+                                          aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                          <div class="modal-dialog">
+                                              <div class="modal-content">
+                                                  <div class="modal-header">
+                                                      <h1 class="modal-title fs-5" id="exampleModalLabel">Confirm
+                                                          Delete</h1>
+                                                      <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                          aria-label="Close"></button>
+                                                  </div>
+                                                  <div class="modal-body">
+                                                      Are you sure you want to delete this Book ?
+                                                  </div>
+                                                  <div class="modal-footer">
+                                                      <button type="button" class="btn btn-secondary"
+                                                          data-bs-dismiss="modal">Close</button>
+                                                      <a class="btn btn-primary"
+                                                          href="{{ url_for('librarian.remove_book', book_id=books.id) }}">Delete</a>
+                                                  </div>
+                                              </div>
+                                          </div>
+                                      </div>
                                         <!-- Table body -->
                                         <tr>
                                             <td>
@@ -214,6 +241,7 @@
 
                                         </tr>
                                         {% endfor %}
+                                        {% endif %}
 
                                     </tbody>
 
@@ -225,6 +253,9 @@
 
 
                 <!-- Card Footer -->
+                {% if books is none %}
+                    
+                {% else %}
                 <div class="card-footer d-md-flex justify-content-between align-items-center">
                     <div>
                         <span>Showing books {{books.first}} to {{books.last}} of {{books.total}}</span>
@@ -249,7 +280,7 @@
                                     </li>
                                 {% endif %}
                             {% endfor %}
-
+    
                             {% if books.has_next %}
                             <li class="page-item">
                                 <a class="page-link mx-1 rounded" href="{{ url_for('librarian.books', page=books.next_num) }}"><i class="mdi mdi-chevron-right"></i></a>
@@ -258,6 +289,7 @@
                         </ul>
                     </nav>
                 </div>
+                {% endif %}
             </div>
         </div>
     </div>

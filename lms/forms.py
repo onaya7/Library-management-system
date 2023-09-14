@@ -142,9 +142,41 @@ class BookForm(FlaskForm):
             raise ValidationError("Invalid image size. Please use an image smaller than 10MB.")
 
                 
-    
+class EditBookForm(FlaskForm):
+    book_category_id = SelectField("Category")
+    author_id = SelectField("Author")
+    title = StringField("Title")
+    description = TextAreaField("Description")
+    version = StringField(
+            "Version",
+            validators=[
+                Regexp(r'^v\d+$', message='Invalid version format. Use "v" followed by a number, e.g., "v1".'),
+            ],
+        )
+    publisher = StringField("Publisher")
+    isbn = IntegerField("Isbn")
+    img_upload = FileField(
+            "Image Upload",
+            validators=[
+                FileRequired(message="Please select an image.")],
+        )
+    total_copies = IntegerField("Total Copies")
 
-            
+    submit = SubmitField("Save Book")
+    
+    def validate_img_upload(self, img_upload):
+        img_ext = img_upload.data.filename.split(".")[-1].lower()
+        if img_ext not in ["jpg", "jpeg", "png", "mp4"]:
+            raise ValidationError("Invalid image format. Please use a jpg, jpeg or png image.")
+
+        default_size = 10 * 1024 * 1024  # 10MB
+        img_upload.data.seek(0, os.SEEK_END)
+        img_size = img_upload.data.tell()
+        img_upload.data.seek(0)
+
+        if img_size > default_size:
+            raise ValidationError("Invalid image size. Please use an image smaller than 10MB.")
+          
                 
             
         

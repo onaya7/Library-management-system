@@ -13,7 +13,7 @@ from werkzeug.utils import secure_filename
 
 from lms.decorator import session_expired_handler
 from lms.extensions import db
-from lms.forms import AuthorForm, BookCategoryForm, BookForm, SearchForm, images
+from lms.forms import AuthorForm, BookCategoryForm, BookForm, SearchForm, images, EditBookForm
 from lms.models import Author, Book, BookCategory
 
 librarian = Blueprint(
@@ -157,7 +157,7 @@ def edit_category(category_id):
     category = BookCategory.query.get(category_id)
     if category is None:
         flash("BookCategory not found", "danger")
-        return redirect(url_for("librarian.categoryr"))
+        return redirect(url_for("librarian.category"))
 
     form = BookCategoryForm()
     if form.validate_on_submit():
@@ -203,32 +203,28 @@ def books():
 
 
 """ search section"""
-
-
-@librarian.route("/librarian/books/q=<string:query>", methods=["GET", "POST"])
+@librarian.route("/librarian/books/search", methods=["GET", "POST"])
 @session_expired_handler("librarian")
-def search_books(query):
-    print(query)
-    books = Book.query.filter(
-        Book.title.ilike(f"%{query}%"),
-    ).paginate(per_page=10, error_out=False)
-
+def search_books():
     form = SearchForm()
+    books = None
     if form.validate_on_submit():
         query = form.query.data.lower().strip()
         books = Book.query.filter(
-            Book.title.ilike(f"%{query}%"),
-        ).paginate(per_page=10, error_out=False)
+            Book.isbn.ilike(f"%{query}%")
+            ).paginate(
+            per_page=10, error_out=False
+        )
 
-    return render_template("librarian/books.html", form=form, books=books, query=query)
+    return render_template("librarian/books.html", form=form, books=books)
 
 
 @librarian.route("/librarian/add_book", methods=["GET", "POST"])
 @session_expired_handler("librarian")
 def add_book():
     form = BookForm()
-    categories = BookCategory.query.all()
-    authors = Author.query.all()
+    categories = BookCategory.query.order_by(BookCategory.name).all()
+    authors = Author.query.order_by(Author.name).all()  
 
     form.book_category_id.choices = [
         (str(category.id), category.name) for category in categories
@@ -278,7 +274,71 @@ def add_book():
 @librarian.route("/librarian/edit_book/<int:book_id>", methods=["GET", "POST"])
 @session_expired_handler("librarian")
 def edit_book(book_id):
-    return render_template("librarian/edit_book.html")
+    book  = Book.query.get(book_id)
+    if book is None:
+        flash("Book not found", "danger")
+        return redirect(url_for("librarian.books"))
+    
+    
+    form = EditBookForm()
+    categories = BookCategory.query.order_by(BookCategory.name).all()
+    authors = Author.query.order_by(Author.name).all()  
+
+    form.book_category_id.choices = [
+        (str(category.id), category.name) for category in categories
+    ]
+    
+    form.author_id.choices = [(str(author.id), author.name) for author in authors]
+    form.title.data= book.title
+    form.description.data= book.description
+    form.version.data= book.version
+    form.publisher.data= book.publisher
+    form.isbn.data= book.isbn
+    form.total_copies.data= book.total_copies
+
+    if form.validate_on_submit():
+        try:
+            book_category_id = form.book_category_id.data
+            author_id = form.author_id.data
+            title = form.title.data.lower().strip()
+            description = form.description.data.strip()
+            version = form.version.data
+            publisher = form.publisher.data.lower().strip()
+            isbn = form.isbn.data
+            img_upload = form.img_upload.data
+            total_copies = form.total_copies.data
+
+            filename = secure_filename(img_upload.filename)
+            img_ext = filename.split(".")[-1].lower()
+            random_number = secrets.token_hex(10)
+            random_filename = f"{random_number}.{img_ext}"
+
+            book.edit_book_details(
+                book_category_id=book_category_id,
+                author_id=author_id,
+                title=title,
+                description=description,
+                version=version,
+                publisher=publisher,
+                isbn=isbn,
+                img_upload=random_filename,
+                total_copies=total_copies,
+            )
+            
+            images.save(img_upload, name=random_filename)
+            db.session.commit()
+            flash("BookCategory edited successfully", "success")
+            return redirect(url_for("librarian.books"))
+        except Exception as e:
+            flash(
+                f"An error occurred while editing Book details: {str(e)}",
+                "danger",
+            )
+            return redirect(url_for("librarian.add_book"))
+
+    return render_template("librarian/edit_book.html", form=form, book=book)
+
+    
 
 
 @librarian.route("/librarian/remove_book/<int:book_id>", methods=["GET", "POST"])
@@ -288,8 +348,6 @@ def remove_book(book_id):
 
 
 """ Student section"""
-
-
 @librarian.route("/librarian/students", methods=["GET", "POST"])
 @session_expired_handler("librarian")
 def students():
