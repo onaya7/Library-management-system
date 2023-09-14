@@ -176,15 +176,11 @@ def remove_category(category_id):
 
 
 """ Book section"""
-
-
 @librarian.route("/librarian/books", methods=["GET", "POST"])
 @session_expired_handler("librarian")
 def books():
     form = SearchForm()
     books = Book.query.paginate(per_page=10, error_out = False)
-    for book in books.items:
-        print (book.category.name)
     return render_template("librarian/books.html", books=books, form=form)
 
 
@@ -195,9 +191,11 @@ def search_books():
     form = SearchForm()
     if form.validate_on_submit():
         query = form.query.data.lower().strip()
+        print(query)
         books = Book.query.filter(
-            Book.name.ilike(f"%{query}%")
+            Book.title.ilike(f"%{query}%"),
         ).paginate(per_page=10, error_out=False)
+        
     return render_template("librarian/books.html", form=form, books=books)
 
 @librarian.route("/librarian/add_book", methods=["GET", "POST"])
