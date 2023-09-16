@@ -80,6 +80,11 @@ content %}
                                         </tr>
                                     </thead>
                                     <tbody>
+                                        {% if author is none %}
+                                        <tr>
+                                            <td>No author found for the search query</td>
+                                        </tr>
+                                        {% else %}
                                         {% for author in author.items %}
                                         <!-- Modal -->
                                         <div class="modal fade" id="exampleModal" tabindex="-1"
@@ -154,6 +159,7 @@ content %}
                                             </td>
                                         </tr>
                                         {% endfor %}
+                                        {% endif %}
                                     </tbody>
                                 </table>
                             </div>
@@ -162,9 +168,12 @@ content %}
                 </div>
 
                 <!-- Card Footer -->
+                {% if author is none %}
+
+                {% else %}
                 <div class="card-footer d-md-flex justify-content-between align-items-center">
                     <div>
-                        <span>Showing authors {{author.first}} to {{author.last}} of
+                        <span>Showing authors from page {{author.first}} to {{author.last}} of
                             {{author.total}}</span>
                     </div>
 
@@ -176,8 +185,9 @@ content %}
                                     href="{{ url_for('librarian.author', page=author.prev_num) }}"><i
                                         class="mdi mdi-chevron-left"></i></a>
                             </li>
-                            {% endif %} {% for number in author.iter_pages() %} {% if
-                            author.page != number %}
+                            {% endif %}
+                            {% for number in author.iter_pages() %}
+                            {% if author.page != number %}
                             <li class="page-item">
                                 <a class="page-link mx-1 rounded"
                                     href="{{ url_for('librarian.author', page=number) }}">{{ number }}</a>
@@ -186,7 +196,9 @@ content %}
                             <li class="page-item active">
                                 <a class="page-link mx-1 rounded" href="#">{{ number }}</a>
                             </li>
-                            {% endif %} {% endfor %} {% if author.has_next %}
+                            {% endif %} 
+                            {% endfor %} 
+                            {% if author.has_next %}
                             <li class="page-item">
                                 <a class="page-link mx-1 rounded"
                                     href="{{ url_for('librarian.author', page=author.next_num) }}"><i
@@ -196,6 +208,7 @@ content %}
                         </ul>
                     </nav>
                 </div>
+                {% endif %}
             </div>
         </div>
     </div>

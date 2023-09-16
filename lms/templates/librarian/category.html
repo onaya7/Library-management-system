@@ -43,17 +43,18 @@
                 </div>
                 <div class="p-4 row">
                     <!-- Form -->
-                    <form action="{{ url_for('librarian.search_category') }}" method="post" class="d-flex align-items-center col-12 col-md-8 col-lg-3">
-                        {{ form.hidden_tag() }}                    
+                    <form action="{{ url_for('librarian.search_category') }}" method="post"
+                        class="d-flex align-items-center col-12 col-md-8 col-lg-3">
+                        {{ form.hidden_tag() }}
                         <span class="position-absolute ps-3 search-icon">
                             <i class="fe fe-search"></i>
                         </span>
                         {{ form.query(class="form-control ps-6", placeholder="Filter Book Category by name")}}
                         {% if form.query.errors %}
                         <ul class="errors">
-                        {% for error in form.query.errors %}
+                            {% for error in form.query.errors %}
                             <li>{{ error }}</li>
-                        {% endfor %}
+                            {% endfor %}
                         </ul>
                         {% endif %}
 
@@ -82,6 +83,11 @@
                                         </tr>
                                     </thead>
                                     <tbody>
+                                        {% if category is none %}
+                                        <tr>
+                                            <td>No category found for the search query</td>
+                                        </tr>
+                                        {% else %}
                                         {% for category in category.items %}
                                         <!-- Modal -->
                                         <div class="modal fade" id="exampleModal" tabindex="-1"
@@ -151,6 +157,7 @@
                                         </tr>
                                         {% endfor %}
 
+                                        {% endif %}
                                     </tbody>
 
                                 </table>
@@ -161,39 +168,48 @@
 
 
                 <!-- Card Footer -->
+                {% if category is none %}
+                    
+                {% else %}
                 <div class="card-footer d-md-flex justify-content-between align-items-center">
                     <div>
-                        <span>Showing categorys {{category.first}} to {{category.last}} of {{category.total}}</span>
+                        <span>Showing categorys from page {{category.first}} to {{category.last}} of {{category.total}}</span>
                     </div>
-                  
+
                     <nav>
                         <ul class="pagination  mb-0 mt-2">
                             {% if category.has_prev %}
                             <li class="page-item disabled">
-                                <a class="page-link mx-1 rounded" href="{{ url_for('librarian.category', page=category.prev_num) }}"><i class="mdi mdi-chevron-left"></i></a>
+                                <a class="page-link mx-1 rounded"
+                                    href="{{ url_for('librarian.category', page=category.prev_num) }}"><i
+                                        class="mdi mdi-chevron-left"></i></a>
                             </li>
                             {% endif %}
-                           
+
                             {% for number in category.iter_pages() %}
-                                {% if category.page != number %}                                    
-                                    <li class="page-item">
-                                        <a class="page-link mx-1 rounded" href="{{ url_for('librarian.category', page=number) }}">{{ number }}</a>
-                                    </li>
-                                {% else %}
-                                    <li class="page-item active">
-                                        <a class="page-link mx-1 rounded" href="#">{{ number }}</a>
-                                    </li>
-                                {% endif %}
+                            {% if category.page != number %}
+                            <li class="page-item">
+                                <a class="page-link mx-1 rounded"
+                                    href="{{ url_for('librarian.category', page=number) }}">{{ number }}</a>
+                            </li>
+                            {% else %}
+                            <li class="page-item active">
+                                <a class="page-link mx-1 rounded" href="#">{{ number }}</a>
+                            </li>
+                            {% endif %}
                             {% endfor %}
 
                             {% if category.has_next %}
                             <li class="page-item">
-                                <a class="page-link mx-1 rounded" href="{{ url_for('librarian.category', page=category.next_num) }}"><i class="mdi mdi-chevron-right"></i></a>
+                                <a class="page-link mx-1 rounded"
+                                    href="{{ url_for('librarian.category', page=category.next_num) }}"><i
+                                        class="mdi mdi-chevron-right"></i></a>
                             </li>
                             {% endif %}
                         </ul>
                     </nav>
                 </div>
+                {% endif %}
             </div>
         </div>
     </div>

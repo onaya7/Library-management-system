@@ -41,22 +41,27 @@ def dashboard():
 @session_expired_handler("librarian")
 def author():
     form = SearchForm()
-    author = Author.query.paginate(per_page=3, error_out=False)
+
+    author = Author.query.order_by(Author.name).paginate(per_page=5, error_out=False)
+    
     return render_template("librarian/author.html", author=author, form=form)
 
 
 """ search section"""
 
 
-@librarian.route(f"/librarian/author/searchq=", methods=["GET", "POST"])
+@librarian.route(f"/librarian/author/search", methods=["GET", "POST"])
 @session_expired_handler("librarian")
 def search_author():
     form = SearchForm()
+    author = None
     if form.validate_on_submit():
-        query = form.query.data.lower().split()
+        query = form.query.data.lower().strip()
         author = Author.query.filter(Author.name.ilike(f"%{query}%")).paginate(
-            per_page=3, error_out=False
+            per_page=5, error_out=False
         )
+        print(query)
+        print(author.items)
     return render_template("librarian/author.html", form=form, author=author)
 
 
@@ -86,7 +91,7 @@ def edit_author(author_id):
         flash("Author not found", "danger")
         return redirect(url_for("librarian.author"))
 
-    form = AuthorForm()
+    form = AuthorForm(obj=author)
     if form.validate_on_submit():
         try:
             author.name = form.name.data.lower().strip()
@@ -115,28 +120,25 @@ def remove_author(author_id):
 
 
 """ Category section"""
-
-
 @librarian.route("/librarian/category", methods=["GET", "POST"])
 @session_expired_handler("librarian")
 def category():
     form = SearchForm()
-    category = BookCategory.query.paginate(per_page=3, error_out=False)
+    category = BookCategory.query.order_by(BookCategory.name).paginate(per_page=5, error_out=False)
     return render_template("librarian/category.html", form=form, category=category)
 
 
 """ search section"""
-
-
-@librarian.route(f"/librarian/category/searchq=", methods=["GET", "POST"])
+@librarian.route(f"/librarian/category/search", methods=["GET", "POST"])
 @session_expired_handler("librarian")
 def search_category():
     form = SearchForm()
+    category = None
     if form.validate_on_submit():
         query = form.query.data.lower().strip()
         category = BookCategory.query.filter(
             BookCategory.name.ilike(f"%{query}%")
-        ).paginate(per_page=3, error_out=False)
+        ).paginate(per_page=5, error_out=False)
     return render_template("librarian/category.html", form=form, category=category)
 
 
@@ -166,7 +168,7 @@ def edit_category(category_id):
         flash("BookCategory not found", "danger")
         return redirect(url_for("librarian.category"))
 
-    form = BookCategoryForm()
+    form = BookCategoryForm(obj=category)
     if form.validate_on_submit():
         try:
             category.name = form.name.data.lower().strip()
@@ -205,7 +207,7 @@ def remove_category(category_id):
 @session_expired_handler("librarian")
 def books():
     form = SearchForm()
-    books = Book.query.paginate(per_page=10, error_out=False)
+    books = Book.query.order_by(Book.title).paginate(per_page=5, error_out=False)
     return render_template("librarian/books.html", books=books, form=form)
 
 
@@ -220,7 +222,7 @@ def search_books():
     if form.validate_on_submit():
         query = form.query.data.lower().strip()
         books = Book.query.filter(Book.isbn.ilike(f"%{query}%")).paginate(
-            per_page=10, error_out=False
+            per_page=5, error_out=False
         )
 
     return render_template("librarian/books.html", form=form, books=books)
@@ -336,7 +338,17 @@ def edit_book(book_id):
 @librarian.route("/librarian/remove_book/<int:book_id>", methods=["GET", "POST"])
 @session_expired_handler("librarian")
 def remove_book(book_id):
-    return redirect(url_for("librarian.books"))
+    book = Book.query.get_or_404(book_id)
+    try:
+        db.session.delete(book)
+        db.session.commit()
+        flash("Book removed successfully", "success")
+        return redirect(url_for("librarian.books"))
+    except Exception as e:
+        flash(f"An error occurred while removing the book: {str(e)}", "danger")
+        return redirect(url_for("librarian.books"))
+    
+
 
 
 """ Student section"""
