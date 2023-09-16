@@ -41,6 +41,7 @@ class Book(UserMixin, db.Model):
         self.total_copies = total_copies
         self.available_copies += total_copies
         self.updated_date = datetime.utcnow()
+        
 
     def __repr__(self):
         return (

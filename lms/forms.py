@@ -176,10 +176,10 @@ class EditBookForm(FlaskForm):
 
         if img_size > default_size:
             raise ValidationError("Invalid image size. Please use an image smaller than 10MB.")
-          
                 
             
-        
+                   
+
 
             
           
