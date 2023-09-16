@@ -24,12 +24,21 @@ class Book(UserMixin, db.Model):
     available_copies = db.Column(db.Integer, default=1)
     created_date = db.Column(db.DateTime, default=datetime.utcnow)
     updated_date = db.Column(db.DateTime, nullable=True)
-    category = db.relationship('BookCategory', back_populates='books')
-    author = db.relationship('Author', back_populates='books')
+    category = db.relationship("BookCategory", back_populates="books")
+    author = db.relationship("Author", back_populates="books")
 
-
-    
-    def edit_book_details(self, book_category_id, author_id, title, description, version, publisher, isbn, img_upload, total_copies):
+    def edit_book_details(
+        self,
+        book_category_id,
+        author_id,
+        title,
+        description,
+        version,
+        publisher,
+        isbn,
+        img_upload,
+        total_copies,
+    ):
         self.book_category_id = book_category_id
         self.author_id = author_id
         self.title = title
@@ -41,7 +50,6 @@ class Book(UserMixin, db.Model):
         self.total_copies = total_copies
         self.available_copies += total_copies
         self.updated_date = datetime.utcnow()
-        
 
     def __repr__(self):
         return (
@@ -54,7 +62,7 @@ class BookCategory(UserMixin, db.Model):
     __table_args__ = {"extend_existing": True}
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), nullable=False)
-    books = db.relationship('Book', back_populates='category')
+    books = db.relationship("Book", back_populates="category")
 
     def __repr__(self):
         return f"BookCategory(id:'{self.id}', name:'{self.name}')"

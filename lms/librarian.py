@@ -43,7 +43,7 @@ def author():
     form = SearchForm()
 
     author = Author.query.order_by(Author.name).paginate(per_page=5, error_out=False)
-    
+
     return render_template("librarian/author.html", author=author, form=form)
 
 
@@ -120,15 +120,21 @@ def remove_author(author_id):
 
 
 """ Category section"""
+
+
 @librarian.route("/librarian/category", methods=["GET", "POST"])
 @session_expired_handler("librarian")
 def category():
     form = SearchForm()
-    category = BookCategory.query.order_by(BookCategory.name).paginate(per_page=5, error_out=False)
+    category = BookCategory.query.order_by(BookCategory.name).paginate(
+        per_page=5, error_out=False
+    )
     return render_template("librarian/category.html", form=form, category=category)
 
 
 """ search section"""
+
+
 @librarian.route(f"/librarian/category/search", methods=["GET", "POST"])
 @session_expired_handler("librarian")
 def search_category():
@@ -311,17 +317,17 @@ def edit_book(book_id):
             random_number = secrets.token_hex(10)
             random_filename = f"{random_number}.{img_ext}"
             images.save(img_upload, name=random_filename)
-        
+
         book.edit_book_details(
-            book_category_id = book_category_id,
-            author_id = author_id,
-            title = title,
-            description = description,
-            version = version,
-            publisher = publisher,
-            isbn = isbn,
-            img_upload = random_filename,
-            total_copies = total_copies
+            book_category_id=book_category_id,
+            author_id=author_id,
+            title=title,
+            description=description,
+            version=version,
+            publisher=publisher,
+            isbn=isbn,
+            img_upload=random_filename,
+            total_copies=total_copies,
         )
 
         try:
@@ -347,8 +353,6 @@ def remove_book(book_id):
     except Exception as e:
         flash(f"An error occurred while removing the book: {str(e)}", "danger")
         return redirect(url_for("librarian.books"))
-    
-
 
 
 """ Student section"""

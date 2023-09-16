@@ -1,16 +1,31 @@
-import isbnlib
-from flask_uploads import IMAGES, UploadSet, configure_uploads, UploadNotAllowed
-from flask_wtf import FlaskForm
-from flask_wtf.file import FileAllowed, FileRequired
-from wtforms import (BooleanField, EmailField, FileField, IntegerField,
-                     IntegerRangeField, PasswordField, SelectField,
-                     StringField, SubmitField, TextAreaField)
-from wtforms.validators import (DataRequired, Email, EqualTo, Length, Regexp,
-                                ValidationError)
-
-from lms.models import Author, Book, BookCategory, Librarian, Student
 import os
 
+import isbnlib
+from flask_uploads import IMAGES, UploadNotAllowed, UploadSet, configure_uploads
+from flask_wtf import FlaskForm
+from flask_wtf.file import FileAllowed, FileRequired
+from wtforms import (
+    BooleanField,
+    EmailField,
+    FileField,
+    IntegerField,
+    IntegerRangeField,
+    PasswordField,
+    SelectField,
+    StringField,
+    SubmitField,
+    TextAreaField,
+)
+from wtforms.validators import (
+    DataRequired,
+    Email,
+    EqualTo,
+    Length,
+    Regexp,
+    ValidationError,
+)
+
+from lms.models import Author, Book, BookCategory, Librarian, Student
 
 images = UploadSet("images", IMAGES)
 
@@ -100,20 +115,23 @@ class BookForm(FlaskForm):
     title = StringField("Title", validators=[DataRequired()])
     description = TextAreaField("Description", validators=[DataRequired()])
     version = StringField(
-            "Version",
-            validators=[
-                DataRequired(),
-                Regexp(r'^v\d+$', message='Invalid version format. Use "v" followed by a number, e.g., "v1".'),
-            ],
-        )
+        "Version",
+        validators=[
+            DataRequired(),
+            Regexp(
+                r"^v\d+$",
+                message='Invalid version format. Use "v" followed by a number, e.g., "v1".',
+            ),
+        ],
+    )
     publisher = StringField("Publisher", validators=[DataRequired()])
     isbn = IntegerField("Isbn", validators=[DataRequired()])
     img_upload = FileField(
-            "Image Upload", validators=[
-                FileRequired(message="Please select a file."),
-                
-            ]
-        )
+        "Image Upload",
+        validators=[
+            FileRequired(message="Please select a file."),
+        ],
+    )
     total_copies = IntegerField("Total Copies", validators=[DataRequired()])
 
     submit = SubmitField("Save Book")
@@ -121,17 +139,21 @@ class BookForm(FlaskForm):
     def validate_isbn(self, isbn):
         isbn_str = str(isbn.data)  # Convert ISBN to a string
         if not isbnlib.is_isbn10(isbn_str) and not isbnlib.is_isbn13(isbn_str):
-            raise ValidationError("Invalid ISBN number. Please provide a valid ISBN-10 or ISBN-13.")
+            raise ValidationError(
+                "Invalid ISBN number. Please provide a valid ISBN-10 or ISBN-13."
+            )
         isbn = Book.query.filter_by(isbn=isbn.data).first()
         if isbn:
             raise ValidationError(
                 f"This number {isbn_str} already exist as an isbn used to register another book please use a different one"
             )
-    
+
     def validate_img_upload(self, img_upload):
         img_ext = img_upload.data.filename.split(".")[-1].lower()
         if img_ext not in ["jpg", "jpeg", "png", "mp4"]:
-            raise ValidationError("Invalid image format. Please use a jpg, jpeg or png image.")
+            raise ValidationError(
+                "Invalid image format. Please use a jpg, jpeg or png image."
+            )
 
         default_size = 10 * 1024 * 1024  # 10MB
         img_upload.data.seek(0, os.SEEK_END)
@@ -139,35 +161,41 @@ class BookForm(FlaskForm):
         img_upload.data.seek(0)
 
         if img_size > default_size:
-            raise ValidationError("Invalid image size. Please use an image smaller than 10MB.")
+            raise ValidationError(
+                "Invalid image size. Please use an image smaller than 10MB."
+            )
 
-                
+
 class EditBookForm(FlaskForm):
     book_category_id = SelectField("Category")
     author_id = SelectField("Author")
     title = StringField("Title")
     description = TextAreaField("Description")
     version = StringField(
-            "Version",
-            validators=[
-                Regexp(r'^v\d+$', message='Invalid version format. Use "v" followed by a number, e.g., "v1".'),
-            ],
-        )
+        "Version",
+        validators=[
+            Regexp(
+                r"^v\d+$",
+                message='Invalid version format. Use "v" followed by a number, e.g., "v1".',
+            ),
+        ],
+    )
     publisher = StringField("Publisher")
     isbn = IntegerField("Isbn")
     img_upload = FileField(
-            "Image Upload",
-            validators=[
-                FileRequired(message="Please select an image.")],
-        )
+        "Image Upload",
+        validators=[FileRequired(message="Please select an image.")],
+    )
     total_copies = IntegerField("Total Copies")
 
     submit = SubmitField("Save Book")
-    
+
     def validate_img_upload(self, img_upload):
         img_ext = img_upload.data.filename.split(".")[-1].lower()
         if img_ext not in ["jpg", "jpeg", "png", "mp4"]:
-            raise ValidationError("Invalid image format. Please use a jpg, jpeg or png image.")
+            raise ValidationError(
+                "Invalid image format. Please use a jpg, jpeg or png image."
+            )
 
         default_size = 10 * 1024 * 1024  # 10MB
         img_upload.data.seek(0, os.SEEK_END)
@@ -175,13 +203,6 @@ class EditBookForm(FlaskForm):
         img_upload.data.seek(0)
 
         if img_size > default_size:
-            raise ValidationError("Invalid image size. Please use an image smaller than 10MB.")
-                
-            
-                   
-
-
-            
-          
-
-
+            raise ValidationError(
+                "Invalid image size. Please use an image smaller than 10MB."
+            )
