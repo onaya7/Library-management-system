@@ -62,7 +62,7 @@ def create_app(config_name="development"):
             return redirect(url_for("auth.student_sign_in"))
 
     @login_manager.user_loader
-    def load_user(id):
+    def load_normal_user(id):
         user = Student.query.get(id)
         if user:
             return user
@@ -70,7 +70,7 @@ def create_app(config_name="development"):
             return None
 
     @login_manager.user_loader
-    def load_user(id):
+    def load_librarian_user(id):
         user = Librarian.query.get(id)
         if user:
             return user

@@ -7,8 +7,8 @@ from werkzeug.utils import secure_filename
 from lms.decorator import session_expired_handler
 from lms.extensions import db
 from lms.forms import (AuthorForm, BookCategoryForm, BookForm, EditBookForm,
-                       SearchForm, images)
-from lms.models import Author, Book, BookCategory
+                       SearchForm, StudentForm, images)
+from lms.models import Author, Book, BookCategory, Student
 
 librarian = Blueprint(
     "librarian", __name__, template_folder="templates", static_folder="assets"
@@ -351,7 +351,43 @@ def students():
 @librarian.route("/librarian/add_student", methods=["GET", "POST"])
 @session_expired_handler("librarian")
 def add_student():
-    return render_template("librarian/add_student.html")
+    form = StudentForm()
+    
+    if form.validate_on_submit():
+        name = form.name.data.lower().strip()
+        password = form.password.data
+        matric_no = form.matric_no.data
+        department = form.department.data.lower().strip()
+        email = form.email.data.lower().strip()
+        img_upload = form.img_upload.data
+        student_status = form.student_status.data
+        
+        filename = secure_filename(img_upload.filename)
+        img_ext = filename.split(".")[-1].lower()
+        random_number = secrets.token_hex(10)
+        random_filename = f"{random_number}.{img_ext}"
+        images.save(img_upload, name=random_filename)
+        
+        student = Student(
+            name=name,
+            password=password,
+            matric_no=matric_no,
+            department=department,
+            email=email,
+            img_upload=random_filename,
+            student_status=student_status,
+            )
+        student.generate_password_hash(password)
+        db.session.add(student)
+        try:
+            db.session.commit()
+            flash("Student added successfully", "success")
+            return redirect(url_for("librarian.students"))
+        except Exception as e:
+            flash(f"An error occurred while adding a new student: {str(e)}", "danger")
+            return redirect(url_for("librarian.add_student"))
+        
+    return render_template("librarian/add_student.html", form=form)
 
 
 @librarian.route("/librarian/edit_student/<int:student_id>", methods=["GET", "POST"])

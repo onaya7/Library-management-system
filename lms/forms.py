@@ -1,15 +1,14 @@
 import os
 
 import isbnlib
-from flask_uploads import IMAGES, UploadNotAllowed, UploadSet, configure_uploads
+from flask_uploads import IMAGES, UploadSet, configure_uploads
 from flask_wtf import FlaskForm
-from flask_wtf.file import FileAllowed, FileRequired
+from flask_wtf.file import FileRequired
 from wtforms import (
     BooleanField,
     EmailField,
     FileField,
     IntegerField,
-    IntegerRangeField,
     PasswordField,
     SelectField,
     StringField,
@@ -207,27 +206,45 @@ class EditBookForm(FlaskForm):
                 "Invalid image size. Please use an image smaller than 10MB."
             )
 
+
 class StudentForm(FlaskForm):
-    name = StringField('Name', validators=[DataRequired(), Length(max=100)])
-    password = PasswordField('Password', validators=[DataRequired(), Length(min=6, max=60)])
+    name = StringField("Name", validators=[DataRequired(), Length(max=100)])
+    password = PasswordField(
+        "Password",
+        validators=[
+            DataRequired(),
+            Length(min=5, max=50, message="Password is too short"),
+            Regexp(
+                "^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&\#])[A-Za-z\d@$!%*?&\#]+$",
+                message="Password must include at least one uppercase letter, one lowercase letter, one number, and one special character",
+            ),
+        ],
+    )
     matric_no = StringField(
-            'Matriculation Number',
-            validators=[
-                DataRequired(),
-                validate_matriculation_number  # Use the custom validator
-            ]
-        )    
-    department = StringField('Department', validators=[DataRequired(), Length(max=50)])
-    email = StringField('Email', validators=[DataRequired(), Email(), Length(max=50)])
-    img_upload = StringField('Profile Image', validators=[DataRequired(), Length(max=100)])
-    student_status = BooleanField('Student Status', default=True)
+        "Matriculation Number",
+        validators=[
+            DataRequired(),
+            Regexp(
+                r"^\d{2}/[A-Z]{3}/\d{2,3}$",
+                message="Invalid matriculation number format. Example: 17/EEN/O33",
+            ),
+        ],
+    )
+    department = StringField("Department", validators=[DataRequired(), Length(max=50)])
+    email = StringField("Email", validators=[DataRequired(), Email(), Length(max=50)])
+    img_upload = FileField(
+        "Profile Picture",
+        validators=[FileRequired(message="Please select an image.")],
+    )
+    student_status = BooleanField("Student Status", default=True)
     submit = SubmitField("Save Student")
 
-    def validate_matriculation_number(form, matric_no):
-        pattern = r'^\d{2}/[A-Z]{3}/\d{2,3}$'
-
-        if not Regexp(pattern).search(matric_no.data):
-            raise ValidationError('Invalid matriculation number format. Example: 17/EEN/O33')
+    def validate_matric_no(self, matric_no):
+        student = Student.query.filter_by(matric_no=matric_no.data).first()
+        if student:
+            raise ValidationError(
+                f"This number {matric_no.data} already exist as a matriculation number used to register another student please use a different one"
+            )
 
     def validate_img_upload(self, img_upload):
         img_ext = img_upload.data.filename.split(".")[-1].lower()

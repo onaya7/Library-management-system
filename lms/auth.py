@@ -12,9 +12,9 @@ auth = Blueprint("auth", __name__, template_folder="templates", static_folder="a
 def student_sign_in():
     form = StudentLoginForm()
     if form.validate_on_submit():
-        matric_no = form.matric_no.data.lower().strip()
-        password = form.password.data.lower().strip()
-        remember = form.remember.data.lower().strip()
+        matric_no = form.matric_no.data
+        password = form.password.data
+        remember = form.remember.data
 
         user = Student.query.filter_by(matric_no=matric_no).first()
         if user is not None:
@@ -42,8 +42,8 @@ def student_sign_in():
 def librarian_sign_in():
     form = LibrarianLoginForm()
     if form.validate_on_submit():
-        email = form.email.data.lower().strip()
-        password = form.password.data.lower().strip()
+        email = form.email.data
+        password = form.password.data
         remember = form.remember.data
 
         user = Librarian.query.filter_by(email=email).first()
