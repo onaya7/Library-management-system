@@ -1,26 +1,13 @@
 import secrets
 
-from flask import (
-    Blueprint,
-    current_app,
-    flash,
-    redirect,
-    render_template,
-    send_from_directory,
-    url_for,
-)
+from flask import (Blueprint, current_app, flash, redirect, render_template,
+                   send_from_directory, url_for)
 from werkzeug.utils import secure_filename
 
 from lms.decorator import session_expired_handler
 from lms.extensions import db
-from lms.forms import (
-    AuthorForm,
-    BookCategoryForm,
-    BookForm,
-    EditBookForm,
-    SearchForm,
-    images,
-)
+from lms.forms import (AuthorForm, BookCategoryForm, BookForm, EditBookForm,
+                       SearchForm, images)
 from lms.models import Author, Book, BookCategory
 
 librarian = Blueprint(
@@ -207,8 +194,6 @@ def remove_category(category_id):
 
 
 """ Book section"""
-
-
 @librarian.route("/librarian/books", methods=["GET", "POST"])
 @session_expired_handler("librarian")
 def books():
@@ -218,8 +203,6 @@ def books():
 
 
 """ search section"""
-
-
 @librarian.route("/librarian/books/search", methods=["GET", "POST"])
 @session_expired_handler("librarian")
 def search_books():
@@ -361,6 +344,7 @@ def remove_book(book_id):
 @librarian.route("/librarian/students", methods=["GET", "POST"])
 @session_expired_handler("librarian")
 def students():
+    
     return render_template("librarian/students.html")
 
 
