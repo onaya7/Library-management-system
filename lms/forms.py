@@ -206,3 +206,42 @@ class EditBookForm(FlaskForm):
             raise ValidationError(
                 "Invalid image size. Please use an image smaller than 10MB."
             )
+
+class StudentForm(FlaskForm):
+    name = StringField('Name', validators=[DataRequired(), Length(max=100)])
+    password = PasswordField('Password', validators=[DataRequired(), Length(min=6, max=60)])
+    matric_no = StringField(
+            'Matriculation Number',
+            validators=[
+                DataRequired(),
+                validate_matriculation_number  # Use the custom validator
+            ]
+        )    
+    department = StringField('Department', validators=[DataRequired(), Length(max=50)])
+    email = StringField('Email', validators=[DataRequired(), Email(), Length(max=50)])
+    img_upload = StringField('Profile Image', validators=[DataRequired(), Length(max=100)])
+    student_status = BooleanField('Student Status', default=True)
+    submit = SubmitField("Save Student")
+
+    def validate_matriculation_number(form, matric_no):
+        pattern = r'^\d{2}/[A-Z]{3}/\d{2,3}$'
+
+        if not Regexp(pattern).search(matric_no.data):
+            raise ValidationError('Invalid matriculation number format. Example: 17/EEN/O33')
+
+    def validate_img_upload(self, img_upload):
+        img_ext = img_upload.data.filename.split(".")[-1].lower()
+        if img_ext not in ["jpg", "jpeg", "png", "mp4"]:
+            raise ValidationError(
+                "Invalid image format. Please use a jpg, jpeg or png image."
+            )
+
+        default_size = 10 * 1024 * 1024  # 10MB
+        img_upload.data.seek(0, os.SEEK_END)
+        img_size = img_upload.data.tell()
+        img_upload.data.seek(0)
+
+        if img_size > default_size:
+            raise ValidationError(
+                "Invalid image size. Please use an image smaller than 10MB."
+            )
