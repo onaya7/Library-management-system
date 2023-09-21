@@ -20,6 +20,7 @@ from lms.forms import (
     BookCategoryForm,
     BookForm,
     EditBookForm,
+    EditStudentForm,
     SearchForm,
     StudentForm,
     images,
@@ -208,8 +209,8 @@ def edit_category(category_id):
 @librarian.route(
     "/librarian/remove_category/<int:category_id>", methods=["GET", "POST"]
 )
-
-@role_required("librarian")@session_expired_handler("librarian")
+@role_required("librarian")
+@session_expired_handler("librarian")
 def remove_category(category_id):
     category = BookCategory.query.get(category_id)
     db.session.delete(category)
@@ -383,7 +384,26 @@ def remove_book(book_id):
 @session_expired_handler("librarian")
 @role_required("librarian")
 def students():
-    return render_template("librarian/students.html")
+    form = SearchForm()
+    student = Student.query.order_by(Student.name).paginate(per_page=5, error_out=False)
+    return render_template("librarian/students.html", student=student, form=form)
+
+
+"""student search section"""
+
+
+@librarian.route("/librarian/students/search", methods=["GET", "POST"])
+@session_expired_handler("librarian")
+@role_required("librarian")
+def search_students():
+    form = SearchForm()
+    student = None
+    if form.validate_on_submit():
+        query = form.query.data.lower().strip()
+        student = Student.query.filter(Student.matric_no.ilike(f"%{query}%")).paginate(
+            per_page=10, error_out=False
+        )
+    return render_template("librarian/students.html", form=form, student=student)
 
 
 @librarian.route("/librarian/add_student", methods=["GET", "POST"])
@@ -433,14 +453,46 @@ def add_student():
 @session_expired_handler("librarian")
 @role_required("librarian")
 def edit_student(student_id):
-    return render_template("librarian/edit_student.html")
+    student = Student.query.get_or_404(student_id)
+    form = EditStudentForm(obj=student)
+    if form.validate_on_submit():
+        student.name = form.name.data.lower().strip()
+        student.matric_no = form.matric_no.data
+        student.department = form.department.data.lower().strip()
+        student.email = form.email.data.lower().strip()
+        student.student_status = form.student_status.data
+        # Handle image upload if a new image is provided
+        img_upload = form.img_upload.data
+        if img_upload:
+            filename = secure_filename(img_upload.filename)
+            img_ext = filename.split(".")[-1].lower()
+            random_number = secrets.token_hex(10)
+            random_filename = f"{random_number}.{img_ext}"
+            images.save(img_upload, name=random_filename)
+        student.img_upload = random_filename
+        try:
+            db.session.commit()
+            flash("Student updated successfully", "success")
+            return redirect(url_for("librarian.students"))
+        except Exception as e:
+            flash(f"An error occurred while updating the student: {str(e)}", "danger")
+            return redirect(url_for("librarian.edit_student", student_id=student.id))
+    return render_template("librarian/edit_student.html", form=form, student=student)
 
 
 @librarian.route("/librarian/remove_student/<int:student_id>", methods=["GET", "POST"])
 @session_expired_handler("librarian")
 @role_required("librarian")
 def remove_student(student_id):
-    return render_template("librarian/remove_student.html")
+    student = Student.query.get_or_404(student_id)
+    try:
+        db.session.delete(student)
+        db.session.commit()
+        flash("Student removed successfully", "success")
+        return redirect(url_for("librarian.students"))
+    except Exception as e:
+        flash(f"An error occurred while removing the student: {str(e)}", "danger")
+        return redirect(url_for("librarian.students"))
 
 
 """ Issue section"""
@@ -459,13 +511,3 @@ def upload(filename):
     return send_from_directory(
         current_app.config["UPLOADED_IMAGES_DEST"], filename, as_attachment=True
     )
-
-
-@librarian.route("/debug", methods=["GET", "POST"])
-@role_required("librarian")
-@session_expired_handler("librarian")
-def debug():
-    if current_user.is_authenticated:
-        return f"User ID: {current_user.email}"
-    else:
-        return "Not authenticated"

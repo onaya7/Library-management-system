@@ -15,13 +15,7 @@ from wtforms import (
     SubmitField,
     TextAreaField,
 )
-from wtforms.validators import (
-    DataRequired,
-    Email,
-    Length,
-    Regexp,
-    ValidationError,
-)
+from wtforms.validators import DataRequired, Email, Length, Regexp, ValidationError
 
 from lms.models import Author, Book, BookCategory, Librarian, Student
 
@@ -244,6 +238,56 @@ class StudentForm(FlaskForm):
             raise ValidationError(
                 f"This number {matric_no.data} already exist as a matriculation number used to register another student please use a different one"
             )
+
+    def validate_img_upload(self, img_upload):
+        img_ext = img_upload.data.filename.split(".")[-1].lower()
+        if img_ext not in ["jpg", "jpeg", "png", "mp4"]:
+            raise ValidationError(
+                "Invalid image format. Please use a jpg, jpeg or png image."
+            )
+
+        default_size = 10 * 1024 * 1024  # 10MB
+        img_upload.data.seek(0, os.SEEK_END)
+        img_size = img_upload.data.tell()
+        img_upload.data.seek(0)
+
+        if img_size > default_size:
+            raise ValidationError(
+                "Invalid image size. Please use an image smaller than 10MB."
+            )
+
+
+class EditStudentForm(FlaskForm):
+    name = StringField("Name", validators=[Length(max=100)])
+    # password = PasswordField(
+    #     "Password",
+    #     validators=[
+    #         Length(min=5, max=50, message="Password is too short"),
+    #         Regexp(
+    #             "^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&\#])[A-Za-z\d@$!%*?&\#]+$",
+    #             message="Password must include at least one uppercase letter, one lowercase letter, one number, and one special character",
+    #         ),
+    #     ],
+    # )
+    matric_no = StringField(
+        "Matriculation Number",
+        validators=[
+            Regexp(
+                r"^\d{2}/[A-Z]{3}/\d{2,3}$",
+                message="Invalid matriculation number format. Example: 17/EEN/O33",
+            ),
+        ],
+    )
+    department = StringField("Department", validators=[Length(max=50)])
+    email = StringField("Email", validators=[Email(), Length(max=50)])
+    img_upload = FileField(
+        "Profile Picture",
+        validators=[FileRequired(message="Please select an image.")],
+    )
+    student_status = BooleanField("Student Status", default=True)
+    submit = SubmitField("Save Student")
+
+    
 
     def validate_img_upload(self, img_upload):
         img_ext = img_upload.data.filename.split(".")[-1].lower()

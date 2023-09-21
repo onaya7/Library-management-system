@@ -141,13 +141,18 @@ def admin_sign_in():
 @login_required
 def logout_student():
     logout_user()
-    flash("logged out successfully.", "danger")
-    return redirect(url_for("auth.student_sign_in"))
+      # Create a response object and remove the token cookie
+    response = make_response(redirect(url_for("auth.student_sign_in")))
+    response.set_cookie("token", "", expires=0)
+
+    flash("Logged out successfully.", "success")
+    return response
 
 
 @auth.route("/auth/librarian/logout", methods=["GET", "POST"])
 @login_required
 def logout_librarian():
+    logout_user()
     # Create a response object and remove the token cookie
     response = make_response(redirect(url_for("auth.librarian_sign_in")))
     response.set_cookie("token", "", expires=0)
@@ -160,5 +165,9 @@ def logout_librarian():
 @login_required
 def logout_admin():
     logout_user()
-    flash("logged out successfully.", "danger")
-    return redirect(url_for("auth.admin_sign_in"))
+      # Create a response object and remove the token cookie
+    response = make_response(redirect(url_for("auth.admin_sign_in")))
+    response.set_cookie("token", "", expires=0)
+
+    flash("Logged out successfully.", "success")
+    return response
