@@ -1,13 +1,29 @@
 import secrets
 
-from flask import (Blueprint, current_app, flash, redirect, render_template,
-                   send_from_directory, url_for)
+from flask import (
+    Blueprint,
+    current_app,
+    flash,
+    redirect,
+    render_template,
+    request,
+    send_from_directory,
+    url_for,
+)
+from flask_login import current_user
 from werkzeug.utils import secure_filename
 
-from lms.decorator import session_expired_handler
+from lms.decorator import role_required, session_expired_handler
 from lms.extensions import db
-from lms.forms import (AuthorForm, BookCategoryForm, BookForm, EditBookForm,
-                       SearchForm, StudentForm, images)
+from lms.forms import (
+    AuthorForm,
+    BookCategoryForm,
+    BookForm,
+    EditBookForm,
+    SearchForm,
+    StudentForm,
+    images,
+)
 from lms.models import Author, Book, BookCategory, Student
 
 librarian = Blueprint(
@@ -17,7 +33,11 @@ librarian = Blueprint(
 
 @librarian.route("/librarian/dashboard", methods=["GET", "POST"])
 @session_expired_handler("librarian")
+@role_required("librarian")
 def dashboard():
+    cookie = request.cookies.get("token", "")
+    # how to decrypt this cookie and see it values
+
     return render_template("librarian/dashboard.html")
 
 
@@ -26,6 +46,7 @@ def dashboard():
 
 @librarian.route("/librarian/author", methods=["GET", "POST"])
 @session_expired_handler("librarian")
+@role_required("librarian")
 def author():
     form = SearchForm()
 
@@ -39,6 +60,7 @@ def author():
 
 @librarian.route(f"/librarian/author/search", methods=["GET", "POST"])
 @session_expired_handler("librarian")
+@role_required("librarian")
 def search_author():
     form = SearchForm()
     author = None
@@ -47,13 +69,13 @@ def search_author():
         author = Author.query.filter(Author.name.ilike(f"%{query}%")).paginate(
             per_page=5, error_out=False
         )
-        print(query)
-        print(author.items)
+
     return render_template("librarian/author.html", form=form, author=author)
 
 
 @librarian.route("/librarian/add_author", methods=["GET", "POST"])
 @session_expired_handler("librarian")
+@role_required("librarian")
 def add_author():
     form = AuthorForm()
     if form.validate_on_submit():
@@ -72,6 +94,7 @@ def add_author():
 
 @librarian.route("/librarian/edit_author/<int:author_id>", methods=["GET", "POST"])
 @session_expired_handler("librarian")
+@role_required("librarian")
 def edit_author(author_id):
     author = Author.query.get(author_id)
     if author is None:
@@ -94,6 +117,7 @@ def edit_author(author_id):
 
 @librarian.route("/librarian/remove_author/<int:author_id>", methods=["GET", "POST"])
 @session_expired_handler("librarian")
+@role_required("librarian")
 def remove_author(author_id):
     author = Author.query.get(author_id)
     db.session.delete(author)
@@ -111,6 +135,7 @@ def remove_author(author_id):
 
 @librarian.route("/librarian/category", methods=["GET", "POST"])
 @session_expired_handler("librarian")
+@role_required("librarian")
 def category():
     form = SearchForm()
     category = BookCategory.query.order_by(BookCategory.name).paginate(
@@ -124,6 +149,7 @@ def category():
 
 @librarian.route(f"/librarian/category/search", methods=["GET", "POST"])
 @session_expired_handler("librarian")
+@role_required("librarian")
 def search_category():
     form = SearchForm()
     category = None
@@ -137,6 +163,7 @@ def search_category():
 
 @librarian.route("/librarian/add_category", methods=["GET", "POST"])
 @session_expired_handler("librarian")
+@role_required("librarian")
 def add_category():
     form = BookCategoryForm()
     if form.validate_on_submit():
@@ -155,6 +182,7 @@ def add_category():
 
 @librarian.route("/librarian/edit_category/<int:category_id>", methods=["GET", "POST"])
 @session_expired_handler("librarian")
+@role_required("librarian")
 def edit_category(category_id):
     category = BookCategory.query.get(category_id)
     if category is None:
@@ -180,7 +208,8 @@ def edit_category(category_id):
 @librarian.route(
     "/librarian/remove_category/<int:category_id>", methods=["GET", "POST"]
 )
-@session_expired_handler("librarian")
+
+@role_required("librarian")@session_expired_handler("librarian")
 def remove_category(category_id):
     category = BookCategory.query.get(category_id)
     db.session.delete(category)
@@ -194,8 +223,11 @@ def remove_category(category_id):
 
 
 """ Book section"""
+
+
 @librarian.route("/librarian/books", methods=["GET", "POST"])
 @session_expired_handler("librarian")
+@role_required("librarian")
 def books():
     form = SearchForm()
     books = Book.query.order_by(Book.title).paginate(per_page=5, error_out=False)
@@ -203,8 +235,11 @@ def books():
 
 
 """ search section"""
+
+
 @librarian.route("/librarian/books/search", methods=["GET", "POST"])
 @session_expired_handler("librarian")
+@role_required("librarian")
 def search_books():
     form = SearchForm()
     books = None
@@ -219,6 +254,7 @@ def search_books():
 
 @librarian.route("/librarian/add_book", methods=["GET", "POST"])
 @session_expired_handler("librarian")
+@role_required("librarian")
 def add_book():
     form = BookForm()
     categories = BookCategory.query.order_by(BookCategory.name).all()
@@ -271,6 +307,7 @@ def add_book():
 
 @librarian.route("/librarian/edit_book/<int:book_id>", methods=["GET", "POST"])
 @session_expired_handler("librarian")
+@role_required("librarian")
 def edit_book(book_id):
     book = Book.query.get_or_404(book_id)
     form = EditBookForm(obj=book)
@@ -326,6 +363,7 @@ def edit_book(book_id):
 
 @librarian.route("/librarian/remove_book/<int:book_id>", methods=["GET", "POST"])
 @session_expired_handler("librarian")
+@role_required("librarian")
 def remove_book(book_id):
     book = Book.query.get_or_404(book_id)
     try:
@@ -343,16 +381,17 @@ def remove_book(book_id):
 
 @librarian.route("/librarian/students", methods=["GET", "POST"])
 @session_expired_handler("librarian")
+@role_required("librarian")
 def students():
-    
     return render_template("librarian/students.html")
 
 
 @librarian.route("/librarian/add_student", methods=["GET", "POST"])
 @session_expired_handler("librarian")
+@role_required("librarian")
 def add_student():
     form = StudentForm()
-    
+
     if form.validate_on_submit():
         name = form.name.data.lower().strip()
         password = form.password.data
@@ -361,13 +400,13 @@ def add_student():
         email = form.email.data.lower().strip()
         img_upload = form.img_upload.data
         student_status = form.student_status.data
-        
+
         filename = secure_filename(img_upload.filename)
         img_ext = filename.split(".")[-1].lower()
         random_number = secrets.token_hex(10)
         random_filename = f"{random_number}.{img_ext}"
         images.save(img_upload, name=random_filename)
-        
+
         student = Student(
             name=name,
             password=password,
@@ -376,7 +415,7 @@ def add_student():
             email=email,
             img_upload=random_filename,
             student_status=student_status,
-            )
+        )
         student.generate_password_hash(password)
         db.session.add(student)
         try:
@@ -386,18 +425,20 @@ def add_student():
         except Exception as e:
             flash(f"An error occurred while adding a new student: {str(e)}", "danger")
             return redirect(url_for("librarian.add_student"))
-        
+
     return render_template("librarian/add_student.html", form=form)
 
 
 @librarian.route("/librarian/edit_student/<int:student_id>", methods=["GET", "POST"])
 @session_expired_handler("librarian")
+@role_required("librarian")
 def edit_student(student_id):
     return render_template("librarian/edit_student.html")
 
 
 @librarian.route("/librarian/remove_student/<int:student_id>", methods=["GET", "POST"])
 @session_expired_handler("librarian")
+@role_required("librarian")
 def remove_student(student_id):
     return render_template("librarian/remove_student.html")
 
@@ -407,6 +448,7 @@ def remove_student(student_id):
 
 @librarian.route("/librarian/issued_book", methods=["GET", "POST"])
 @session_expired_handler("librarian")
+@role_required("librarian")
 def issued_book():
     return render_template("librarian/issued_book.html")
 
@@ -417,3 +459,13 @@ def upload(filename):
     return send_from_directory(
         current_app.config["UPLOADED_IMAGES_DEST"], filename, as_attachment=True
     )
+
+
+@librarian.route("/debug", methods=["GET", "POST"])
+@role_required("librarian")
+@session_expired_handler("librarian")
+def debug():
+    if current_user.is_authenticated:
+        return f"User ID: {current_user.email}"
+    else:
+        return "Not authenticated"

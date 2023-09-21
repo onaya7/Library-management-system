@@ -1,7 +1,7 @@
 from flask import Blueprint, redirect, render_template, url_for
-from flask_login import login_required
+from flask_login import current_user, login_required
 
-from lms.decorator import session_expired_handler
+from lms.decorator import role_required, session_expired_handler
 
 student = Blueprint(
     "student", __name__, template_folder="templates", static_folder="assets"
@@ -10,6 +10,7 @@ student = Blueprint(
 
 @student.route("/student/dashboard", methods=["GET", "POST"])
 @session_expired_handler("student")
+@role_required("student")
 def dashboard():
     return render_template("student/dashboard.html")
 

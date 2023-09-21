@@ -1,21 +1,18 @@
+import os
 from datetime import timedelta
 
 from flask import Flask, flash, redirect, render_template, request, url_for
-from flask_login import current_user
+from flask_uploads import configure_uploads
 
 from lms.admin import admin
 from lms.auth import auth
 from lms.config import config
 from lms.extensions import db, login_manager, migrate
+from lms.forms import images
+from lms.helpers import token_authentication
 from lms.home import home
 from lms.librarian import librarian
-from lms.models import Librarian, Student
 from lms.student import student
-
-from flask_uploads import configure_uploads
-from lms.forms import images
-
-import os
 
 
 def create_app(config_name="development"):
@@ -25,12 +22,13 @@ def create_app(config_name="development"):
     app.config.from_object(config[config_name])
     config[config_name].init_app(app)
 
+    app.config["SESSION_TYPE"] = "filesystem"
+
     app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(minutes=15)
     app.config["REMEMBER_COOKIE_DURATION"] = timedelta(days=1)
-    
-        
+
     # flask_uploads
-    app.config['UPLOADED_IMAGES_DEST'] = os.path.join(app.root_path, 'upload')
+    app.config["UPLOADED_IMAGES_DEST"] = os.path.join(app.root_path, "upload")
 
     configure_uploads(app, images)
 
@@ -46,36 +44,23 @@ def create_app(config_name="development"):
 
     @login_manager.unauthorized_handler
     def unauthorized_user():
-        # if current_user.is_authenticated:
-        #     return render_template('dashboard/dashboard.html')
-        # else:
-        if request.endpoint == "admin.dashboard":
-            flash("Sorry only admins are authorized to access this page.", "danger")
-            return redirect(url_for("auth.admin_sign_in"))
+        if request.endpoint == "auth.logout_student":
+            flash("Sorry only students are authorized to access this page.", "danger")
+            return redirect(url_for("auth.student_sign_in"))
 
-        elif request.endpoint == "librarian.dashboard":
+        elif request.endpoint == "auth.logout_librarian":
             flash("Sorry only librarians are authorized to access this page.", "danger")
             return redirect(url_for("auth.librarian_sign_in"))
 
-        else:
-            flash("Please log in to access this page.", "danger")
-            return redirect(url_for("auth.student_sign_in"))
+        elif request.endpoint == "auth.logout_admin":
+            flash("Sorry only admins are authorized to access this page.", "danger")
+            return redirect(url_for("auth.admin_sign_in"))
 
-    @login_manager.user_loader
-    def load_normal_user(id):
-        user = Student.query.get(id)
-        if user:
-            return user
-        else:
-            return None
-
-    @login_manager.user_loader
-    def load_librarian_user(id):
-        user = Librarian.query.get(id)
-        if user:
-            return user
-        else:
-            return None
+    # Custom request loader to get user based on session ID
+    @login_manager.request_loader
+    def load_user_from_request(request):
+        user = token_authentication(request)
+        return user
 
     @app.errorhandler(404)
     def page_not_found(e):
@@ -84,5 +69,8 @@ def create_app(config_name="development"):
     @app.errorhandler(500)
     def internal_server_error(e):
         return render_template("auth/500.html")
+
+    with app.app_context():
+        pass
 
     return app

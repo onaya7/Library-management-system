@@ -1,7 +1,7 @@
 import os
 
 import isbnlib
-from flask_uploads import IMAGES, UploadSet, configure_uploads
+from flask_uploads import IMAGES, UploadSet
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileRequired
 from wtforms import (
@@ -18,7 +18,6 @@ from wtforms import (
 from wtforms.validators import (
     DataRequired,
     Email,
-    EqualTo,
     Length,
     Regexp,
     ValidationError,

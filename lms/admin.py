@@ -1,7 +1,7 @@
 from flask import Blueprint, redirect, render_template
 from flask_login import login_required
 
-from lms.decorator import session_expired_handler
+from lms.decorator import session_expired_handler, role_required
 
 admin = Blueprint(
     "admin", __name__, template_folder="templates", static_folder="assets"

@@ -1,8 +1,10 @@
+import uuid
 from datetime import datetime, timedelta
 
 from flask_bcrypt import generate_password_hash
 from flask_login import UserMixin
 
+from lms.encryption import decode_jwt, generate_jwt
 from lms.extensions import db
 
 
@@ -83,6 +85,7 @@ class Student(UserMixin, db.Model):
     __tablename__ = "student"
     __table_args__ = {"extend_existing": True}
     id = db.Column(db.Integer, primary_key=True)
+    alternative_id = db.Column(db.String(36), default=str(uuid.uuid4()), nullable=False)
     name = db.Column(db.String(100), nullable=False)
     password = db.Column(db.String(60), nullable=False)
     matric_no = db.Column(db.String(20), nullable=False)
@@ -98,6 +101,15 @@ class Student(UserMixin, db.Model):
     def generate_password_hash(self, password):
         self.password = generate_password_hash(password)
 
+    def generate_jwt(self) -> str:
+        payload = dict()
+        payload["id"] = self.alternative_id
+        payload["role"] = "student"
+        payload["exp"] = datetime.utcnow() + timedelta(hours=1)
+        payload["iat"] = datetime.utcnow()
+
+        return generate_jwt(payload)
+
     def get_id(self):
         try:
             return str(self.id)
@@ -112,6 +124,7 @@ class Librarian(UserMixin, db.Model):
     __tablename__ = "librarian"
     __table_args__ = {"extend_existing": True}
     id = db.Column(db.Integer, primary_key=True)
+    alternative_id = db.Column(db.String(36), default=str(uuid.uuid4()), nullable=False)
     name = db.Column(db.String(100), nullable=False)
     password = db.Column(db.String(60), nullable=False)
     email = db.Column(db.String(50), nullable=False)
@@ -123,6 +136,21 @@ class Librarian(UserMixin, db.Model):
 
     def generate_password_hash(self, password):
         self.password = generate_password_hash(password)
+
+    def generate_jwt(self) -> str:
+        payload = dict()
+        payload["id"] = self.alternative_id
+        payload["role"] = "librarian"
+        payload["exp"] = datetime.utcnow() + timedelta(hours=1)
+        payload["iat"] = datetime.utcnow()
+
+        return generate_jwt(payload)
+
+    @staticmethod
+    def decode_jwt(
+        token: str,
+    ) -> tuple:
+        return decode_jwt(token)
 
     def get_id(self):
         try:
