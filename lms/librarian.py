@@ -27,6 +27,8 @@ from lms.forms import (
 )
 from lms.models import Author, Book, BookCategory, Student
 
+from datetime import datetime
+
 librarian = Blueprint(
     "librarian", __name__, template_folder="templates", static_folder="assets"
 )
@@ -36,10 +38,11 @@ librarian = Blueprint(
 @session_expired_handler("librarian")
 @role_required("librarian")
 def dashboard():
-    cookie = request.cookies.get("token", "")
-    # how to decrypt this cookie and see it values
-
-    return render_template("librarian/dashboard.html")
+    author = Author.query.order_by(Author.name).paginate(per_page=5, error_out=False)
+    book = Book.query.order_by(Book.title).paginate(per_page=5, error_out=False)
+    student = Student.query.order_by(Student.name).paginate(per_page=5, error_out=False)
+    category = BookCategory.query.order_by(BookCategory.name).paginate(per_page=5, error_out=False)
+    return render_template("librarian/dashboard.html", author=author, category=category, book=book, student=student)
 
 
 """ Author section"""
@@ -461,6 +464,7 @@ def edit_student(student_id):
         student.department = form.department.data.lower().strip()
         student.email = form.email.data.lower().strip()
         student.student_status = form.student_status.data
+        student.updated_at = datetime.now()
         # Handle image upload if a new image is provided
         img_upload = form.img_upload.data
         if img_upload:
@@ -496,8 +500,6 @@ def remove_student(student_id):
 
 
 """ Issue section"""
-
-
 @librarian.route("/librarian/issued_book", methods=["GET", "POST"])
 @session_expired_handler("librarian")
 @role_required("librarian")
