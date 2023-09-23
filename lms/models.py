@@ -240,12 +240,12 @@ class Fine(UserMixin, db.Model):
     __tablename__ = "fine"
     __table_args__ = {"extend_existing": True}
     id = db.Column(db.Integer, primary_key=True)
-    amount = db.Column(db.Float, default=2000)
+    amount = db.Column(db.Float, default=0)
     student_id = db.Column(db.Integer, db.ForeignKey("student.id"), nullable=False)
     issue = db.relationship("Issue", backref="fine", lazy=True)
 
-    def calculate_fine(self):
-        expiration_date = self.issue[0].expiry_date
+    def calculate_fine(self, issue_expiry_date):
+        expiration_date = issue_expiry_date
         current_date = datetime.utcnow()
 
         days_overdue = (current_date - expiration_date).days
@@ -253,9 +253,11 @@ class Fine(UserMixin, db.Model):
         if days_overdue > 0:
             fine_per_day = 100
             fine_amount = fine_per_day * days_overdue
-            return fine_amount
+            self.amount = fine_amount
+            return self.amount
         else:
-            return 0
+            self.amount = 0
+            return self.amount
 
     def __repr__(self):
         return f"Fine(id:'{self.id}', amount:'{self.amount}', student_id:'{self.student_id}')"

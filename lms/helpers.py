@@ -17,7 +17,6 @@ def handle_login(token):
                 Librarian.is_admin == True,
             ).first()
             if admin:
-                print(admin)
                 return admin
 
         elif role == "librarian":
@@ -26,7 +25,6 @@ def handle_login(token):
                 Librarian.is_librarian == True,
             ).first()
             if librarian:
-                print(librarian)
                 return librarian
 
         elif role == "student":

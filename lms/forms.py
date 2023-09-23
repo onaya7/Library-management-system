@@ -325,3 +325,14 @@ class IssueBookForm(FlaskForm):
             raise ValidationError(
                 f"This number {book_isbn.data} does not exist as a book isbn please use a different one"
             )
+            
+class FineForm(FlaskForm):
+    matric_no = StringField("Matriculation Number", validators=[DataRequired()])
+    submit = SubmitField("Generate Fine")
+    
+    def validate_matric_no(self, matric_no):
+        student = Student.query.filter_by(matric_no=matric_no.data).first()
+        if not student:
+            raise ValidationError(
+                f"This number {matric_no.data} does not exist as a matriculation number used to register a student please use a different one"
+            )

@@ -25,9 +25,10 @@ from lms.forms import (
     SearchForm,
     StudentForm,
     IssueBookForm,
+    FineForm,
     images,
 )
-from lms.models import Author, Book, BookCategory, Student, Issue
+from lms.models import Author, Book, BookCategory, Student, Issue, Fine
 
 librarian = Blueprint(
     "librarian", __name__, template_folder="templates", static_folder="assets"
@@ -563,8 +564,67 @@ def issue_book():
             return redirect(url_for("librarian.issued_book"))
         except Exception as e:
             flash(f"An error occurred while issuing a book: {str(e)}", "danger")
+            print(e)
             return redirect(url_for("librarian.issued_book"))
     return render_template("librarian/issue_book.html", form=form)
+
+
+
+@librarian.route("/librarian/return_book/<int:issue_id>", methods=["GET", "POST"])
+@session_expired_handler("librarian")
+@role_required("librarian")
+def return_book(issue_id):
+    id=issue_id
+    print(id)
+    
+    issue_id = Issue.query.get_or_404(id)
+    issue_id =issue_id.id
+    issue = Issue.query.filter_by(id=issue_id).first()
+    
+    book_id = issue.book_id
+    book = Book.query.filter_by(id=book_id).first()
+    book_isbn = book.isbn
+    
+    student_id = issue.student_id
+    student = Student.query.filter_by(id=student_id).first()
+    matric_no = student.matric_no
+    
+    librarian_id = current_user.alternative_id
+    if request.method == "POST":
+        book.available_copies +=  1 
+        issue.returned_date(datetime.utcnow())
+
+        try:
+            db.session.commit()
+            flash("Book returned successfully", "success")
+        except Exception as e:
+            flash(f"An error occurred while returning a book: {str(e)}", "danger")
+    return render_template("librarian/return_book.html", book_isbn=book_isbn, matric_no=matric_no, librarian_id=librarian_id, id=id)
+
+
+@librarian.route("/librarian/fine", methods=["GET", "POST"])
+@session_expired_handler("librarian")
+@role_required("librarian")
+def fine():
+    form = FineForm()
+    if form.validate_on_submit():
+        matric_no = form.matric_no.data
+        
+        student_id = Student.query.filter_by(matric_no=matric_no).first()
+        student_id = student_id.id
+        
+        fine =  Fine(student_id=student_id)
+        fine.calculate_fine(student_id)
+        db.session.add(fine)
+        try:
+            db.session.commit()
+            flash("Fine calculated successfully", "success")
+            return redirect(url_for("librarian.fine"))
+        except Exception as e:
+            flash(f"An error occurred while calculating the fine: {str(e)}", "danger")
+            return redirect(url_for("librarian.fine"))
+        
+    return render_template("librarian/fine.html", form=form)
 
 """ image upload section"""
 @librarian.route("/upload/<path:filename>")

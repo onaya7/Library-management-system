@@ -1,0 +1,76 @@
+{% extends 'librarian/base.html' %}
+{% block title %}Return Book {% endblock%}
+{% block content %}
+<section class="container-fluid p-4">
+    <div class="row ">
+        <div class="col-lg-12 col-md-12 col-12">
+            <!-- Page header -->
+            <div class="border-bottom pb-3 mb-3 ">
+                <div class="mb-2 mb-lg-0">
+                    <h1 class="mb-0 h2 fw-bold"> Return Book </h1>
+                    <!-- Breadcrumb -->
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item">
+                                <a href="{{ url_for('librarian.dashboard')}}">Dashboard</a>
+                            </li>
+                            <li class="breadcrumb-item">
+                                <a href="#">Return Book </a>
+                            </li>
+                            <li class="breadcrumb-item active" aria-current="page">
+                                Return Book
+                            </li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row ">
+        <div class="offset-xl-3 col-xl-6 col-12">
+            <!-- card -->
+            <form action="{{ url_for('librarian.return_book', issue_id=id) }}" method="post" enctype="multipart/form-data">
+           
+                <div class="card mb-4">
+                    <!-- card body -->
+                    <div class="card-body">
+                        <h4 class="mb-4">Book Return Overview</h4>
+
+                        <!-- row -->
+                        <div class="row gx-3">
+
+                            <!-- input -->
+                            <div class="mb-3 ">
+                                <h4>Book isbn</h4>
+                                {{book_isbn}}
+                            </div>
+
+                            <!-- input -->
+                            <div class="mb-3 ">
+                                <h4>Matriculation Number</h4>
+                                {{matric_no}}
+                            </div>
+
+                             <!-- input -->
+                             <div class="mb-3 ">
+                                <h4>Librarian id</h4>
+                                {{librarian_id}}
+                            </div>
+
+
+                        </div>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-end">
+                    <!-- buttons -->
+                    <a href="{{ url_for('librarian.issued_book')}}" class="btn btn-outline-primary me-2">Cancel</a>
+                    <!-- button -->
+                    <div class="d-grid">
+                        <button class="btn btn-primary" type="submit">Return Book</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock %}
