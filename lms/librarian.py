@@ -24,9 +24,10 @@ from lms.forms import (
     EditStudentForm,
     SearchForm,
     StudentForm,
+    IssueBookForm,
     images,
 )
-from lms.models import Author, Book, BookCategory, Student
+from lms.models import Author, Book, BookCategory, Student, Issue
 
 librarian = Blueprint(
     "librarian", __name__, template_folder="templates", static_folder="assets"
@@ -534,7 +535,36 @@ def issued_book():
 @session_expired_handler("librarian")
 @role_required("librarian")
 def issue_book():
-    return render_template("librarian/issue_book.html")
+    form = IssueBookForm()
+    if form.validate_on_submit():
+        book_id = int(form.book_isbn.data)
+        student_id = form.matric_no.data
+        librarian_id = int(current_user.id)
+        
+        book_id = Book.query.filter(Book.isbn == book_id, Book.available_copies > 0).first()
+        student_id = Student.query.filter_by(matric_no=student_id).first()
+        if not  book_id:
+            flash("Book is not available for issue", "danger")
+            return redirect(url_for('librarian.issue_book'))
+        book_id.available_copies-=1
+        book_id , student_id= book_id.id, student_id.id
+           
+        issued_book = Issue(
+            student_id=student_id,
+            book_id=book_id,
+            librarian_id=librarian_id
+        )
+        issued_book.set_expiry_date(datetime.utcnow())
+        db.session.add(issued_book)
+
+        try:
+            db.session.commit()
+            flash("Book issued successfully", "success")
+            return redirect(url_for("librarian.issued_book"))
+        except Exception as e:
+            flash(f"An error occurred while issuing a book: {str(e)}", "danger")
+            return redirect(url_for("librarian.issued_book"))
+    return render_template("librarian/issue_book.html", form=form)
 
 """ image upload section"""
 @librarian.route("/upload/<path:filename>")

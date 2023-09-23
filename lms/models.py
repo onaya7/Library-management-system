@@ -170,8 +170,9 @@ class LibraryCard(UserMixin, db.Model):
     issued_date = db.Column(db.DateTime, default=datetime.utcnow)
     expiry_date = db.Column(db.DateTime, nullable=True)
 
-    def __init__(self):
-        self.expiry_date = self.issued_date + timedelta(days=365)  # Adding one year
+
+    def set_expiry_date(self, date):
+        self.expiry_date = date + timedelta(days=365)  # Adding one year
 
     def has_expired(self):
         return datetime.utcnow() > self.expiry_date
@@ -179,6 +180,7 @@ class LibraryCard(UserMixin, db.Model):
     def __repr__(self):
         return f"LibraryCard(id:'{self.id}', student_id:'{self.student_id}')"
 
+    
 
 class Reservation(UserMixin, db.Model):
     __tablename__ = "reservation"
@@ -206,8 +208,9 @@ class Issue(UserMixin, db.Model):
     expiry_date = db.Column(db.DateTime, nullable=True)
     return_date = db.Column(db.DateTime, nullable=True)
 
-    def __init__(self):
-        self.expiry_date = self.issued_date + timedelta(days=14)  # Adding 14 days
+
+    def set_expiry_date(self, date):
+        self.expiry_date = date + timedelta(minutes=5)  # Expires in 5min
 
     def has_expired(self):
         return datetime.utcnow() > self.expiry_date
