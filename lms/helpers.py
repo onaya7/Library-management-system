@@ -12,10 +12,12 @@ def handle_login(token):
         alternative_id = data.get("id")
 
         if role == "admin":
-            admin = Librarian.query.filter_by(
-                alternative_id=alternative_id, is_admin=True
+            admin = Librarian.query.filter(
+                Librarian.alternative_id == alternative_id,
+                Librarian.is_admin == True,
             ).first()
             if admin:
+                print(admin)
                 return admin
 
         elif role == "librarian":
@@ -24,6 +26,7 @@ def handle_login(token):
                 Librarian.is_librarian == True,
             ).first()
             if librarian:
+                print(librarian)
                 return librarian
 
         elif role == "student":

@@ -1,4 +1,5 @@
 import secrets
+from datetime import datetime
 
 from flask import (
     Blueprint,
@@ -27,8 +28,6 @@ from lms.forms import (
 )
 from lms.models import Author, Book, BookCategory, Student
 
-from datetime import datetime
-
 librarian = Blueprint(
     "librarian", __name__, template_folder="templates", static_folder="assets"
 )
@@ -41,8 +40,16 @@ def dashboard():
     author = Author.query.order_by(Author.name).paginate(per_page=5, error_out=False)
     book = Book.query.order_by(Book.title).paginate(per_page=5, error_out=False)
     student = Student.query.order_by(Student.name).paginate(per_page=5, error_out=False)
-    category = BookCategory.query.order_by(BookCategory.name).paginate(per_page=5, error_out=False)
-    return render_template("librarian/dashboard.html", author=author, category=category, book=book, student=student)
+    category = BookCategory.query.order_by(BookCategory.name).paginate(
+        per_page=5, error_out=False
+    )
+    return render_template(
+        "librarian/dashboard.html",
+        author=author,
+        category=category,
+        book=book,
+        student=student,
+    )
 
 
 """ Author section"""
@@ -500,6 +507,7 @@ def remove_student(student_id):
 
 
 """ Issue section"""
+
 @librarian.route("/librarian/issued_book", methods=["GET", "POST"])
 @session_expired_handler("librarian")
 @role_required("librarian")
@@ -507,6 +515,28 @@ def issued_book():
     return render_template("librarian/issued_book.html")
 
 
+# """issued book search section"""
+# @librarian.route("/librarian/issued_book/search", methods=["GET", "POST"])
+# @session_expired_handler("librarian")
+# @role_required("librarian")
+# def search_students():
+#     form = SearchForm()
+#     issued_book = None
+#     if form.validate_on_submit():
+#         query = form.query.data.lower().strip()
+#         issued_book = Student.query.filter(Student.matric_no.ilike(f"%{query}%")).paginate(
+#             per_page=10, error_out=False
+#         )
+#     return render_template("librarian/issued_book.html", form=form, issued_book=issued_book)
+
+
+@librarian.route("/librarian/issue_book", methods=["GET", "POST"])
+@session_expired_handler("librarian")
+@role_required("librarian")
+def issue_book():
+    return render_template("librarian/issue_book.html")
+
+""" image upload section"""
 @librarian.route("/upload/<path:filename>")
 @session_expired_handler("librarian")
 def upload(filename):

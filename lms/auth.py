@@ -65,7 +65,7 @@ def librarian_sign_in():
         password = form.password.data
         remember = form.remember.data
 
-        user = Librarian.query.filter_by(email=email).first()
+        user = Librarian.query.filter_by(email=email, is_librarian=True).first()
         if user is not None:
             user_password = user.password
             password_check = bcrypt.check_password_hash(user_password, password)
@@ -76,7 +76,6 @@ def librarian_sign_in():
                 # Create a response object and set the cookie
                 response = make_response(redirect(url_for("librarian.dashboard")))
                 response = set_cookie(response, token)
-                print(session)
                 # Handle 'next' query parameter
                 next_page = request.args.get("next")
                 if next_page:
@@ -105,8 +104,8 @@ def admin_sign_in():
         password = form.password.data.lower().strip()
         remember = form.remember.data
 
-        user = Librarian.query.filter_by(email=email).first()
-        if user is not None and user.is_admin is True:
+        user = Librarian.query.filter_by(email=email, is_admin=True).first()
+        if user is not None:
             user_password = user.password
             password_check = bcrypt.check_password_hash(user_password, password)
             if password_check:
@@ -116,7 +115,6 @@ def admin_sign_in():
                 # Create a response object and set the cookie
                 response = make_response(redirect(url_for("librarian.dashboard")))
                 response = set_cookie(response, token)
-                print(session)
                 # Handle 'next' query parameter
                 next_page = request.args.get("next")
                 if next_page:
