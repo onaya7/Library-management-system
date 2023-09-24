@@ -207,8 +207,11 @@ class Issue(UserMixin, db.Model):
     issued_date = db.Column(db.DateTime, default=datetime.utcnow)
     expiry_date = db.Column(db.DateTime, nullable=True)
     return_date = db.Column(db.DateTime, nullable=True)
+    fine = db.relationship("Fine", back_populates="issue")
 
 
+    def add_fine_to_student(self, fine):
+        self.fine_id = fine
     def set_expiry_date(self, date):
         self.expiry_date = date + timedelta(minutes=5)  # Expires in 5min
 
@@ -220,6 +223,19 @@ class Issue(UserMixin, db.Model):
 
     def __repr__(self):
         return f"Issue(id:'{self.id}', book_id:'{self.book_id}', student_id:'{self.student_id}', librarian_id:'{self.librarian_id}')"
+
+
+class Fine(UserMixin, db.Model):
+    __tablename__ = "fine"
+    __table_args__ = {"extend_existing": True}
+    id = db.Column(db.Integer, primary_key=True)
+    amount = db.Column(db.Float, default=0)
+    student_id = db.Column(db.Integer, db.ForeignKey("student.id"), nullable=False)
+    issue = db.relationship("Issue", back_populates="fine")
+
+
+    def __repr__(self):
+        return f"Fine(id:'{self.id}', amount:'{self.amount}', student_id:'{self.student_id}')"
 
 
 class Transaction(UserMixin, db.Model):
@@ -234,34 +250,6 @@ class Transaction(UserMixin, db.Model):
 
     def __repr__(self):
         return f"Transaction(id:'{self.id}', book_id:'{self.book_id}', student_id:'{self.student_id}', fine_id:'{self.fine_id}')"
-
-
-class Fine(UserMixin, db.Model):
-    __tablename__ = "fine"
-    __table_args__ = {"extend_existing": True}
-    id = db.Column(db.Integer, primary_key=True)
-    amount = db.Column(db.Float, default=0)
-    student_id = db.Column(db.Integer, db.ForeignKey("student.id"), nullable=False)
-    issue = db.relationship("Issue", backref="fine", lazy=True)
-
-    def calculate_fine(self, issue_expiry_date):
-        expiration_date = issue_expiry_date
-        current_date = datetime.utcnow()
-        print(current_date)
-
-        days_overdue = (current_date - expiration_date).days
-
-        if days_overdue > 0:
-            fine_per_day = 100
-            fine_amount = fine_per_day * days_overdue
-            self.amount = fine_amount
-            return self.amount
-        else:
-            self.amount = 0
-            return self.amount
-
-    def __repr__(self):
-        return f"Fine(id:'{self.id}', amount:'{self.amount}', student_id:'{self.student_id}')"
 
 
 class Payment(UserMixin, db.Model):

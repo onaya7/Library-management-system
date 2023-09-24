@@ -30,6 +30,8 @@ from lms.forms import (
 )
 from lms.models import Author, Book, BookCategory, Student, Issue, Fine
 
+from lms.helpers import calculate_fine
+
 librarian = Blueprint(
     "librarian", __name__, template_folder="templates", static_folder="assets"
 )
@@ -575,7 +577,6 @@ def issue_book():
 @role_required("librarian")
 def return_book(issue_id):
     id=issue_id
-    print(id)
     
     issue_id = Issue.query.get_or_404(id)
     issue_id =issue_id.id
@@ -591,9 +592,20 @@ def return_book(issue_id):
     
     librarian_id = current_user.alternative_id
     if request.method == "POST":
+        fine_amount = calculate_fine(issue.expiry_date)
+        print(fine_amount)
+        if fine_amount > 0:
+            fine = Fine(amount=fine_amount, student_id=student.id)
+            db.session.add(fine)
+            db.session.commit()
+            
+            fine_id = fine.id
+            issue.add_fine_to_student(fine_id)            
+            print(fine_id)
+
+       
         book.available_copies +=  1 
         issue.returned_date(datetime.utcnow())
-
         try:
             db.session.commit()
             flash("Book returned successfully", "success")
@@ -602,30 +614,30 @@ def return_book(issue_id):
     return render_template("librarian/return_book.html", book_isbn=book_isbn, matric_no=matric_no, librarian_id=librarian_id, id=id)
 
 
-@librarian.route("/librarian/fine", methods=["GET", "POST"])
-@session_expired_handler("librarian")
-@role_required("librarian")
-def fine():
-    form = FineForm()
-    if form.validate_on_submit():
-        matric_no = form.matric_no.data
+# @librarian.route("/librarian/fine", methods=["GET", "POST"])
+# @session_expired_handler("librarian")
+# @role_required("librarian")
+# def fine():
+#     form = FineForm()
+#     if form.validate_on_submit():
+#         matric_no = form.matric_no.data
         
-        student_id = Student.query.filter_by(matric_no=matric_no).first()
-        student_id = student_id.id
+#         student_id = Student.query.filter_by(matric_no=matric_no).first()
+#         student_id = student_id.id
         
-        fine =  Fine(student_id=student_id)
-        date = datetime.utcnow()
-        fine.calculate_fine(date)
-        db.session.add(fine)
-        try:
-            db.session.commit()
-            flash("Fine calculated successfully", "success")
-            return redirect(url_for("librarian.fine"))
-        except Exception as e:
-            flash(f"An error occurred while calculating the fine: {str(e)}", "danger")
-            return redirect(url_for("librarian.fine"))
+#         fine =  Fine(student_id=student_id)
+#         date = datetime.utcnow()
+#         fine.calculate_fine(date)
+#         db.session.add(fine)
+#         try:
+#             db.session.commit()
+#             flash("Fine calculated successfully", "success")
+#             return redirect(url_for("librarian.fine"))
+#         except Exception as e:
+#             flash(f"An error occurred while calculating the fine: {str(e)}", "danger")
+#             return redirect(url_for("librarian.fine"))
         
-    return render_template("librarian/fine.html", form=form)
+#     return render_template("librarian/fine.html", form=form)
 
 """ image upload section"""
 @librarian.route("/upload/<path:filename>")
