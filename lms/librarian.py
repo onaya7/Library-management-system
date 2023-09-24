@@ -1,36 +1,18 @@
 import secrets
 from datetime import datetime
 
-from flask import (
-    Blueprint,
-    current_app,
-    flash,
-    redirect,
-    render_template,
-    request,
-    send_from_directory,
-    url_for,
-)
+from flask import (Blueprint, current_app, flash, redirect, render_template,
+                   request, send_from_directory, url_for)
 from flask_login import current_user
 from werkzeug.utils import secure_filename
 
 from lms.decorator import role_required, session_expired_handler
 from lms.extensions import db
-from lms.forms import (
-    AuthorForm,
-    BookCategoryForm,
-    BookForm,
-    EditBookForm,
-    EditStudentForm,
-    SearchForm,
-    StudentForm,
-    IssueBookForm,
-    FineForm,
-    images,
-)
-from lms.models import Author, Book, BookCategory, Student, Issue, Fine
-
+from lms.forms import (AuthorForm, BookCategoryForm, BookForm, EditBookForm,
+                       EditStudentForm, FineForm, IssueBookForm, SearchForm,
+                       StudentForm, images)
 from lms.helpers import calculate_fine
+from lms.models import Author, Book, BookCategory, Fine, Issue, Student
 
 librarian = Blueprint(
     "librarian", __name__, template_folder="templates", static_folder="assets"
@@ -577,33 +559,35 @@ def issue_book():
 @role_required("librarian")
 def return_book(issue_id):
     id=issue_id
-    
     issue_id = Issue.query.get_or_404(id)
+    
     issue_id =issue_id.id
     issue = Issue.query.filter_by(id=issue_id).first()
     
     book_id = issue.book_id
     book = Book.query.filter_by(id=book_id).first()
     book_isbn = book.isbn
+    book_title= book.title
     
     student_id = issue.student_id
     student = Student.query.filter_by(id=student_id).first()
     matric_no = student.matric_no
     
-    librarian_id = current_user.alternative_id
+    librarian_id = current_user.name
     if request.method == "POST":
+        if issue.returned_date:
+            flash("Book already returned", "danger")
+            return redirect(url_for("librarian.return_book", issue_id=id))
+        
         fine_amount = calculate_fine(issue.expiry_date)
-        print(fine_amount)
         if fine_amount > 0:
             fine = Fine(amount=fine_amount, student_id=student.id)
             db.session.add(fine)
             db.session.commit()
-            
+    
             fine_id = fine.id
             issue.add_fine_to_student(fine_id)            
-            print(fine_id)
 
-       
         book.available_copies +=  1 
         issue.returned_date(datetime.utcnow())
         try:
@@ -611,7 +595,7 @@ def return_book(issue_id):
             flash("Book returned successfully", "success")
         except Exception as e:
             flash(f"An error occurred while returning a book: {str(e)}", "danger")
-    return render_template("librarian/return_book.html", book_isbn=book_isbn, matric_no=matric_no, librarian_id=librarian_id, id=id)
+    return render_template("librarian/return_book.html", book_title=book_title, book_isbn=book_isbn, matric_no=matric_no, librarian_id=librarian_id, id=id)
 
 
 # @librarian.route("/librarian/fine", methods=["GET", "POST"])
