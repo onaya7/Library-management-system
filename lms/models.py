@@ -247,6 +247,7 @@ class Fine(UserMixin, db.Model):
     def calculate_fine(self, issue_expiry_date):
         expiration_date = issue_expiry_date
         current_date = datetime.utcnow()
+        print(current_date)
 
         days_overdue = (current_date - expiration_date).days
 

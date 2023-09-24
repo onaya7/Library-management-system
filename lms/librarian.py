@@ -614,7 +614,8 @@ def fine():
         student_id = student_id.id
         
         fine =  Fine(student_id=student_id)
-        fine.calculate_fine(student_id)
+        date = datetime.utcnow()
+        fine.calculate_fine(date)
         db.session.add(fine)
         try:
             db.session.commit()
