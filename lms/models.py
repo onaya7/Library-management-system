@@ -28,6 +28,8 @@ class Book(UserMixin, db.Model):
     updated_date = db.Column(db.DateTime, nullable=True)
     category = db.relationship("BookCategory", back_populates="books")
     author = db.relationship("Author", back_populates="books")
+    issue = db.relationship("Issue", back_populates="books")
+
 
     def edit_book_details(
         self,
@@ -97,6 +99,8 @@ class Student(UserMixin, db.Model):
     student_status = db.Column(db.Boolean, default=True)
     library_card = db.relationship("LibraryCard", backref="student", uselist=False)
     fine = db.relationship("Fine", backref="student", uselist=False)
+    issue = db.relationship("Issue", back_populates="student")
+
 
     def generate_password_hash(self, password):
         self.password = generate_password_hash(password)
@@ -208,6 +212,9 @@ class Issue(UserMixin, db.Model):
     expiry_date = db.Column(db.DateTime, nullable=True)
     return_date = db.Column(db.DateTime, nullable=True)
     fine = db.relationship("Fine", back_populates="issue")
+    student = db.relationship("Student", back_populates="issue")
+    books = db.relationship("Book", back_populates="issue")
+
 
 
     def add_fine_to_student(self, fine):

@@ -498,22 +498,24 @@ def remove_student(student_id):
 @session_expired_handler("librarian")
 @role_required("librarian")
 def issued_book():
-    return render_template("librarian/issued_book.html")
+    form = SearchForm()
+    issue = Issue.query.order_by(Issue.issued_date).paginate(per_page=5, error_out=False)
+    return render_template("librarian/issued_book.html",  issue=issue, form=form)
 
 
-# """issued book search section"""
-# @librarian.route("/librarian/issued_book/search", methods=["GET", "POST"])
-# @session_expired_handler("librarian")
-# @role_required("librarian")
-# def search_students():
-#     form = SearchForm()
-#     issued_book = None
-#     if form.validate_on_submit():
-#         query = form.query.data.lower().strip()
-#         issued_book = Student.query.filter(Student.matric_no.ilike(f"%{query}%")).paginate(
-#             per_page=10, error_out=False
-#         )
-#     return render_template("librarian/issued_book.html", form=form, issued_book=issued_book)
+"""issued book search section"""
+@librarian.route("/librarian/issued_book/search", methods=["GET", "POST"])
+@session_expired_handler("librarian")
+@role_required("librarian")
+def search_issue():
+    form = SearchForm()
+    issue = None
+    if form.validate_on_submit():
+        query = form.query.data.lower().strip()
+        issue = Issue.query.filter(Issue.issued_date.ilike(f"%{query}%")).paginate(
+            per_page=10, error_out=False
+        )
+    return render_template("librarian/issued_book.html", form=form, issue=issue)
 
 
 @librarian.route("/librarian/issue_book", methods=["GET", "POST"])
@@ -548,7 +550,6 @@ def issue_book():
             return redirect(url_for("librarian.issued_book"))
         except Exception as e:
             flash(f"An error occurred while issuing a book: {str(e)}", "danger")
-            print(e)
             return redirect(url_for("librarian.issued_book"))
     return render_template("librarian/issue_book.html", form=form)
 
@@ -572,10 +573,10 @@ def return_book(issue_id):
     student_id = issue.student_id
     student = Student.query.filter_by(id=student_id).first()
     matric_no = student.matric_no
-    
+    print(issue.return_date)
     librarian_id = current_user.name
     if request.method == "POST":
-        if issue.returned_date:
+        if issue.return_date:
             flash("Book already returned", "danger")
             return redirect(url_for("librarian.return_book", issue_id=id))
         
