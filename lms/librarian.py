@@ -599,6 +599,30 @@ def return_book(issue_id):
     return render_template("librarian/return_book.html", book_title=book_title, book_isbn=book_isbn, matric_no=matric_no, librarian_id=librarian_id, id=id)
 
 
+""" Fine section"""
+
+@librarian.route("/librarian/fine", methods=["GET", "POST"])
+@session_expired_handler("librarian")
+@role_required("librarian")
+def fine():
+    form = SearchForm()
+    fine = Fine.query.order_by(Fine.student_id).paginate(per_page=5, error_out=False)
+    return render_template("librarian/fine.html",  fine=fine, form=form)
+
+"""Fine  search section"""
+@librarian.route("/librarian/fine/search", methods=["GET", "POST"])
+@session_expired_handler("librarian")
+@role_required("librarian")
+def search_fine():
+    form = SearchForm()
+    fine = None
+    if form.validate_on_submit():
+        query = form.query.data.lower().strip()
+        fine = Fine.query.filter(Fine.student.matric_no.ilike(f"%{query}%")).paginate(
+            per_page=10, error_out=False
+        )
+    return render_template("librarian/issued_book.html", form=form, fine=fine)
+
 # @librarian.route("/librarian/fine", methods=["GET", "POST"])
 # @session_expired_handler("librarian")
 # @role_required("librarian")

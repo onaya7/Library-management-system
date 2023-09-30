@@ -1,66 +1,215 @@
 {% extends 'librarian/base.html' %}
-{% block title %}Fine {% endblock%}
+{% block title %}Fine {% endblock %}
 {% block content %}
 <section class="container-fluid p-4">
     <div class="row ">
         <div class="col-lg-12 col-md-12 col-12">
             <!-- Page header -->
-            <div class="border-bottom pb-3 mb-3 ">
+            <div class="border-bottom pb-3 mb-3 d-md-flex align-items-center justify-content-between">
                 <div class="mb-2 mb-lg-0">
-                    <h1 class="mb-0 h2 fw-bold"> Fine </h1>
+                    <h1 class="mb-0 h2 fw-bold">Fine <span class="fs-5 text-muted">({{fine.total}} )</span></h1>
                     <!-- Breadcrumb -->
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb">
                             <li class="breadcrumb-item">
                                 <a href="{{ url_for('librarian.dashboard')}}">Dashboard</a>
                             </li>
-                            <li class="breadcrumb-item">
-                                <a href="{{ url_for('librarian.issued_book') }}">Issued Book </a>
-                            </li>
                             <li class="breadcrumb-item active" aria-current="page">
-                                Fine
+                                Student Fine
                             </li>
                         </ol>
                     </nav>
                 </div>
             </div>
+
         </div>
     </div>
-    <div class="row ">
-        <div class="offset-xl-3 col-xl-6 col-12">
-            <!-- card -->
-            <form action="{{ url_for('librarian.fine') }}" method="post" enctype="multipart/form-data">
-                {{ form.hidden_tag() }}
-                <div class="card mb-4">
-                    <!-- card body -->
-                    <div class="card-body">
-                        <h4 class="mb-4">Fine Overview</h4>
+    <div class="row">
+        <div class="col-lg-12 col-md-12 col-12">
+            <!-- Card -->
+            <div class="card rounded-3">
+                <!-- Card Header -->
+                <div class="card-header border-bottom-0 p-0">
+                    <ul class="nav nav-lb-tab" id="tab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <a class="nav-link active" id="all-tab" data-bs-toggle="pill" href="#all" role="tab"
+                                aria-controls="all" aria-selected="true">All</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="p-4 row">
+                    <!-- Form -->
+                    <form action="{{ url_for('librarian.search_fine') }}" method="post"
+                        class="d-flex align-items-center col-12 col-md-8 col-lg-3">
+                        {{ form.hidden_tag() }}
+                        <span class="position-absolute ps-3 search-icon">
+                            <i class="fe fe-search"></i>
+                        </span>
+                        {{ form.query(class="form-control ps-6", placeholder="Filter by matric number")}}
+                        {% if form.query.errors %}
+                        <ul class="errors">
+                            {% for error in form.query.errors %}
+                            <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
 
-                        <!-- row -->
-                        <div class="row gx-3">
+                    </form>
 
-                            <!-- input -->
-                            <div class="mb-3 ">
-                                {{ form.matric_no.label(for="matric_no", class="form-label")}}
-                                {{ form.matric_no(class="form-control" ,id="matric_no")}}
-                                {% if form.matric_no.errors %}
-                                <ul class="errors">
-                                    {% for error in form.matric_no.errors %}
-                                    <li>{{ error }}</li>
-                                    {% endfor %}
-                                </ul>
-                                {% endif %}
+                </div>
+                <div>
+
+                    <div class="tab-content" id="tabContent">
+                        <!-- Tab -->
+                        <div class="tab-pane fade show active" id="all" role="tabpanel" aria-labelledby="all-tab">
+                            <div class="table-responsive border-0">
+                                <!-- Table -->
+                                <table class="table mb-0 text-nowrap table-hover table-centered table-with-checkbox">
+                                    <!-- Table Head -->
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th></th>
+                                            <th>Matric no</th>
+                                            <th>Amount</th>
+                                            <th>Status</th>
+                                            <th>Action</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% if fine is none %}
+                                        <tr>
+                                            <td>No fine found for the search query.</td>
+                                        </tr>
+                                        {% else %}
+                                        {% for fine in fine.items %}
+                                        
+                                        <!-- Table body -->
+                                        <tr>
+                                            <td>
+                                                <div class="form-check">
+                                                    <input type="checkbox" class="form-check-input" id="productOne">
+                                                    <label class="form-check-label" for="productOne"></label>
+                                                </div>
+                                            </td>
+
+
+                                            <td>
+                                                <a href="#" class="text-inherit">
+                                                    <div class="d-flex align-items-center">
+                                                        <div class="ms-3">
+                                                            <h5 class="mb-0 text-primary-hover txt">
+                                                                {{fine.student.matric_no}}
+                                                            </h5>
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </td>
+
+                                            
+                                            <td>
+                                                <a href="#" class="text-inherit">
+                                                    <div class="d-flex align-items-center">
+                                                        <div class="ms-3">
+                                                            <h5 class="mb-0 text-primary-hover txt">
+                                                                {{fine.amount}}
+                                                            </h5>
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </td>
+
+                                            <td>
+                                                <a href="#" class="text-inherit">
+                                                    <div class="d-flex align-items-center">
+                                                        <div class="ms-3">
+                                                            <h5 class="mb-0 text-primary-hover txt">
+                                                                {{fine.status}}
+                                                            </h5>
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </td>
+
+                                            <td>
+                                                <span class="dropdown dropstart">
+                                                    <a class="btn-icon btn btn-ghost btn-sm rounded-circle" href="#"
+                                                        role="button" id="productDropdown1" data-bs-toggle="dropdown"
+                                                        data-bs-offset="-20,20" aria-expanded="false">
+                                                        <i class="fe fe-more-vertical"></i>
+                                                    </a>
+                                                    <span class="dropdown-menu" aria-labelledby="productDropdown1">
+                                                        <span class="dropdown-header">Settings</span>
+                                                        <a class="dropdown-item"
+                                                            href="{{ url_for('librarian.edit_book', book_id=fine.id) }}"><i
+                                                                class="fe fe-edit dropdown-item-icon"></i>Edit</a>
+                                                        <button type="button" class="dropdown-item"
+                                                            data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                                            <i class="fe fe-trash dropdown-item-icon"></i>Delete
+                                                        </button>
+                                                    </span>
+                                                </span>
+                                            </td>
+
+                                            <td></td>
+
+                                        </tr>
+                                        {% endfor %}
+                                        {% endif %}
+
+                                    </tbody>
+
+                                </table>
                             </div>
-
                         </div>
                     </div>
                 </div>
-                <div class="d-flex justify-content-end">
-                    <!-- buttons -->
-                    <a href="{{ url_for('librarian.issued_book')}}" class="btn btn-outline-primary me-2">Cancel</a>
-                    {{ form.submit(class="btn btn-primary",type="submit")}}
+
+
+                <!-- Card Footer -->
+                {% if fine is none %}
+
+                {% else %}
+                <div class="card-footer d-md-flex justify-content-between align-items-center">
+                    <div>
+                        <span>Showing fine from page {{fine.first}} to {{fine.last}} of {{fine.total}}</span>
+                    </div>
+
+                    <nav>
+                        <ul class="pagination  mb-0 mt-2">
+                            {% if fine.has_prev %}
+                            <li class="page-item disabled">
+                                <a class="page-link mx-1 rounded"
+                                    href="{{ url_for('librarian.fine', page=fine.prev_num) }}"><i
+                                        class="mdi mdi-chevron-left"></i></a>
+                            </li>
+                            {% endif %}
+
+                            {% for number in fine.iter_pages() %}
+                            {% if fine.page != number %}
+                            <li class="page-item">
+                                <a class="page-link mx-1 rounded"
+                                    href="{{ url_for('librarian.fine', page=number) }}">{{ number }}</a>
+                            </li>
+                            {% else %}
+                            <li class="page-item active">
+                                <a class="page-link mx-1 rounded" href="#">{{ number }}</a>
+                            </li>
+                            {% endif %}
+                            {% endfor %}
+
+                            {% if fine.has_next %}
+                            <li class="page-item">
+                                <a class="page-link mx-1 rounded"
+                                    href="{{ url_for('librarian.fine', page=fine.next_num) }}"><i
+                                        class="mdi mdi-chevron-right"></i></a>
+                            </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
                 </div>
-            </form>
+                {% endif %}
+            </div>
         </div>
     </div>
 </section>

@@ -98,7 +98,7 @@ class Student(UserMixin, db.Model):
     updated_at = db.Column(db.DateTime, nullable=True)
     student_status = db.Column(db.Boolean, default=True)
     library_card = db.relationship("LibraryCard", backref="student", uselist=False)
-    fine = db.relationship("Fine", backref="student", uselist=False)
+    fine = db.relationship("Fine", back_populates="student", uselist=False)
     issue = db.relationship("Issue", back_populates="student")
 
 
@@ -207,15 +207,13 @@ class Issue(UserMixin, db.Model):
     book_id = db.Column(db.Integer, db.ForeignKey("book.id"), nullable=False)
     fine_id = db.Column(db.Integer, db.ForeignKey("fine.id"), nullable=True)
     librarian_id = db.Column(db.Integer, db.ForeignKey("librarian.id"), nullable=False)
-    transactions = db.relationship("Transaction", backref="issue", lazy=True)
     issued_date = db.Column(db.DateTime, default=datetime.utcnow)
     expiry_date = db.Column(db.DateTime, nullable=True)
     return_date = db.Column(db.DateTime, nullable=True)
     fine = db.relationship("Fine", back_populates="issue")
     student = db.relationship("Student", back_populates="issue")
     books = db.relationship("Book", back_populates="issue")
-
-
+    transactions = db.relationship("Transaction", back_populates="issue", lazy=True)
 
     def add_fine_to_student(self, fine):
         self.fine_id = fine
@@ -238,9 +236,10 @@ class Fine(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     amount = db.Column(db.Float, default=0)
     student_id = db.Column(db.Integer, db.ForeignKey("student.id"), nullable=False)
+    status = db.Column(db.Boolean, default=False)
     issue = db.relationship("Issue", back_populates="fine")
-
-
+    student = db.relationship("Student", back_populates="fine")
+    
     def __repr__(self):
         return f"Fine(id:'{self.id}', amount:'{self.amount}', student_id:'{self.student_id}')"
 
@@ -254,6 +253,8 @@ class Transaction(UserMixin, db.Model):
     issue_id = db.Column(db.Integer, db.ForeignKey("issue.id"), nullable=False)
     fine_id = db.Column(db.Integer, db.ForeignKey("fine.id"), nullable=True)
     payment_id = db.Column(db.Integer, db.ForeignKey("payment.id"), nullable=False)
+    issue = db.relationship("Issue", back_populates="transactions", lazy=True)
+    payment = db.relationship("Payment", back_populates="transactions", lazy=True)
 
     def __repr__(self):
         return f"Transaction(id:'{self.id}', book_id:'{self.book_id}', student_id:'{self.student_id}', fine_id:'{self.fine_id}')"
@@ -264,9 +265,11 @@ class Payment(UserMixin, db.Model):
     __table_args__ = {"extend_existing": True}
     id = db.Column(db.Integer, primary_key=True)
     student_id = db.Column(db.Integer, db.ForeignKey("student.id"), nullable=False)
-    transactions = db.relationship("Transaction", backref="payment", lazy=True)
+    status = db.Column(db.Boolean, default=False)
     amount = db.Column(db.Float, nullable=False)
     payment_date = db.Column(db.DateTime, default=datetime.utcnow)
+    transactions = db.relationship("Transaction", back_populates="payment", lazy=True)
+
 
     def __repr__(self):
         return f"Payment(id:'{self.id}', amount:'{self.amount}', student_id:'{self.student_id}')"
