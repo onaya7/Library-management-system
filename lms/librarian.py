@@ -582,7 +582,7 @@ def return_book(issue_id):
         
         fine_amount = calculate_fine(issue.expiry_date)
         if fine_amount > 0:
-            fine = Fine(amount=fine_amount, student_id=student.id)
+            fine = Fine(amount=fine_amount, student_id=student.id, matric_no=student.matric_no)
             db.session.add(fine)
             db.session.commit()
     
@@ -618,10 +618,10 @@ def search_fine():
     fine = None
     if form.validate_on_submit():
         query = form.query.data.lower().strip()
-        fine = Fine.query.filter(Fine.student.matric_no.ilike(f"%{query}%")).paginate(
+        fine = Fine.query.filter(Fine.matric_no.ilike(f"%{query}%")).paginate(
             per_page=10, error_out=False
         )
-    return render_template("librarian/issued_book.html", form=form, fine=fine)
+    return render_template("librarian/fine.html", form=form, fine=fine)
 
 # @librarian.route("/librarian/fine", methods=["GET", "POST"])
 # @session_expired_handler("librarian")

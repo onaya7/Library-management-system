@@ -71,6 +71,7 @@
                                             <th></th>
                                             <th>Matric no</th>
                                             <th>Amount</th>
+                                            <th>Date</th>
                                             <th>Status</th>
                                             <th>Action</th>
                                             <th></th>
@@ -124,8 +125,28 @@
                                                     <div class="d-flex align-items-center">
                                                         <div class="ms-3">
                                                             <h5 class="mb-0 text-primary-hover txt">
-                                                                {{fine.status}}
+                                                                {{fine.issue[0].return_date.strftime('%Y-%m-%d ')}}
                                                             </h5>
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </td>
+
+                                            <td>
+                                                <a href="#" class="text-inherit">
+                                                    <div class="d-flex align-items-center">
+                                                        <div class="ms-3">
+                                                            {% if fine.status is true %}
+                                                            <h5 class="mb-0 text-primary-hover ">
+                                                                <span class="badge bg-success badge-dot me-1"></span>
+                                                                Paid
+                                                            </h5>
+                                                            {% else %}
+                                                            <h5 class="mb-0 text-primary-hover">
+                                                                <span class="badge bg-danger badge-dot me-1"></span>
+                                                                Not Paid
+                                                            </h5>
+                                                            {% endif %}
                                                         </div>
                                                     </div>
                                                 </a>
