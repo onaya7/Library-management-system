@@ -73,8 +73,6 @@
                                             <th>Amount</th>
                                             <th>Date</th>
                                             <th>Status</th>
-                                            <th>Action</th>
-                                            <th></th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -113,7 +111,7 @@
                                                     <div class="d-flex align-items-center">
                                                         <div class="ms-3">
                                                             <h5 class="mb-0 text-primary-hover txt">
-                                                                {{fine.amount}}
+                                                                ₦{{fine.amount}}
                                                             </h5>
                                                         </div>
                                                     </div>
@@ -152,27 +150,6 @@
                                                 </a>
                                             </td>
 
-                                            <td>
-                                                <span class="dropdown dropstart">
-                                                    <a class="btn-icon btn btn-ghost btn-sm rounded-circle" href="#"
-                                                        role="button" id="productDropdown1" data-bs-toggle="dropdown"
-                                                        data-bs-offset="-20,20" aria-expanded="false">
-                                                        <i class="fe fe-more-vertical"></i>
-                                                    </a>
-                                                    <span class="dropdown-menu" aria-labelledby="productDropdown1">
-                                                        <span class="dropdown-header">Settings</span>
-                                                        <a class="dropdown-item"
-                                                            href="{{ url_for('librarian.edit_book', book_id=fine.id) }}"><i
-                                                                class="fe fe-edit dropdown-item-icon"></i>Edit</a>
-                                                        <button type="button" class="dropdown-item"
-                                                            data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                                            <i class="fe fe-trash dropdown-item-icon"></i>Delete
-                                                        </button>
-                                                    </span>
-                                                </span>
-                                            </td>
-
-                                            <td></td>
 
                                         </tr>
                                         {% endfor %}

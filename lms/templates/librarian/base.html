@@ -73,109 +73,93 @@
                 <!-- Navbar nav -->
                 <ul class="navbar-nav flex-column" id="sideNavbar">
                     <li class="nav-item">
-                        <a class="nav-link  " href="#" data-bs-toggle="collapse" data-bs-target="#navDashboard"
-                            aria-expanded="false" aria-controls="navDashboard">
-                            <i class="nav-icon fe fe-home me-2"></i> Dashboard
-                        </a>
-                        <div id="navDashboard" class="collapse  show " data-bs-parent="#sideNavbar">
-                            <ul class="nav flex-column">
-                                <li class="nav-item ">
-                                    <a class="nav-link  active " href="{{ url_for('librarian.dashboard')}}">
-                                        Overview
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link  collapsed " href="#" data-bs-toggle="collapse" data-bs-target="#navCourses"
-                            aria-expanded="false" aria-controls="navCourses">
-                            <i class="nav-icon fe fe-book me-2"></i> Books
-                        </a>
-                        <div id="navCourses" class="collapse " data-bs-parent="#sideNavbar">
-                            <ul class="nav flex-column">
-                                <li class="nav-item">
-                                    <a class="nav-link " href="{{ url_for('librarian.books')}}">
-                                        All Books
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link " href="{{ url_for('librarian.category')}}">
-                                        All Book Category
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link " href="{{url_for('librarian.issued_book')}}">
-                                        Issued Books
-                                    </a>
-                                </li>
-                                
-                                <li class="nav-item">
-                                    <a class="nav-link " href="admin-course-category-single.html">
-                                        Reserved Books
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                    </li>
-                    <!-- Nav item -->
-                    <li class="nav-item">
-                        <a class="nav-link   collapsed " href="#" data-bs-toggle="collapse" data-bs-target="#navProfile"
-                            aria-expanded="false" aria-controls="navProfile">
-                            <i class="nav-icon fe fe-user me-2"></i> Authors
-                        </a>
-                        <div id="navProfile" class="collapse " data-bs-parent="#sideNavbar">
-                            <ul class="nav flex-column">
-                                <li class="nav-item">
-                                    <a class="nav-link " href="{{ url_for('librarian.author')}}">
-                                        All Authors
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                    </li>
-                    <!-- Nav item -->
-                    <li class="nav-item ">
-                        <a class="nav-link   collapsed  " href="#" data-bs-toggle="collapse" data-bs-target="#navCMS"
-                            aria-expanded="false" aria-controls="navCMS">
-                            <i class="nav-icon fe fe-book-open me-2"></i> Students
-                        </a>
-                        <div id="navCMS" class="collapse  " data-bs-parent="#sideNavbar">
-                            <ul class="nav flex-column">
-                                <li class="nav-item">
-                                    <a class="nav-link   active  " href="{{ url_for('librarian.students')}}">
-                                        All Students
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
+                        <div class="navbar-heading">Overview</div>
                     </li>
 
-                    <!-- Nav item -->
-                    <li class="nav-item ">
-                        <a class="nav-link   collapsed  " href="#" data-bs-toggle="collapse" data-bs-target="#navCMS"
-                            aria-expanded="false" aria-controls="navCMS">
-                            <i class="nav-icon fe fe-file me-2"></i> Analytics
+                    <li class="nav-item">
+                        <a class="nav-link " href=" {{ url_for('librarian.dashboard')}}">
+                            <i class="nav-icon fe fe-home me-2"></i> Dashboard
                         </a>
-                        <div id="navCMS" class="collapse  " data-bs-parent="#sideNavbar">
-                            <ul class="nav flex-column">
-                                <li class="nav-item">
-                                    <a class="nav-link   active  " href="{{ url_for('librarian.students')}}">
-                                        View Transactions
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                        <div id="navCMS" class="collapse  " data-bs-parent="#sideNavbar">
-                            <ul class="nav flex-column">
-                                <li class="nav-item">
-                                    <a class="nav-link   active  " href="{{ url_for('librarian.fine')}}">
-                                        View Students Fines 
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
                     </li>
+
+                    <li class="nav-item">
+                        <div class="nav-divider"></div>
+                    </li>
+
+                    <li class="nav-item">
+                        <div class="navbar-heading">Features</div>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link " href=" {{ url_for('librarian.books')}}">
+                            <i class="nav-icon fe fe-book me-2"></i> View Books 
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link " href=" {{ url_for('librarian.category')}}">
+                            <i class="nav-icon fe fe-book me-2"></i> View Book Category 
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link " href=" {{ url_for('librarian.issued_book')}}">
+                            <i class="nav-icon fe fe-book me-2"></i> Issued Books
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link " href=" {{ url_for('librarian.issued_book')}}">
+                            <i class="nav-icon fe fe-book me-2"></i> Reserved Books
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <div class="nav-divider"></div>
+                    </li>
+
+
+                    <li class="nav-item">
+                        <a class="nav-link " href=" {{ url_for('librarian.author')}}">
+                            <i class="nav-icon fe fe-users me-2"></i> View Authors
+                        </a>
+                    </li>
+
+
+                    <li class="nav-item">
+                        <a class="nav-link " href=" {{ url_for('librarian.students')}}">
+                            <i class="nav-icon fe fe-user me-2"></i> View Students 
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <div class="nav-divider"></div>
+                    </li>
+                    
+                    <li class="nav-item">
+                        <a class="nav-link " href=" {{ url_for('librarian.issued_book')}}">
+                            <i class="nav-icon fe fe-file me-2"></i>View Transactions
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link " href=" {{ url_for('librarian.fine')}}">
+                            <i class="nav-icon fe fe-file me-2"></i> View Student Fines
+                        </a>
+                    </li>
+                    
+                    <li class="nav-item">
+                        <div class="nav-divider"></div>
+                    </li>
+                    <li class="nav-item">
+                        <div class="nav-divider"></div>
+                    </li>
+                    
+                    <li class="nav-item">
+                        <a class="nav-link " href=" {{ url_for('auth.logout_librarian')}}">
+                            <i class="nav-icon fe fe-lock me-2"></i> Logout
+                        </a>
+                    </li>
+
                 </ul>
 
             </div>
