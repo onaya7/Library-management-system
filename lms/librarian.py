@@ -72,6 +72,11 @@ def search_author():
         author = Author.query.filter(Author.name.ilike(f"%{query}%")).paginate(
             per_page=5, error_out=False
         )
+        
+        if not author.items:
+            flash("No author found with the given name.", "info")
+        elif author.total == 0:
+            flash("No results found.", "info")
 
     return render_template("librarian/author.html", form=form, author=author)
 
@@ -248,9 +253,16 @@ def search_books():
     books = None
     if form.validate_on_submit():
         query = form.query.data.lower().strip()
-        books = Book.query.filter(Book.isbn.ilike(f"%{query}%")).paginate(
-            per_page=5, error_out=False
-        )
+        # Perform case-insensitive search on both title and ISBN
+        books = Book.query.filter(
+            db.or_(Book.title.ilike(f"%{query}%"), Book.isbn.ilike(f"%{query}%"))
+        ).paginate(per_page=5, error_out=False)
+
+        if not books.items:
+            flash("No books found with the given title or ISBN.", "info")
+        elif books.total == 0:
+            flash("No results found.", "info")
+        
 
     return render_template("librarian/books.html", form=form, books=books)
 
@@ -405,6 +417,10 @@ def search_students():
         student = Student.query.filter(Student.matric_no.ilike(f"%{query}%")).paginate(
             per_page=10, error_out=False
         )
+        if not student.items:
+            flash("No student found with the given matric number.", "info")
+        elif student.total == 0:
+            flash("No results found.", "info")
     return render_template("librarian/students.html", form=form, student=student)
 
 
@@ -521,6 +537,10 @@ def search_issue():
         issue = Issue.query.filter(Issue.issued_date.ilike(f"%{query}%")).paginate(
             per_page=10, error_out=False
         )
+        if not issue.items:
+            flash("No issue found with the given issued date.", "info")
+        elif issue.total == 0:
+            flash("No results found.", "info")
     return render_template("librarian/issued_book.html", form=form, issue=issue)
 
 
@@ -627,6 +647,10 @@ def search_fine():
         fine = Fine.query.filter(Fine.matric_no.ilike(f"%{query}%")).paginate(
             per_page=10, error_out=False
         )
+        if not fine.items:
+            flash("No fine found with the given matric number.", "info")
+        elif fine.total == 0:
+            flash("No results found.", "info")
     return render_template("librarian/fine.html", form=form, fine=fine)
 
 """ Reserve section"""
@@ -648,9 +672,14 @@ def search_reserve():
     reserve = None
     if form.validate_on_submit():
         query = form.query.data.lower().strip()
-        reserve = Reservation.query.filter(Reservation.reservation_status.ilike(f"%{query}%"), Reservation.reservation_date.ilike(f"%{query}%")).paginate(
+        reserve = Reservation.query.filter(
+            db.or_(Reservation.reservation_status.ilike(f"%{query}%"), Reservation.reservation_date.ilike(f"%{query}%"))).paginate(
             per_page=10, error_out=False
         )
+        if not reserve.items:
+            flash("No Book reservation found with the given date or status.", "info")
+        elif reserve.total == 0:
+            flash("No results found.", "info")
     return render_template("librarian/reserve.html", form=form, reserve=reserve)
 
 """ image upload section"""
