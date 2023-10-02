@@ -37,7 +37,7 @@
     text-transform: capitalize;
 }
 
-.photo{
+.photo, #ph{
     width: 5.25rem;
     height: 5.25rem;
     object-fit: cover
