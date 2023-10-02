@@ -122,7 +122,26 @@ def reserve_book(book_id):
         except Exception as e:
             flash(f"An error occurred while processing reservation: {str(e)}", "danger")
             return redirect(url_for("student.single_book", book_id=book_id))
-        
+
+
+@student.route("/student/issue_history", methods=["GET", "POST"])
+@session_expired_handler("student")
+def issue_history():
+    return render_template("student/issue_history.html")
+
+
+@student.route("/student/reserve_history", methods=["GET", "POST"])
+@session_expired_handler("student")
+def reserve_history():
+    return render_template("student/reserve_history.html")
+
+
+@student.route("/student/transaction", methods=["GET", "POST"])
+@session_expired_handler("student")
+def transaction():
+    return render_template("student/transaction.html")
+
+
 @student.route("/student/profile", methods=["GET", "POST"])
 @session_expired_handler("student")
 def profile():
