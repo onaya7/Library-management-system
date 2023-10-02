@@ -197,7 +197,7 @@ class Issue(UserMixin, db.Model):
     student_id = db.Column(db.Integer, db.ForeignKey("student.id"), nullable=False)
     book_id = db.Column(db.Integer, db.ForeignKey("book.id"), nullable=False)
     fine_id = db.Column(db.Integer, db.ForeignKey("fine.id"), nullable=True)
-    librarian_id = db.Column(db.Integer, db.ForeignKey("librarian.id"), nullable=False)
+    librarian_id = db.Column(db.Integer, db.ForeignKey("librarian.id"), nullable=True)
     issued_date = db.Column(db.DateTime, default=datetime.utcnow)
     expiry_date = db.Column(db.DateTime, nullable=True)
     return_date = db.Column(db.DateTime, nullable=True)

@@ -1,0 +1,113 @@
+{% extends 'student/base.html' %}
+{% block title %} Book details{% endblock %}
+{% block content %}
+<section class="container-fluid p-4">
+    <div class="row ">
+        <div class="col-lg-12 col-md-12 col-12">
+            <!-- Page header -->
+            <div class="border-bottom pb-3 mb-3 d-md-flex align-items-center justify-content-between">
+                <div class="mb-2 mb-lg-0">
+                    <h1 class="mb-0 h2 fw-bold">Book details <span class="fs-5 text-muted"></span></h1>
+                    <!-- Breadcrumb -->
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item">
+                                <a href="{{ url_for('student.dashboard')}}">Dashboard </a>
+                            </li>
+                            <li class="breadcrumb-item active" aria-current="page">
+                                Book details
+                            </li>
+                        </ol>
+                    </nav>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-body p-5">
+            <div class="row">
+                <div class="col-lg-6 col-12">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="mb-4">
+                                <!-- Gallery -->
+                                <a href="{{ url_for('librarian.upload', filename=book.img_upload)}}" class="glightboxGallery"
+                                    data-gallery="gallery1">
+                                    <img src="{{ url_for('librarian.upload', filename=book.img_upload)}}" alt="image"
+                                        class="img-fluid rounded-3 w-100">
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-12">
+                    <div class="my-5 mx-lg-10">
+                        <!-- heading -->
+                        <div>
+                            <h1 class="txt">{{book.title}}</h1>
+                            <div>
+                                <!-- review -->
+                                <span><span class="me-1 text-dark fw-semibold">4.4<i
+                                            class="mdi mdi-star text-success ms-1"></i>
+                                    </span>592 Students Reviews</span>
+                            </div>
+                        </div>
+                        <hr class="my-3">
+
+                        <!-- row -->
+                        <div class="row">
+                            <!-- col -->
+                            <div class="col-md-6">
+                                <div class="d-grid mb-2 mb-md-0">
+                                    <!-- btn -->
+                                    <a href="{{ url_for('student.issue_book', book_id=book.id)}}" class="btn btn-danger"><i
+                                            class="fe fe-edit me-2"></i>Issue Book</a>
+                                </div>
+                            </div>
+                            <!-- col -->
+                            <div class="col-md-6">
+
+                                <div class="d-grid">
+                                    <!-- btn -->
+                                    <a href="{{ url_for('student.reserve_book', book_id=book.id)}}" class="btn btn-outline-secondary"><i
+                                            class="fe fe-heart me-2"></i>Reserve</a>
+                                </div>
+                            </div>
+                        </div>
+                        <hr class="mt-4 mb-2">
+                        <div class=" mb-4" id="ecommerceAccordion">
+                            <!-- List group -->
+                            <ul class="list-group list-group-flush">
+                                <!-- List group item -->
+                                <li class="list-group-item px-0">
+                                    <!-- Toggle -->
+                                    <a class="d-flex align-items-center text-inherit text-decoration-none fw-semibold mb-0"
+                                        data-bs-toggle="collapse" href="#productDetails" role="button"
+                                        aria-expanded="false" aria-controls="productDetails">
+                                        <div class="me-auto">
+                                            Book Description
+                                        </div>
+                                        <!-- Chevron -->
+                                        <span class="chevron-arrow  ms-4">
+                                            <i class="fe fe-chevron-down fs-4"></i>
+                                        </span>
+                                    </a>
+                                    <!-- Row -->
+                                    <!-- Collapse -->
+                                    <div class="collapse show" id="productDetails" data-bs-parent="#ecommerceAccordion">
+                                        <div class="py-3 ">
+                                            <p>{{book.description}}</p>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

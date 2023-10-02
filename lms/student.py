@@ -44,7 +44,7 @@ def search_book():
     return render_template("student/books.html", form=form, books=books)
 
 
-@student.route("/student/books", methods=["GET", "POST"])
+@student.route("/student/book", methods=["GET", "POST"])
 @session_expired_handler("student")
 @role_required("student")
 def books():
@@ -55,16 +55,74 @@ def books():
 
 @student.route("/student/books/<int:book_id>", methods=["GET", "POST"])
 @session_expired_handler("student")
+@role_required("student")
 def single_book(book_id):
-    return render_template("student/single_book.html")
+    book = Book.query.filter_by(id=book_id).first()
+    if book is None:
+        flash("Book not found.", "warning")
+        return redirect(url_for("student.books"))
+        
+    return render_template("student/single_book.html", book=book)
 
 
-@student.route("/student/request_book", methods=["GET", "POST"])
+@student.route("/student/issue_book/<int:book_id>", methods=["GET", "POST"])
 @session_expired_handler("student")
-def request_book():
-    return redirect(url_for("student.single_book"))
+@role_required("student")
+def issue_book(book_id):
+        book = Book.query.filter_by(id=book_id).first()
+
+        single_book = Book.query.filter(Book.isbn == book.isbn, Book.available_copies > 0).first()
+        student_id = Student.query.filter_by(matric_no=current_user.matric_no).first()
+        if not  single_book:
+            flash("Book is not available for issue", "danger")
+            return render_template('student/single_book.html', book=book)
+        single_book.available_copies-=1
+        single_book , student_id= single_book.id, student_id.id
+           
+        issued_book = Issue(
+            student_id=student_id,
+            book_id=single_book,
+        )
+        issued_book.set_expiry_date(datetime.utcnow())
+        db.session.add(issued_book)
+
+        try:
+            db.session.commit()
+            flash("Book issued successfully", "success")
+            return redirect(url_for("student.single_book", book_id=book_id))
+        except Exception as e:
+            flash(f"An error occurred while issuing a book: {str(e)}", "danger")
+            return redirect(url_for("student.single_book", book_id=book_id))
 
 
+@student.route("/student/reserve_book/<int:book_id>", methods=["GET", "POST"])
+@session_expired_handler("student")
+@role_required("student")
+def reserve_book(book_id):
+        book = Book.query.filter_by(id=book_id).first()
+
+        single_book = Book.query.filter(Book.isbn == book.isbn, Book.available_copies > 0).first()
+        student_id = Student.query.filter_by(matric_no=current_user.matric_no).first()
+        if not  single_book:
+            flash("Book is not available for reservation", "danger")
+            return render_template('student/single_book.html', book=book)
+        single_book , student_id= single_book.id, student_id.id
+           
+        reserve = Reservation(
+            student_id=student_id,
+            book_id=single_book,
+            reservation_date=datetime.utcnow()
+        )
+        db.session.add(reserve)
+
+        try:
+            db.session.commit()
+            flash("Book reserved successfully", "success")
+            return redirect(url_for("student.single_book", book_id=book_id))
+        except Exception as e:
+            flash(f"An error occurred while processing reservation: {str(e)}", "danger")
+            return redirect(url_for("student.single_book", book_id=book_id))
+        
 @student.route("/student/profile", methods=["GET", "POST"])
 @session_expired_handler("student")
 def profile():
