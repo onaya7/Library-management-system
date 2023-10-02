@@ -92,7 +92,7 @@
 
                     <li class="nav-item">
                         <a class="nav-link " href=" {{ url_for('librarian.books')}}">
-                            <i class="nav-icon fe fe-book me-2"></i> View Books 
+                            <i class="nav-icon fe fe-book-open me-2"></i> View Books 
                         </a>
                     </li>
 
@@ -108,7 +108,7 @@
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link " href=" {{ url_for('librarian.issued_book')}}">
+                        <a class="nav-link " href=" {{ url_for('librarian.reserve')}}">
                             <i class="nav-icon fe fe-book me-2"></i> Reserved Books
                         </a>
                     </li>
@@ -120,14 +120,14 @@
 
                     <li class="nav-item">
                         <a class="nav-link " href=" {{ url_for('librarian.author')}}">
-                            <i class="nav-icon fe fe-users me-2"></i> View Authors
+                            <i class="nav-icon fe fe-user-check  me-2"></i> View Authors
                         </a>
                     </li>
 
 
                     <li class="nav-item">
                         <a class="nav-link " href=" {{ url_for('librarian.students')}}">
-                            <i class="nav-icon fe fe-user me-2"></i> View Students 
+                            <i class="nav-icon fe fe-users me-2"></i> View Students 
                         </a>
                     </li>
 
@@ -156,7 +156,7 @@
                     
                     <li class="nav-item">
                         <a class="nav-link " href=" {{ url_for('auth.logout_librarian')}}">
-                            <i class="nav-icon fe fe-lock me-2"></i> Logout
+                            <i class="nav-icon fe fe-log-out me-2"></i> Logout
                         </a>
                     </li>
 

@@ -29,6 +29,8 @@ class Book(UserMixin, db.Model):
     category = db.relationship("BookCategory", back_populates="books")
     author = db.relationship("Author", back_populates="books")
     issue = db.relationship("Issue", back_populates="books")
+    reserve = db.relationship("Reservation", back_populates="books")
+
 
 
     def edit_book_details(
@@ -100,6 +102,8 @@ class Student(UserMixin, db.Model):
     library_card = db.relationship("LibraryCard", backref="student", uselist=False)
     fine = db.relationship("Fine", back_populates="student", uselist=False)
     issue = db.relationship("Issue", back_populates="student")
+    reserve = db.relationship("Reservation", back_populates="student")
+
 
 
     def generate_password_hash(self, password):
@@ -186,19 +190,6 @@ class LibraryCard(UserMixin, db.Model):
 
     
 
-class Reservation(UserMixin, db.Model):
-    __tablename__ = "reservation"
-    __table_args__ = {"extend_existing": True}
-    id = db.Column(db.Integer, primary_key=True)
-    book_id = db.Column(db.Integer, db.ForeignKey("book.id"), nullable=False)
-    student_id = db.Column(db.Integer, db.ForeignKey("student.id"), nullable=False)
-    reservation_status = db.Column(db.Boolean, default=True)
-    reservation_date = db.Column(db.DateTime, default=datetime.utcnow)
-
-    def __repr__(self):
-        return f"Reservation(id:'{self.id}', book_id:'{self.book_id}', student_id:'{self.student_id}')"
-
-
 class Issue(UserMixin, db.Model):
     __tablename__ = "issue"
     __table_args__ = {"extend_existing": True}
@@ -244,6 +235,22 @@ class Fine(UserMixin, db.Model):
     def __repr__(self):
         return f"Fine(id:'{self.id}', amount:'{self.amount}', student_id:'{self.student_id}')"
 
+
+class Reservation(UserMixin, db.Model):
+    __tablename__ = "reservation"
+    __table_args__ = {"extend_existing": True}
+    id = db.Column(db.Integer, primary_key=True)
+    book_id = db.Column(db.Integer, db.ForeignKey("book.id"), nullable=False)
+    student_id = db.Column(db.Integer, db.ForeignKey("student.id"), nullable=False)
+    reservation_status = db.Column(db.Boolean, default=True)
+    reservation_date = db.Column(db.DateTime, default=datetime.utcnow)
+    student = db.relationship("Student", back_populates="reserve")
+    books = db.relationship("Book", back_populates="reserve")
+
+    
+
+    def __repr__(self):
+        return f"Reservation(id:'{self.id}', book_id:'{self.book_id}', student_id:'{self.student_id}')"
 
 class Transaction(UserMixin, db.Model):
     __tablename__ = "transaction"

@@ -12,7 +12,7 @@ from lms.forms import (AuthorForm, BookCategoryForm, BookForm, EditBookForm,
                        EditStudentForm, FineForm, IssueBookForm, SearchForm,
                        StudentForm, images)
 from lms.helpers import calculate_fine
-from lms.models import Author, Book, BookCategory, Fine, Issue, Student
+from lms.models import Author, Book, BookCategory, Fine, Issue, Student, Reservation
 
 librarian = Blueprint(
     "librarian", __name__, template_folder="templates", static_folder="assets"
@@ -29,12 +29,18 @@ def dashboard():
     category = BookCategory.query.order_by(BookCategory.name).paginate(
         per_page=5, error_out=False
     )
+    issue = Issue.query.order_by(Issue.issued_date).paginate(per_page=5, error_out=False)
+    fine = Fine.query.order_by(Fine.id.desc()).paginate(per_page=5, error_out=False)
+    reservation = Reservation.query.order_by(Reservation.reservation_date.desc()).paginate(per_page=5, error_out=False)
     return render_template(
         "librarian/dashboard.html",
         author=author,
         category=category,
         book=book,
         student=student,
+        issue=issue,
+        fine=fine,
+        reservation=reservation
     )
 
 
@@ -623,30 +629,29 @@ def search_fine():
         )
     return render_template("librarian/fine.html", form=form, fine=fine)
 
-# @librarian.route("/librarian/fine", methods=["GET", "POST"])
-# @session_expired_handler("librarian")
-# @role_required("librarian")
-# def fine():
-#     form = FineForm()
-#     if form.validate_on_submit():
-#         matric_no = form.matric_no.data
-        
-#         student_id = Student.query.filter_by(matric_no=matric_no).first()
-#         student_id = student_id.id
-        
-#         fine =  Fine(student_id=student_id)
-#         date = datetime.utcnow()
-#         fine.calculate_fine(date)
-#         db.session.add(fine)
-#         try:
-#             db.session.commit()
-#             flash("Fine calculated successfully", "success")
-#             return redirect(url_for("librarian.fine"))
-#         except Exception as e:
-#             flash(f"An error occurred while calculating the fine: {str(e)}", "danger")
-#             return redirect(url_for("librarian.fine"))
-        
-#     return render_template("librarian/fine.html", form=form)
+""" Reserve section"""
+
+@librarian.route("/librarian/reserve", methods=["GET", "POST"])
+@session_expired_handler("librarian")
+@role_required("librarian")
+def reserve():
+    form = SearchForm()
+    reserve = Reservation.query.order_by(Reservation.reservation_date.desc()).paginate(per_page=5, error_out=False)
+    return render_template("librarian/reserve.html",  reserve=reserve, form=form)
+
+"""Reserve  search section"""
+@librarian.route("/librarian/reserve/search", methods=["GET", "POST"])
+@session_expired_handler("librarian")
+@role_required("librarian")
+def search_reserve():
+    form = SearchForm()
+    reserve = None
+    if form.validate_on_submit():
+        query = form.query.data.lower().strip()
+        reserve = Reservation.query.filter(Reservation.reservation_status.ilike(f"%{query}%"), Reservation.reservation_date.ilike(f"%{query}%")).paginate(
+            per_page=10, error_out=False
+        )
+    return render_template("librarian/reserve.html", form=form, reserve=reserve)
 
 """ image upload section"""
 @librarian.route("/upload/<path:filename>")
