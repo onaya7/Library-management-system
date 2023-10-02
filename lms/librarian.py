@@ -30,7 +30,7 @@ def dashboard():
         per_page=5, error_out=False
     )
     issue = Issue.query.order_by(Issue.issued_date).paginate(per_page=5, error_out=False)
-    fine = Fine.query.order_by(Fine.id.desc()).paginate(per_page=5, error_out=False)
+    fine = Fine.query.filter(Fine.status == False).order_by(Fine.id.desc()).paginate(per_page=5, error_out=False)
     reservation = Reservation.query.order_by(Reservation.reservation_date.desc()).paginate(per_page=5, error_out=False)
     return render_template(
         "librarian/dashboard.html",

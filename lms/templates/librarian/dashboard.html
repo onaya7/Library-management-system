@@ -170,76 +170,150 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-xl-8 col-lg-12 col-md-12 col-12">
+        <div class="col-lg-12 col-md-12 col-12">
             <!-- Card -->
             <div class="card mb-4">
                 <!-- Card header -->
                 <div
-                    class="card-header align-items-center card-header-height d-flex justify-content-between align-items-center">
-                    <div>
-                        <h4 class="mb-0">Report Analysis</h4>
-                    </div>
-                    <div>
-                        <div class="dropdown dropstart">
-                            <a class="btn-icon btn btn-ghost btn-sm rounded-circle" href="#" role="button"
-                                id="courseDropdown1" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="fe fe-more-vertical"></i>
-                            </a>
-                            <div class="dropdown-menu" aria-labelledby="courseDropdown1">
-                                <span class="dropdown-header">Settings</span>
-                                <a class="dropdown-item" href="#"><i
-                                        class="fe fe-external-link dropdown-item-icon "></i>Export</a>
-                                <a class="dropdown-item" href="#"><i class="fe fe-mail dropdown-item-icon "></i>Email
-                                    Report</a>
-                                <a class="dropdown-item" href="#"><i
-                                        class="fe fe-download dropdown-item-icon "></i>Download</a>
-                            </div>
-                        </div>
-                    </div>
+                    class="card-header d-flex justify-content-between align-items-center border-bottom-0 card-header-height">
+                    <h4 class="mb-0">Overdue's History</h4>
+                    <a href="{{ url_for('librarian.fine')}}" class="btn btn-outline-secondary btn-sm">View all</a>
+
                 </div>
-                <!-- Card body -->
-                <div class="card-body">
-                    <!-- Earning chart -->
-                    <div id="earning" class="apex-charts"></div>
-                </div>
-            </div>
-        </div>
-        <div class="col-xl-4 col-lg-12 col-md-12 col-12">
-            <!-- Card -->
-            <div class="card mb-4">
-                <!-- Card header -->
-                <div
-                    class="card-header align-items-center card-header-height  d-flex justify-content-between align-items-center">
-                    <div>
-                        <h4 class="mb-0">Traffic</h4>
-                    </div>
-                    <div>
-                        <div class="dropdown dropstart">
-                            <a class="btn-icon btn btn-ghost btn-sm rounded-circle" href="#" role="button"
-                                id="courseDropdown2" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="fe fe-more-vertical"></i>
-                            </a>
-                            <div class="dropdown-menu" aria-labelledby="courseDropdown2">
-                                <span class="dropdown-header">Settings</span>
-                                <a class="dropdown-item" href="#"><i
-                                        class="fe fe-external-link dropdown-item-icon "></i>Export</a>
-                                <a class="dropdown-item" href="#"><i class="fe fe-mail dropdown-item-icon "></i>Email
-                                    Report</a>
-                                <a class="dropdown-item" href="#"><i
-                                        class="fe fe-download dropdown-item-icon "></i>Download</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- Card body -->
-                <div class="card-body">
-                    <div id="traffic" class="apex-charts d-flex justify-content-center"></div>
+                <!-- Table -->
+                <div class="table-responsive border-0 overflow-y-hidden">
+                    <table class="table mb-0 text-nowrap table-hover table-centered">
+                        <thead class="table-light">
+                            <tr>
+                                <th scope="col">MATRIC NO</th>
+                                <th scope="col">BOOK TITLE</th>
+                                <th scope="col">BOOK ISBN</th>
+                                <th scope="col">DUE DATE</th>
+                                <th scope="col">FINE</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for fine in fine.items %}
+                            <tr>
+                                <td>
+                                    <h5 class="mb-0">
+                                        <a href="#" class="text-inherit">
+                                            {{fine.student.matric_no}}
+                                        </a>
+                                    </h5>
+                                </td>
+
+                                <td>
+                                    <a href="#" class="text-inherit">{{fine.issue[0].books.title}}</a>
+                                </td>
+
+                                <td>
+                                    <h5 class="mb-0">
+                                        <a href="#" class="text-inherit">
+                                            {{fine.issue[0].books.isbn}}
+                                        </a>
+                                    </h5>
+                                </td>
+
+                                <td>
+                                    <h5 class="mb-0">
+                                        <a href="#" class="text-inherit">
+                                            {{ fine.issue[0].expiry_date.strftime('%Y-%m-%d ') }}
+                                        </a>
+                                    </h5>
+                                </td>
+
+                                <td>
+                                    <h5 class="mb-0">
+                                        <a href="#" class="text-inherit">
+                                            ₦{{fine.amount}}
+                                        </a>
+                                    </h5>
+                                </td>
+
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
     </div>
     <div class="row">
+        <div class="col-lg-12 col-md-12 col-12">
+            <!-- Card -->
+            <div class="card mb-4">
+                <!-- Card header -->
+                <div
+                    class="card-header d-flex justify-content-between align-items-center border-bottom-0 card-header-height">
+                    <h4 class="mb-0">Recent Checkout's</h4>
+                    <a href="{{ url_for('librarian.issued_book')}}" class="btn btn-outline-secondary btn-sm">View all</a>
+                </div>
+                <!-- Table -->
+                <div class="table-responsive border-0 overflow-y-hidden">
+                    <table class="table mb-0 text-nowrap table-hover table-centered">
+                        <thead class="table-light">
+                            <tr>
+                                <th scope="col"> MATRIC NO</th>
+                                <th scope="col">BOOK TITLE</th>
+                                <th scope="col">BOOK ISBN</th>
+                                <th scope="col">BOOK AUTHOR</th>
+                                <th scope="col">ISSUE DATE</th>
+                                <th scope="col">RETURN DATE</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for issue in issue.items %}
+                            <tr>
+                                <td>
+                                    <a href="#" class="text-inherit">{{issue.student.matric_no}}</a>
+                                </td>
 
+                                <td>
+                                    <a href="#" class="text-inherit">{{issue.books.title}}</a>
+                                </td>
+
+                                <td>
+                                    <h5 class="mb-0">
+                                        <a href="#" class="text-inherit">
+                                            {{issue.books.isbn}}
+                                        </a>
+                                    </h5>
+                                </td>
+
+                                <td>
+                                    <h5 class="mb-0">
+                                        <a href="#" class="text-inherit">
+                                            {{issue.books.author.name}}
+                                        </a>
+                                    </h5>
+                                </td>
+
+                                <td>
+                                    <h5 class="mb-0">
+                                        <a href="#" class="text-inherit">
+                                            {{issue.issued_date.strftime('%Y-%m-%d ') }}
+                                        </a>
+                                    </h5>
+                                </td>
+
+                                <td>
+                                    <h5 class="mb-0">
+                                        <a href="#" class="text-inherit">
+                                            {{issue.return_date.strftime('%Y-%m-%d ') }}
+                                        </a>
+                                    </h5>
+                                </td>
+
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
         <div class="col-xl-6 col-lg-12 col-md-12 col-12 mb-4">
             <!-- Card -->
             <div class="card h-100">
@@ -317,8 +391,9 @@
                         <li class="list-group-item px-0">
                             <div class="row">
                                 <div class="col-auto">
-                                    <a href="#"><img id="ph" src="{{ url_for('librarian.upload', filename=student.img_upload)}}"
-                                            alt="" class="img-fluid rounded img-4by3-lg "></a>
+                                    <a href="#"><img id="ph"
+                                            src="{{ url_for('librarian.upload', filename=student.img_upload)}}" alt=""
+                                            class="img-fluid rounded img-4by3-lg "></a>
                                 </div>
                                 <div class="col ps-0">
                                     <a href="#">
@@ -327,7 +402,7 @@
                                         </h5>
                                     </a>
                                     <div class="d-flex align-items-center">
-                                        <img src="../../assets/images/avatar/06.png" alt=""
+                                        <img src="../../assets/images/logo.png" alt=""
                                             class="rounded-circle avatar-xs me-2">
                                         <span class="fs-6">{{student.matric_no}}</span>
                                     </div>
