@@ -65,6 +65,32 @@ def single_book(book_id):
     return render_template("student/single_book.html", book=book)
 
 
+"""issued book search section"""
+@student.route("/student/issued_book/search", methods=["GET", "POST"])
+@session_expired_handler("student")
+@role_required("student")
+def search_issue():
+    form = SearchForm()
+    issue = None
+    if form.validate_on_submit():
+        query = form.query.data.lower().strip()
+        issue = Issue.query.filter(Issue.student_id == current_user.id, Issue.issued_date.ilike(f"%{query}%")).paginate(
+            per_page=10, error_out=False
+        )
+        if not issue.items:
+            flash("No issue found with the given issued date.", "info")
+        elif issue.total == 0:
+            flash("No results found.", "info")
+    return render_template("student/issue_history.html", form=form, issue=issue)
+
+@student.route("/student/issue_history", methods=["GET", "POST"])
+@session_expired_handler("student")
+@role_required("student")
+def issue_history():
+    form = SearchForm()
+    issue = Issue.query.filter_by(student_id=current_user.id).order_by(Issue.issued_date).paginate(per_page=5, error_out=False)
+    return render_template("student/issue_history.html", issue=issue, form=form)
+
 @student.route("/student/issue_book/<int:book_id>", methods=["GET", "POST"])
 @session_expired_handler("student")
 @role_required("student")
@@ -94,6 +120,31 @@ def issue_book(book_id):
             flash(f"An error occurred while issuing a book: {str(e)}", "danger")
             return redirect(url_for("student.single_book", book_id=book_id))
 
+"""reserve book search section"""
+@student.route("/student/reserve_book/search", methods=["GET", "POST"])
+@session_expired_handler("student")
+@role_required("student")
+def search_reserve():
+    form = SearchForm()
+    reserve = None
+    if form.validate_on_submit():
+        query = form.query.data.lower().strip()
+        reserve = Reservation.query.filter(Reservation.student_id == current_user.id, Reservation.reservation_date.ilike(f"%{query}%")).paginate(
+            per_page=10, error_out=False
+        )
+        if not reserve.items:
+            flash("No reserve found with the given reservation date.", "info")
+        elif reserve.total == 0:
+            flash("No results found.", "info")
+    return render_template("student/reserve_history.html", form=form, reserve=reserve)
+
+@student.route("/student/reserve_history", methods=["GET", "POST"])
+@session_expired_handler("student")
+@role_required("student")
+def reserve_history():
+    form = SearchForm()
+    reserve = Reservation.query.filter_by(student_id=current_user.id).order_by(Reservation.reservation_date).paginate(per_page=5, error_out=False)
+    return render_template("student/reserve_history.html", reserve=reserve, form=form)
 
 @student.route("/student/reserve_book/<int:book_id>", methods=["GET", "POST"])
 @session_expired_handler("student")
@@ -124,17 +175,33 @@ def reserve_book(book_id):
             return redirect(url_for("student.single_book", book_id=book_id))
 
 
-@student.route("/student/issue_history", methods=["GET", "POST"])
+""" Fine section"""
+
+@student.route("/student/fine", methods=["GET", "POST"])
 @session_expired_handler("student")
-def issue_history():
-    return render_template("student/issue_history.html")
+@role_required("student")
+def fine():
+    form = SearchForm()
+    fine = Fine.query.filter_by(student_id=current_user.id).order_by(Fine.student_id).paginate(per_page=5, error_out=False)
+    return render_template("student/fine.html",  fine=fine, form=form)
 
-
-@student.route("/student/reserve_history", methods=["GET", "POST"])
+"""Fine  search section"""
+@student.route("/student/fine/search", methods=["GET", "POST"])
 @session_expired_handler("student")
-def reserve_history():
-    return render_template("student/reserve_history.html")
-
+@role_required("student")
+def search_fine():
+    form = SearchForm()
+    fine = None
+    if form.validate_on_submit():
+        query = form.query.data.lower().strip()
+        fine = Fine.query.filter(Fine.student_id == current_user.id,Fine.matric_no.ilike(f"%{query}%")).paginate(
+            per_page=10, error_out=False
+        )
+        if not fine.items:
+            flash("No fine found with the given matric number.", "info")
+        elif fine.total == 0:
+            flash("No results found.", "info")
+    return render_template("student/fine.html", form=form, fine=fine)
 
 @student.route("/student/transaction", methods=["GET", "POST"])
 @session_expired_handler("student")
@@ -147,11 +214,6 @@ def transaction():
 def profile():
     return render_template("student/profile.html")
 
-
-@student.route("/student/fine", methods=["GET", "POST"])
-@session_expired_handler("student")
-def fine():
-    return render_template("student/fine.html")
 
 
 @student.route("/student/payment", methods=["GET", "POST"])

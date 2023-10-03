@@ -298,11 +298,19 @@
                                 </td>
 
                                 <td>
+                                    {% if issue.return_date is none %}
+                                    <h5 class="mb-0">
+                                        <a href="#" class="text-inherit">
+                                            Not returned
+                                        </a>
+                                    </h5>
+                                    {% else %}
                                     <h5 class="mb-0">
                                         <a href="#" class="text-inherit">
                                             {{issue.return_date.strftime('%Y-%m-%d ') }}
                                         </a>
                                     </h5>
+                                    {% endif %}
                                 </td>
 
                             </tr>

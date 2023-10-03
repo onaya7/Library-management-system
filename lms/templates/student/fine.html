@@ -1,5 +1,5 @@
 {% extends 'student/base.html' %}
-{% block title %}Reserved Books{% endblock %}
+{% block title %}Book Fine {% endblock %}
 {% block content %}
 <section class="container-fluid p-4">
     <div class="row ">
@@ -7,7 +7,7 @@
             <!-- Page header -->
             <div class="border-bottom pb-3 mb-3 d-md-flex align-items-center justify-content-between">
                 <div class="mb-2 mb-lg-0">
-                    <h1 class="mb-0 h2 fw-bold">Reserved Books <span class="fs-5 text-muted">({{reserve.total}} )</span></h1>
+                    <h1 class="mb-0 h2 fw-bold">Fine  <span class="fs-5 text-muted">({{fine.total}} )</span></h1>
                     <!-- Breadcrumb -->
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb">
@@ -15,7 +15,7 @@
                                 <a href="{{ url_for('student.dashboard')}}">Dashboard</a>
                             </li>
                             <li class="breadcrumb-item active" aria-current="page">
-                                Books
+                                Book Fine
                             </li>
                         </ol>
                     </nav>
@@ -39,13 +39,13 @@
                 </div>
                 <div class="p-4 row">
                     <!-- Form -->
-                    <form action="{{ url_for('student.search_reserve') }}" method="post"
+                    <form action="{{ url_for('student.search_fine') }}" method="post"
                         class="d-flex align-items-center col-12 col-md-8 col-lg-3">
                         {{ form.hidden_tag() }}
                         <span class="position-absolute ps-3 search-icon">
                             <i class="fe fe-search"></i>
                         </span>
-                        {{ form.query(class="form-control ps-6", placeholder="Filter reserved Book by date")}}
+                        {{ form.query(class="form-control ps-6", placeholder="Filter fine by matric_no")}}
                         {% if form.query.errors %}
                         <ul class="errors">
                             {% for error in form.query.errors %}
@@ -73,17 +73,19 @@
                                             <th>Book Title</th>
                                             <th>Book Isbn</th>
                                             <th>Matric no</th>
-                                            <th>Reserved date</th>
+                                            <th>Due date</th>
+                                            <th>Fine</th>
+                                            <th>Status</th>
                                             <th></th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {% if reserve is none %}
+                                        {% if fine is none %}
                                         <tr>
-                                            <td>No book reservation found for the search query.</td>
+                                            <td>No book fined found for the search query.</td>
                                         </tr>
                                         {% else %}
-                                        {% for reserve in reserve.items %}
+                                        {% for fine in fine.items %}
                                  
                                         <!-- Table body -->
                                         <tr>
@@ -98,7 +100,7 @@
                                                 <a href="#" class="text-inherit">
                                                     <div class="d-flex align-items-center">
                                                         <div>
-                                                            <img src="{{ url_for('librarian.upload', filename=reserve.books.img_upload)}}"
+                                                            <img src="{{ url_for('librarian.upload', filename=fine.issue[0].books.img_upload)}}"
                                                                 alt="" class="img-4by3-md rounded">
                                                         </div>
                                                     </div>
@@ -110,7 +112,7 @@
                                                     <div class="d-flex align-items-center">
                                                         <div class="ms-3">
                                                             <h5 class="mb-0 text-primary-hover txt">
-                                                                {{reserve.books.title}}
+                                                                {{fine.issue[0].books.title}}                                                            
                                                             </h5>
                                                         </div>
                                                     </div>
@@ -122,7 +124,7 @@
                                                     <div class="d-flex align-items-center">
                                                         <div class="ms-3">
                                                             <h5 class="mb-0 text-primary-hover txt">
-                                                                {{reserve.books.isbn}}
+                                                                {{fine.issue[0].books.isbn}}
                                                             </h5>
                                                         </div>
                                                     </div>
@@ -133,7 +135,7 @@
                                                     <div class="d-flex align-items-center">
                                                         <div class="ms-3">
                                                             <h5 class="mb-0 text-primary-hover txt">
-                                                                {{reserve.student.matric_no}}
+                                                                {{fine.student.matric_no}}
                                                             </h5>
                                                         </div>
                                                     </div>
@@ -144,8 +146,40 @@
                                                     <div class="d-flex align-items-center">
                                                         <div class="ms-3">
                                                             <h5 class="mb-0 text-primary-hover txt">
-                                                                {{ reserve.reservation_date.strftime('%Y-%m-%d ') }}
+                                                                {{ fine.issue[0].expiry_date.strftime('%Y-%m-%d ') }}
                                                             </h5>
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </td>
+
+                                            <td>
+                                                <a href="#" class="text-inherit">
+                                                    <div class="d-flex align-items-center">
+                                                        <div class="ms-3">
+                                                            <h5 class="mb-0 text-primary-hover txt">
+                                                                ₦{{fine.amount}}
+                                                            </h5>
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </td>
+
+                                            <td>
+                                                <a href="#" class="text-inherit">
+                                                    <div class="d-flex align-items-center">
+                                                        <div class="ms-3">
+                                                            {% if fine.status is true %}
+                                                            <h5 class="mb-0 text-primary-hover txt">
+                                                                <span class="badge bg-success badge-dot me-1"></span>
+                                                                Paid
+                                                            </h5>
+                                                            {% else %}
+                                                            <h5 class="mb-0 text-primary-hover txt">
+                                                                <span class="badge bg-danger badge-dot me-1"></span>
+                                                                Not Paid                                                            
+                                                            </h5>
+                                                            {% endif %}
                                                         </div>
                                                     </div>
                                                 </a>
@@ -167,29 +201,29 @@
 
 
                 <!-- Card Footer -->
-                {% if reserve is none %}
+                {% if fine is none %}
 
                 {% else %}
                 <div class="card-footer d-md-flex justify-content-between align-items-center">
                     <div>
-                        <span>Showing reserve from page {{reserve.first}} to {{reserve.last}} of {{reserve.total}}</span>
+                        <span>Showing fine from page {{fine.first}} to {{fine.last}} of {{fine.total}}</span>
                     </div>
 
                     <nav>
                         <ul class="pagination  mb-0 mt-2">
-                            {% if reserve.has_prev %}
+                            {% if fine.has_prev %}
                             <li class="page-item disabled">
                                 <a class="page-link mx-1 rounded"
-                                    href="{{ url_for('student.reserve_history', page=reserve.prev_num) }}"><i
+                                    href="{{ url_for('student.fine_history', page=fine.prev_num) }}"><i
                                         class="mdi mdi-chevron-left"></i></a>
                             </li>
                             {% endif %}
 
-                            {% for number in reserve.iter_pages() %}
-                            {% if reserve.page != number %}
+                            {% for number in fine.iter_pages() %}
+                            {% if fine.page != number %}
                             <li class="page-item">
                                 <a class="page-link mx-1 rounded"
-                                    href="{{ url_for('student.reserve_history', page=number) }}">{{ number }}</a>
+                                    href="{{ url_for('student.fine_history', page=number) }}">{{ number }}</a>
                             </li>
                             {% else %}
                             <li class="page-item active">
@@ -198,10 +232,10 @@
                             {% endif %}
                             {% endfor %}
 
-                            {% if reserve.has_next %}
+                            {% if fine.has_next %}
                             <li class="page-item">
                                 <a class="page-link mx-1 rounded"
-                                    href="{{ url_for('student.reserve_history', page=reserve.next_num) }}"><i
+                                    href="{{ url_for('student.fine_history', page=fine.next_num) }}"><i
                                         class="mdi mdi-chevron-right"></i></a>
                             </li>
                             {% endif %}
