@@ -120,7 +120,7 @@
                             {% if books.has_prev %}
                             <li class="page-item disabled">
                                 <a class="page-link mx-1 rounded"
-                                    href="{{ url_for('librarian.books', page=books.prev_num) }}"><i
+                                    href="{{ url_for('student.books', page=books.prev_num) }}"><i
                                         class="mdi mdi-chevron-left"></i></a>
                             </li>
                             {% endif %}
@@ -129,7 +129,7 @@
                             {% if books.page != number %}
                             <li class="page-item">
                                 <a class="page-link mx-1 rounded"
-                                    href="{{ url_for('librarian.books', page=number) }}">{{ number }}</a>
+                                    href="{{ url_for('student.books', page=number) }}">{{ number }}</a>
                             </li>
                             {% else %}
                             <li class="page-item active">
@@ -141,7 +141,7 @@
                             {% if books.has_next %}
                             <li class="page-item">
                                 <a class="page-link mx-1 rounded"
-                                    href="{{ url_for('librarian.books', page=books.next_num) }}"><i
+                                    href="{{ url_for('student.books', page=books.next_num) }}"><i
                                         class="mdi mdi-chevron-right"></i></a>
                             </li>
                             {% endif %}

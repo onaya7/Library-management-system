@@ -88,7 +88,7 @@ def search_issue():
 @role_required("student")
 def issue_history():
     form = SearchForm()
-    issue = Issue.query.filter_by(student_id=current_user.id).order_by(Issue.issued_date).paginate(per_page=5, error_out=False)
+    issue = Issue.query.filter_by(student_id=current_user.id).order_by(Issue.issued_date.desc()).paginate(per_page=5, error_out=False)
     return render_template("student/issue_history.html", issue=issue, form=form)
 
 @student.route("/student/issue_book/<int:book_id>", methods=["GET", "POST"])

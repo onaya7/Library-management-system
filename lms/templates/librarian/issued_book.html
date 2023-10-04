@@ -216,7 +216,7 @@
                             {% if issue.has_prev %}
                             <li class="page-item disabled">
                                 <a class="page-link mx-1 rounded"
-                                    href="{{ url_for('librarian.issue', page=issue.prev_num) }}"><i
+                                    href="{{ url_for('librarian.issued_book', page=issue.prev_num) }}"><i
                                         class="mdi mdi-chevron-left"></i></a>
                             </li>
                             {% endif %}
@@ -225,7 +225,7 @@
                             {% if issue.page != number %}
                             <li class="page-item">
                                 <a class="page-link mx-1 rounded"
-                                    href="{{ url_for('librarian.issue', page=number) }}">{{ number }}</a>
+                                    href="{{ url_for('librarian.issued_book', page=number) }}">{{ number }}</a>
                             </li>
                             {% else %}
                             <li class="page-item active">
@@ -237,7 +237,7 @@
                             {% if issue.has_next %}
                             <li class="page-item">
                                 <a class="page-link mx-1 rounded"
-                                    href="{{ url_for('librarian.issue', page=issue.next_num) }}"><i
+                                    href="{{ url_for('librarian.issue_book', page=issue.next_num) }}"><i
                                         class="mdi mdi-chevron-right"></i></a>
                             </li>
                             {% endif %}

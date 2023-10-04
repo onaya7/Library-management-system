@@ -29,7 +29,7 @@ def dashboard():
     category = BookCategory.query.order_by(BookCategory.name).paginate(
         per_page=5, error_out=False
     )
-    issue = Issue.query.order_by(Issue.issued_date).paginate(per_page=5, error_out=False)
+    issue = Issue.query.order_by(Issue.issued_date.desc()).paginate(per_page=5, error_out=False)
     fine = Fine.query.filter(Fine.status == False).order_by(Fine.id.desc()).paginate(per_page=5, error_out=False)
     reservation = Reservation.query.order_by(Reservation.reservation_date.desc()).paginate(per_page=5, error_out=False)
     return render_template(
@@ -467,6 +467,14 @@ def add_student():
     return render_template("librarian/add_student.html", form=form)
 
 
+@librarian.route("/librarian/view_student/<int:student_id>", methods=["GET", "POST"])
+@session_expired_handler("librarian")
+@role_required("librarian")
+def view_student(student_id):
+    student = Student.query.get_or_404(student_id)
+    return render_template("librarian/view_student.html",  student=student)
+
+
 @librarian.route("/librarian/edit_student/<int:student_id>", methods=["GET", "POST"])
 @session_expired_handler("librarian")
 @role_required("librarian")
@@ -521,7 +529,7 @@ def remove_student(student_id):
 @role_required("librarian")
 def issued_book():
     form = SearchForm()
-    issue = Issue.query.order_by(Issue.issued_date).paginate(per_page=5, error_out=False)
+    issue = Issue.query.order_by(Issue.issued_date.desc()).paginate(per_page=5, error_out=False)
     return render_template("librarian/issued_book.html",  issue=issue, form=form)
 
 
