@@ -248,7 +248,10 @@
                                                                 class="fe fe-edit dropdown-item-icon"></i>Edit</a>
                                                                 <a class="dropdown-item"
                                                                 href="{{ url_for('librarian.edit_student', student_id=student.id) }}"><i
-                                                                    class="fe fe-edit dropdown-item-icon"></i>Issue Book</a>
+                                                                    class="fe fe-book dropdown-item-icon"></i>Issue Book</a>
+                                                                <a class="dropdown-item"
+                                                                href="{{ url_for('librarian.student_library_card', student_id=student.id) }}"><i
+                                                                    class="fe fe-credit-card dropdown-item-icon"></i>Issue Card</a>
                                                         <button type="button" class="dropdown-item"
                                                             data-bs-toggle="modal" data-bs-target="#exampleModal">
                                                             <i class="fe fe-trash dropdown-item-icon"></i>Delete

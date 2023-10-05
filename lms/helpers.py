@@ -1,7 +1,7 @@
 import io
 import os
 import random
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from flask import current_app, make_response
 from PIL import Image, ImageDraw, ImageFont
@@ -85,19 +85,20 @@ def generate_library_card(student_id: int) -> int:
     name = student.name
     matric_no = student.matric_no
     department = student.department
-    email = student.email
     img_upload = student.img_upload
-    joined_date = student.joined_date.strftime("%Y-%m-%d")
+    expire_date = datetime.utcnow() + timedelta(days=365)
+    expire_date = expire_date.strftime("%Y-%m-%d")
+    
 
     card_img_location = os.path.join(
-        current_app.root_path, "assets/images/library_card_template.jpg"
+        current_app.root_path, "assets/images/library_card_template_front.png"
     )
     card_template = Image.open(card_img_location)
 
     student_img_location = os.path.join(current_app.root_path, f"upload/{img_upload}")
-    student_img = Image.open(student_img_location).resize((150, 150))
+    student_img = Image.open(student_img_location).resize(size(20.54, 26.87))
 
-    card_template.paste(student_img, (300, 100))
+    card_template.paste(student_img, size(5.37, 9.02))
 
     draw = ImageDraw.Draw(card_template)
     font = os.path.join(
@@ -105,12 +106,10 @@ def generate_library_card(student_id: int) -> int:
     )
     font = ImageFont.truetype(font, size=20)
 
-    draw.text((50, 50), f"Name: {name}", fill=(0, 0, 0), font=font)
-    draw.text((50, 100), f"Matric No: {matric_no}", fill=(0, 0, 0), font=font)
-    draw.text((50, 150), f"Department: {department}", fill=(0, 0, 0), font=font)
-    draw.text((50, 200), f"Email: {email}", fill=(0, 0, 0), font=font)
-    draw.text((50, 250), f"Joined Date: {joined_date}", fill=(0, 0, 0), font=font)
-    draw.text((50, 300), f"Image Upload: {img_upload}", fill=(0, 0, 0), font=font)
+    draw.text(size(44.07, 28.4), name, fill=(0, 0, 0), font=font)
+    draw.text(size(44.07, 35.0), matric_no, fill=(0, 0, 0), font=font)
+    draw.text(size(44.07, 41.5), department, fill=(0, 0, 0), font=font)
+    draw.text(size(44.07, 48.0), expire_date, fill=(0, 0, 0), font=font)
 
     card_template.save(
         os.path.join(current_app.root_path, "assets/images/library_card.png")
@@ -121,3 +120,13 @@ def generate_library_card(student_id: int) -> int:
     image_buffer.seek(0)
 
     return image_buffer
+
+# Function to calculate target size in pixels
+def size(target_width_mm:float, target_height_mm:float) -> tuple[int, int]:
+    dpi = 300
+    target_width = int(target_width_mm * dpi / 25.4)
+    target_height = int(target_height_mm * dpi / 25.4)
+    
+    return target_width, target_height
+ 
+    

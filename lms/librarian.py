@@ -10,6 +10,7 @@ from flask import (
     request,
     send_from_directory,
     url_for,
+    send_file
 )
 from flask_login import current_user
 from werkzeug.utils import secure_filename
@@ -22,13 +23,12 @@ from lms.forms import (
     BookForm,
     EditBookForm,
     EditStudentForm,
-    FineForm,
     IssueBookForm,
     SearchForm,
     StudentForm,
     images,
 )
-from lms.helpers import calculate_fine
+from lms.helpers import calculate_fine, generate_library_card
 from lms.models import Author, Book, BookCategory, Fine, Issue, Reservation, Student
 
 librarian = Blueprint(
@@ -752,3 +752,19 @@ def upload(filename):
     return send_from_directory(
         current_app.config["UPLOADED_IMAGES_DEST"], filename, as_attachment=True
     )
+
+
+""" generate library card for student section"""
+
+
+@librarian.route("/librarian/student_library_card/<int:student_id>")
+@session_expired_handler("librarian")
+def student_library_card(student_id):
+    student = Student.query.get_or_404(student_id)
+    if not student:
+        flash("unable to generate library card for student")
+        return redirect(url_for("librarian.students"))
+    image_buffer = generate_library_card(student.id)
+    return send_file(image_buffer, mimetype='image/png', as_attachment=True, download_name=f'{student.matric_no}_library_card.png')
+    
+    
