@@ -9,6 +9,8 @@ from PIL import Image, ImageDraw, ImageFont
 from lms.encryption import decode_jwt
 from lms.models import Librarian, Student
 
+import qrcode
+
 
 # function to handle the login token
 def handle_login(token):
@@ -86,6 +88,7 @@ def generate_library_card(student_id: int) -> int:
     matric_no = student.matric_no
     department = student.department
     img_upload = student.img_upload
+    email = student.email
     expire_date = datetime.utcnow() + timedelta(days=365)
     expire_date = expire_date.strftime("%Y-%m-%d")
     
@@ -110,10 +113,19 @@ def generate_library_card(student_id: int) -> int:
     draw.text(size(44.07, 35.0), matric_no, fill=(0, 0, 0), font=font)
     draw.text(size(44.07, 41.5), department, fill=(0, 0, 0), font=font)
     draw.text(size(44.07, 48.0), expire_date, fill=(0, 0, 0), font=font)
+    
+    # Generate QR code and paste it onto the card
+    # qr_data = f"Name: {name}\nMatric No: {matric_no}\nEmail: {email}\nDepartment: {department}\nExpire Date: {expire_date}"
+    qr_data = f"{name}-{matric_no}-{department}"  # Adjust as needed for your use case
+    qr_img = generate_qr_code(qr_data)
+    qr_img = qr_img.convert("RGBA")  # Convert to RGBA to support transparency
+    qr_img = qr_img.resize(size(11.23, 10.99))  
+    card_template.paste(qr_img, size(0.89, 43.3), qr_img)
 
-    card_template.save(
-        os.path.join(current_app.root_path, "assets/images/library_card.png")
-    )
+
+    # card_template.save(
+    #     os.path.join(current_app.root_path, "assets/images/library_card.png")
+    # )
 
     image_buffer = io.BytesIO()
     card_template.save(image_buffer, format="PNG")
@@ -129,4 +141,17 @@ def size(target_width_mm:float, target_height_mm:float) -> tuple[int, int]:
     
     return target_width, target_height
  
-    
+# Function to generate a code128 barcode
+def generate_qr_code(data):
+    qr = qrcode.QRCode(
+        version=1,
+        error_correction=qrcode.constants.ERROR_CORRECT_L,
+        box_size=5,
+        border=4,
+    )
+    qr.add_data(data)
+    qr.make(fit=True)
+
+    qr_img = qr.make_image(fill_color="black", back_color="white")
+
+    return qr_img
