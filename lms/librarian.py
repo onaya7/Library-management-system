@@ -1,18 +1,35 @@
 import secrets
 from datetime import datetime
 
-from flask import (Blueprint, current_app, flash, redirect, render_template,
-                   request, send_from_directory, url_for)
+from flask import (
+    Blueprint,
+    current_app,
+    flash,
+    redirect,
+    render_template,
+    request,
+    send_from_directory,
+    url_for,
+)
 from flask_login import current_user
 from werkzeug.utils import secure_filename
 
 from lms.decorator import role_required, session_expired_handler
 from lms.extensions import db
-from lms.forms import (AuthorForm, BookCategoryForm, BookForm, EditBookForm,
-                       EditStudentForm, FineForm, IssueBookForm, SearchForm,
-                       StudentForm, images)
+from lms.forms import (
+    AuthorForm,
+    BookCategoryForm,
+    BookForm,
+    EditBookForm,
+    EditStudentForm,
+    FineForm,
+    IssueBookForm,
+    SearchForm,
+    StudentForm,
+    images,
+)
 from lms.helpers import calculate_fine
-from lms.models import Author, Book, BookCategory, Fine, Issue, Student, Reservation
+from lms.models import Author, Book, BookCategory, Fine, Issue, Reservation, Student
 
 librarian = Blueprint(
     "librarian", __name__, template_folder="templates", static_folder="assets"
@@ -25,13 +42,23 @@ librarian = Blueprint(
 def dashboard():
     author = Author.query.order_by(Author.name).paginate(per_page=5, error_out=False)
     book = Book.query.order_by(Book.id.desc()).paginate(per_page=5, error_out=False)
-    student = Student.query.order_by(Student.id.desc()).paginate(per_page=5, error_out=False)
+    student = Student.query.order_by(Student.id.desc()).paginate(
+        per_page=5, error_out=False
+    )
     category = BookCategory.query.order_by(BookCategory.name).paginate(
         per_page=5, error_out=False
     )
-    issue = Issue.query.order_by(Issue.issued_date.desc()).paginate(per_page=5, error_out=False)
-    fine = Fine.query.filter(Fine.status == False).order_by(Fine.id.desc()).paginate(per_page=5, error_out=False)
-    reservation = Reservation.query.order_by(Reservation.reservation_date.desc()).paginate(per_page=5, error_out=False)
+    issue = Issue.query.order_by(Issue.issued_date.desc()).paginate(
+        per_page=5, error_out=False
+    )
+    fine = (
+        Fine.query.filter(Fine.status == False)
+        .order_by(Fine.id.desc())
+        .paginate(per_page=5, error_out=False)
+    )
+    reservation = Reservation.query.order_by(
+        Reservation.reservation_date.desc()
+    ).paginate(per_page=5, error_out=False)
     return render_template(
         "librarian/dashboard.html",
         author=author,
@@ -40,7 +67,7 @@ def dashboard():
         student=student,
         issue=issue,
         fine=fine,
-        reservation=reservation
+        reservation=reservation,
     )
 
 
@@ -72,7 +99,7 @@ def search_author():
         author = Author.query.filter(Author.name.ilike(f"%{query}%")).paginate(
             per_page=5, error_out=False
         )
-        
+
         if not author.items:
             flash("No author found with the given name.", "info")
         elif author.total == 0:
@@ -262,7 +289,6 @@ def search_books():
             flash("No books found with the given title or ISBN.", "info")
         elif books.total == 0:
             flash("No results found.", "info")
-        
 
     return render_template("librarian/books.html", form=form, books=books)
 
@@ -472,7 +498,7 @@ def add_student():
 @role_required("librarian")
 def view_student(student_id):
     student = Student.query.get_or_404(student_id)
-    return render_template("librarian/view_student.html",  student=student)
+    return render_template("librarian/view_student.html", student=student)
 
 
 @librarian.route("/librarian/edit_student/<int:student_id>", methods=["GET", "POST"])
@@ -524,16 +550,21 @@ def remove_student(student_id):
 
 """ Issue section"""
 
+
 @librarian.route("/librarian/issued_book", methods=["GET", "POST"])
 @session_expired_handler("librarian")
 @role_required("librarian")
 def issued_book():
     form = SearchForm()
-    issue = Issue.query.order_by(Issue.issued_date.desc()).paginate(per_page=5, error_out=False)
-    return render_template("librarian/issued_book.html",  issue=issue, form=form)
+    issue = Issue.query.order_by(Issue.issued_date.desc()).paginate(
+        per_page=5, error_out=False
+    )
+    return render_template("librarian/issued_book.html", issue=issue, form=form)
 
 
 """issued book search section"""
+
+
 @librarian.route("/librarian/issued_book/search", methods=["GET", "POST"])
 @session_expired_handler("librarian")
 @role_required("librarian")
@@ -561,19 +592,19 @@ def issue_book():
         book_id = int(form.book_isbn.data)
         student_id = form.matric_no.data
         librarian_id = int(current_user.id)
-        
-        book_id = Book.query.filter(Book.isbn == book_id, Book.available_copies > 0).first()
+
+        book_id = Book.query.filter(
+            Book.isbn == book_id, Book.available_copies > 0
+        ).first()
         student_id = Student.query.filter_by(matric_no=student_id).first()
-        if not  book_id:
+        if not book_id:
             flash("Book is not available for issue", "danger")
-            return redirect(url_for('librarian.issue_book'))
-        book_id.available_copies-=1
-        book_id , student_id= book_id.id, student_id.id
-           
+            return redirect(url_for("librarian.issue_book"))
+        book_id.available_copies -= 1
+        book_id, student_id = book_id.id, student_id.id
+
         issued_book = Issue(
-            student_id=student_id,
-            book_id=book_id,
-            librarian_id=librarian_id
+            student_id=student_id, book_id=book_id, librarian_id=librarian_id
         )
         issued_book.set_expiry_date(datetime.utcnow())
         db.session.add(issued_book)
@@ -588,22 +619,21 @@ def issue_book():
     return render_template("librarian/issue_book.html", form=form)
 
 
-
 @librarian.route("/librarian/return_book/<int:issue_id>", methods=["GET", "POST"])
 @session_expired_handler("librarian")
 @role_required("librarian")
 def return_book(issue_id):
-    id=issue_id
+    id = issue_id
     issue_id = Issue.query.get_or_404(id)
-    
-    issue_id =issue_id.id
+
+    issue_id = issue_id.id
     issue = Issue.query.filter_by(id=issue_id).first()
-    
+
     book_id = issue.book_id
     book = Book.query.filter_by(id=book_id).first()
     book_isbn = book.isbn
-    book_title= book.title
-    
+    book_title = book.title
+
     student_id = issue.student_id
     student = Student.query.filter_by(id=student_id).first()
     matric_no = student.matric_no
@@ -613,27 +643,37 @@ def return_book(issue_id):
         if issue.return_date:
             flash("Book already returned", "danger")
             return redirect(url_for("librarian.return_book", issue_id=id))
-        
+
         fine_amount = calculate_fine(issue.expiry_date)
         if fine_amount > 0:
-            fine = Fine(amount=fine_amount, student_id=student.id, matric_no=student.matric_no)
+            fine = Fine(
+                amount=fine_amount, student_id=student.id, matric_no=student.matric_no
+            )
             db.session.add(fine)
             db.session.commit()
-    
-            fine_id = fine.id
-            issue.add_fine_to_student(fine_id)            
 
-        book.available_copies +=  1 
+            fine_id = fine.id
+            issue.add_fine_to_student(fine_id)
+
+        book.available_copies += 1
         issue.returned_date(datetime.utcnow())
         try:
             db.session.commit()
             flash("Book returned successfully", "success")
         except Exception as e:
             flash(f"An error occurred while returning a book: {str(e)}", "danger")
-    return render_template("librarian/return_book.html", book_title=book_title, book_isbn=book_isbn, matric_no=matric_no, librarian_id=librarian_id, id=id)
+    return render_template(
+        "librarian/return_book.html",
+        book_title=book_title,
+        book_isbn=book_isbn,
+        matric_no=matric_no,
+        librarian_id=librarian_id,
+        id=id,
+    )
 
 
 """ Fine section"""
+
 
 @librarian.route("/librarian/fine", methods=["GET", "POST"])
 @session_expired_handler("librarian")
@@ -641,9 +681,12 @@ def return_book(issue_id):
 def fine():
     form = SearchForm()
     fine = Fine.query.order_by(Fine.student_id).paginate(per_page=5, error_out=False)
-    return render_template("librarian/fine.html",  fine=fine, form=form)
+    return render_template("librarian/fine.html", fine=fine, form=form)
+
 
 """Fine  search section"""
+
+
 @librarian.route("/librarian/fine/search", methods=["GET", "POST"])
 @session_expired_handler("librarian")
 @role_required("librarian")
@@ -661,17 +704,24 @@ def search_fine():
             flash("No results found.", "info")
     return render_template("librarian/fine.html", form=form, fine=fine)
 
+
 """ Reserve section"""
+
 
 @librarian.route("/librarian/reserve", methods=["GET", "POST"])
 @session_expired_handler("librarian")
 @role_required("librarian")
 def reserve():
     form = SearchForm()
-    reserve = Reservation.query.order_by(Reservation.reservation_date.desc()).paginate(per_page=5, error_out=False)
-    return render_template("librarian/reserve.html",  reserve=reserve, form=form)
+    reserve = Reservation.query.order_by(Reservation.reservation_date.desc()).paginate(
+        per_page=5, error_out=False
+    )
+    return render_template("librarian/reserve.html", reserve=reserve, form=form)
+
 
 """Reserve  search section"""
+
+
 @librarian.route("/librarian/reserve/search", methods=["GET", "POST"])
 @session_expired_handler("librarian")
 @role_required("librarian")
@@ -681,16 +731,21 @@ def search_reserve():
     if form.validate_on_submit():
         query = form.query.data.lower().strip()
         reserve = Reservation.query.filter(
-            db.or_(Reservation.reservation_status.ilike(f"%{query}%"), Reservation.reservation_date.ilike(f"%{query}%"))).paginate(
-            per_page=10, error_out=False
-        )
+            db.or_(
+                Reservation.reservation_status.ilike(f"%{query}%"),
+                Reservation.reservation_date.ilike(f"%{query}%"),
+            )
+        ).paginate(per_page=10, error_out=False)
         if not reserve.items:
             flash("No Book reservation found with the given date or status.", "info")
         elif reserve.total == 0:
             flash("No results found.", "info")
     return render_template("librarian/reserve.html", form=form, reserve=reserve)
 
+
 """ image upload section"""
+
+
 @librarian.route("/upload/<path:filename>")
 @session_expired_handler("librarian")
 def upload(filename):

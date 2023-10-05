@@ -287,8 +287,6 @@ class EditStudentForm(FlaskForm):
     student_status = BooleanField("Student Status", default=True)
     submit = SubmitField("Save Student")
 
-    
-
     def validate_img_upload(self, img_upload):
         img_ext = img_upload.data.filename.split(".")[-1].lower()
         if img_ext not in ["jpg", "jpeg", "png", "mp4"]:
@@ -311,7 +309,7 @@ class IssueBookForm(FlaskForm):
     book_isbn = IntegerField("Book ISBN", validators=[DataRequired()])
     matric_no = StringField("Matriculation Number", validators=[DataRequired()])
     submit = SubmitField("Issue Book")
-    
+
     def validate_matric_no(self, matric_no):
         student = Student.query.filter_by(matric_no=matric_no.data).first()
         if not student:
@@ -325,11 +323,12 @@ class IssueBookForm(FlaskForm):
             raise ValidationError(
                 f"This number {book_isbn.data} does not exist as a book isbn please use a different one"
             )
-            
+
+
 class FineForm(FlaskForm):
     matric_no = StringField("Matriculation Number", validators=[DataRequired()])
     submit = SubmitField("Generate Fine")
-    
+
     def validate_matric_no(self, matric_no):
         student = Student.query.filter_by(matric_no=matric_no.data).first()
         if not student:

@@ -7,19 +7,23 @@ from flask import (
     request,
     session,
     url_for,
+    current_app
 )
 from flask_login import login_required, login_user, logout_user
 
 from lms.extensions import bcrypt
 from lms.forms import AdminLoginForm, LibrarianLoginForm, StudentLoginForm
-from lms.helpers import set_cookie
+from lms.helpers import set_cookie, generate_library_card
 from lms.models import Librarian, Student
+
 
 auth = Blueprint("auth", __name__, template_folder="templates", static_folder="assets")
 
 
 @auth.route("/auth/student/sign-in", methods=["GET", "POST"])
 def student_sign_in():
+    image = generate_library_card(student_id=1)
+    print(image)
     form = StudentLoginForm()
     if form.validate_on_submit():
         matric_no = form.matric_no.data
