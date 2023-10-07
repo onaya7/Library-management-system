@@ -122,6 +122,8 @@ Open your web browser and navigate to http://localhost:5000 to access the projec
 
 ![Screenshot (210)](https://github.com/onaya7/Library-management-system/assets/63925047/01fd6b40-5188-4ddb-8063-c1b090d7b53e)
 
+![Screenshot (215)](https://github.com/onaya7/Library-management-system/assets/63925047/0c007286-7843-4ff9-a219-5031ea3ba2e2)
+
 ![Screenshot (213)](https://github.com/onaya7/Library-management-system/assets/63925047/7a68ea90-827d-4eb8-aca7-76b637ff7d49)
 
 ### Library card generated for the users by the librarian on the Library Management System
@@ -159,4 +161,4 @@ Please ensure your code adheres to the project's coding conventions and includes
 ## License
 
 CoinControl is released under the MIT License, which allows you to use, modify, and distribute the code freely. See the LICENSE file for more details.
-[MIT LICENSE](https://github.com/onaya7/lms).
+[MIT LICENSE](https://github.com/onaya7/Library-management-system/blob/master/LICENSE.md).
