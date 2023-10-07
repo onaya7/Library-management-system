@@ -114,9 +114,8 @@ def generate_library_card(student_id: int) -> int:
     draw.text(size(44.07, 41.5), department, fill=(0, 0, 0), font=font)
     draw.text(size(44.07, 48.0), expire_date, fill=(0, 0, 0), font=font)
     
-    # Generate QR code and paste it onto the card
-    # qr_data = f"Name: {name}\nMatric No: {matric_no}\nEmail: {email}\nDepartment: {department}\nExpire Date: {expire_date}"
-    qr_data = f"{name}-{matric_no}-{department}"  # Adjust as needed for your use case
+
+    qr_data = f"{name}-{matric_no}-{department}" 
     qr_img = generate_qr_code(qr_data)
     qr_img = qr_img.convert("RGBA")  # Convert to RGBA to support transparency
     qr_img = qr_img.resize(size(11.23, 10.99))  
