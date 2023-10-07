@@ -97,10 +97,15 @@ Open your web browser and navigate to http://localhost:5000 to access the projec
 ### Screenshots
 
 ``
-
+# Layered Architecture Diagram for The Library Management System
 ![web-infrastructure-design drawio](https://github.com/onaya7/Library-management-system/assets/63925047/aa1eba2c-90fb-4d8e-81ac-106cbc01197f)
+
+# Use case Diagram for The Library Management System
 ![Use-case-diagram-lms drawio](https://github.com/onaya7/Library-management-system/assets/63925047/eba812a1-513c-4886-b5b6-ffc1409c467a)
+
+# Entity Relationship(ER)  Diagram for The Library Management System
 ![library management system er diagram (500lv project work) drawio](https://github.com/onaya7/Library-management-system/assets/63925047/cdeccbf1-44a8-4672-8743-67d5ffca5076)
+
 ![Screenshot (195)](https://github.com/onaya7/Library-management-system/assets/63925047/7092a484-d0e6-48ec-9b76-0c26612a36fa)
 ![Screenshot (196)](https://github.com/onaya7/Library-management-system/assets/63925047/9f82ac9c-df51-4aaf-97c9-a61bb0094195)
 ![Screenshot (197)](https://github.com/onaya7/Library-management-system/assets/63925047/a21d1513-4d05-4534-9ef4-b48406a5bc2a)
@@ -110,8 +115,9 @@ Open your web browser and navigate to http://localhost:5000 to access the projec
 ![Screenshot (209)](https://github.com/onaya7/Library-management-system/assets/63925047/373e8f43-da0f-43ff-85dc-94cac7cf029b)
 ![Screenshot (210)](https://github.com/onaya7/Library-management-system/assets/63925047/01fd6b40-5188-4ddb-8063-c1b090d7b53e)
 ![Screenshot (213)](https://github.com/onaya7/Library-management-system/assets/63925047/7a68ea90-827d-4eb8-aca7-76b637ff7d49)
-![17_EEN_033_library_card (1)](https://github.com/onaya7/Library-management-system/assets/63925047/d2674533-3bc9-49f6-ae8e-e504f1853382)
 
+# Library card generated for the users by the librarian on the Library Management System
+![17_EEN_033_library_card (1)](https://github.com/onaya7/Library-management-system/assets/63925047/d2674533-3bc9-49f6-ae8e-e504f1853382)
 
 
 ## Contributing
