@@ -4,6 +4,7 @@ from datetime import timedelta
 from flask import Flask, flash, redirect, render_template, request, url_for
 from flask_uploads import configure_uploads
 
+
 from lms.admin import admin
 from lms.auth import auth
 from lms.config import config

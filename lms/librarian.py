@@ -1,7 +1,6 @@
 import secrets
 from datetime import datetime
 
-import werkzeug
 from flask import (
     Blueprint,
     current_app,
@@ -9,11 +8,12 @@ from flask import (
     redirect,
     render_template,
     request,
-    send_file,
     send_from_directory,
     url_for,
+    send_file
 )
 from flask_login import current_user
+from werkzeug.utils import secure_filename
 
 from lms.decorator import role_required, session_expired_handler
 from lms.extensions import db
@@ -30,9 +30,6 @@ from lms.forms import (
 )
 from lms.helpers import calculate_fine, generate_library_card
 from lms.models import Author, Book, BookCategory, Fine, Issue, Reservation, Student
-
-
-
 
 librarian = Blueprint(
     "librarian", __name__, template_folder="templates", static_folder="assets"
@@ -320,7 +317,7 @@ def add_book():
         img_upload = form.img_upload.data
         total_copies = form.total_copies.data
 
-        filename = werkzeug.secure_filename(img_upload.filename)
+        filename = secure_filename(img_upload.filename)
         img_ext = filename.split(".")[-1].lower()
         random_number = secrets.token_hex(10)
         random_filename = f"{random_number}.{img_ext}"
@@ -376,7 +373,7 @@ def edit_book(book_id):
         # Handle image upload if a new image is provided
         img_upload = form.img_upload.data
         if img_upload:
-            filename = werkzeug.secure_filename(img_upload.filename)
+            filename = secure_filename(img_upload.filename)
             img_ext = filename.split(".")[-1].lower()
             random_number = secrets.token_hex(10)
             random_filename = f"{random_number}.{img_ext}"
@@ -468,7 +465,7 @@ def add_student():
         img_upload = form.img_upload.data
         student_status = form.student_status.data
 
-        filename = werkzeug.secure_filename(img_upload.filename)
+        filename = secure_filename(img_upload.filename)
         img_ext = filename.split(".")[-1].lower()
         random_number = secrets.token_hex(10)
         random_filename = f"{random_number}.{img_ext}"
@@ -520,7 +517,7 @@ def edit_student(student_id):
         # Handle image upload if a new image is provided
         img_upload = form.img_upload.data
         if img_upload:
-            filename = werkzeug.secure_filename(img_upload.filename)
+            filename = secure_filename(img_upload.filename)
             img_ext = filename.split(".")[-1].lower()
             random_number = secrets.token_hex(10)
             random_filename = f"{random_number}.{img_ext}"
@@ -768,9 +765,6 @@ def student_library_card(student_id):
         flash("unable to generate library card for student")
         return redirect(url_for("librarian.students"))
     image_buffer = generate_library_card(student.id)
-    return send_file(
-        image_buffer,
-        mimetype="image/png",
-        as_attachment=True,
-        download_name=f"{student.matric_no}_library_card.png",
-    )
+    return send_file(image_buffer, mimetype='image/png', as_attachment=True, download_name=f'{student.matric_no}_library_card.png')
+    
+    
