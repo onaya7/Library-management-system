@@ -760,13 +760,11 @@ def upload(filename):
 @librarian.route("/librarian/student_library_card/<int:student_id>")
 @session_expired_handler("librarian")
 def student_library_card(student_id):
-    student = Student.query.get_or_404(student_id)
-    if not student:
-        flash("unable to generate library card for student")
+    student = Student.query.get(student_id)
+    if student is None:
+        flash("Student not found", "warning")
         return redirect(url_for("librarian.students"))
     image_buffer = generate_library_card(student.id)
-    if image_buffer is None:
-        return redirect(url_for("librarian.students"))
     return send_file(image_buffer, mimetype='image/png', as_attachment=True, download_name=f'{student.matric_no}_library_card.png')
     
     
