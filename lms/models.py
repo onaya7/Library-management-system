@@ -103,6 +103,7 @@ class Student(UserMixin, db.Model):
     fine = db.relationship("Fine", back_populates="student", uselist=False)
     issue = db.relationship("Issue", back_populates="student")
     reserve = db.relationship("Reservation", back_populates="student")
+    is_student = db.Column(db.Boolean, default=True)
 
 
 

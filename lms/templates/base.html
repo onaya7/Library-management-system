@@ -140,15 +140,7 @@
                                             <hr class="mx-3">
                                         </li>
 
-                                        {% if not current_user.is_authenticated %}
-                                        <li>
-                                            <a class="dropdown-item" href="{{ url_for('auth.librarian_sign_in')}}">
-                                                Sign In
-                                            </a>
-                                        </li>
-                                        {% endif %}
-
-                                        {% if current_user.is_authenticated %}
+                                        {% if current_user.is_librarian and current_user.is_authenticated %}
                                         <li>
                                             <a class="dropdown-item" href="{{ url_for('librarian.dashboard')}}">
                                                 Dashboard</a>
@@ -157,14 +149,13 @@
                                             <a class="dropdown-item" href="{{ url_for('auth.logout_librarian')}}">
                                                 Sign Out</a>
                                         </li>
-                                        {% endif %}
-
+                                        {% else %}
                                         <li>
-                                            <a class="dropdown-item" href="#">
-                                                Forgot Password
+                                            <a class="dropdown-item" href="{{ url_for('auth.librarian_sign_in')}}">
+                                                Sign In
                                             </a>
                                         </li>
-
+                                        {% endif %}
                                     </ul>
                                 </li>
                                 <li class="dropdown-submenu dropend">
@@ -175,22 +166,14 @@
                                         <li class="text-wrap">
                                             <h5 class="dropdown-header text-dark">Students</h5>
                                             <p class="dropdown-text mb-0">
-                                                Students dashboard to manage issed books and fines.
+                                                Students dashboard to manage issued books and fines.
                                             </p>
                                         </li>
                                         <li>
                                             <hr class="mx-3">
                                         </li>
 
-                                        {% if not current_user.is_authenticated %}
-                                        <li>
-                                            <a class="dropdown-item" href="{{ url_for('auth.student_sign_in')}}">
-                                                Sign In
-                                            </a>
-                                        </li>
-                                        {% endif %}
-
-                                        {% if current_user.is_authenticated %}
+                                        {% if current_user.is_student and current_user.is_authenticated %}
                                         <li>
                                             <a class="dropdown-item" href="{{ url_for('student.dashboard')}}">
                                                 Dashboard</a>
@@ -198,6 +181,12 @@
                                         <li>
                                             <a class="dropdown-item" href="{{ url_for('auth.logout_student')}}">
                                                 Sign Out</a>
+                                        </li>
+                                        {% else %}
+                                        <li>
+                                            <a class="dropdown-item" href="{{ url_for('auth.student_sign_in')}}">
+                                                Sign In
+                                            </a>
                                         </li>
                                         {% endif %}
 
