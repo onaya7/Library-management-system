@@ -765,6 +765,8 @@ def student_library_card(student_id):
         flash("unable to generate library card for student")
         return redirect(url_for("librarian.students"))
     image_buffer = generate_library_card(student.id)
+    if image_buffer is None:
+        return redirect(url_for("librarian.students"))
     return send_file(image_buffer, mimetype='image/png', as_attachment=True, download_name=f'{student.matric_no}_library_card.png')
     
     

@@ -82,6 +82,7 @@ def calculate_fine(issue_expiry_date):
 
 # function to generate library card
 def generate_library_card(student_id: int) -> int:
+    
     student = Student.query.get(student_id)
 
     name = student.name
