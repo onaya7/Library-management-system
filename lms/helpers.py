@@ -3,13 +3,12 @@ import os
 import random
 from datetime import datetime, timedelta
 
+import qrcode
 from flask import current_app, make_response
 from PIL import Image, ImageDraw, ImageFont
 
 from lms.encryption import decode_jwt
 from lms.models import Librarian, Student
-
-import qrcode
 
 
 # function to handle the login token
@@ -84,7 +83,10 @@ def calculate_fine(issue_expiry_date):
 def generate_library_card(student_id: int) -> int:
     
     student = Student.query.get(student_id)
-
+    
+    if student is None:
+        return None
+    
     name = student.name
     matric_no = student.matric_no
     department = student.department
