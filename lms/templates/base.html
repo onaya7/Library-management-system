@@ -1,13 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script>
         // Render blocking JS:
         if (localStorage.theme) document.documentElement.setAttribute("data-theme", localStorage.theme);
-        </script>
-    <title>{% block title %}{% endblock%} | LMS Unicross</title>
+    </script>
+    <title>{% block title %}{% endblock%}Home | LMS </title>
 
     <!-- favicon -->
     <link rel="shortcut icon" href="{{ url_for('admin.static', filename='images/logo.png')}}" type="image/x-icon">
@@ -16,20 +17,24 @@
     <link rel="stylesheet" href="{{ url_for('admin.static', filename='css/style.css') }}">
 
     <!-- external css -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
-    <link rel="stylesheet" href="{{ url_for('admin.static', filename='vendor/font-awesome/css/font-awesome.min.css') }}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+    <link rel="stylesheet"
+        href="{{ url_for('admin.static', filename='vendor/font-awesome/css/font-awesome.min.css') }}">
 
 
     <!-- font -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Balsamiq+Sans:wght@400;700&family=Poppins:wght@100;200;300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Balsamiq+Sans:wght@400;700&family=Poppins:wght@100;200;300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
 
 
     <!-- ------------------------- -->
 
-    
+
     <!-- Libs CSS -->
     <link href="../../assets/fonts/feather/feather.css" rel="stylesheet">
     <link href="../../assets/libs/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet" />
@@ -42,30 +47,209 @@
 
     <!-- ------------------------- -->
 
-
-
 </head>
+
 <body class="body">
     {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-        {% for category, message in messages %}
-        <div class="alert alert-{{category}} alert-dismissible fade show " role="alert"">
+    {% if messages %}
+    {% for category, message in messages %}
+    <div class="alert alert-{{category}} alert-dismissible fade show " role="alert"">
             {{ message }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-        {% endfor %}
-        {% endif %}
+            <button type=" button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endfor %}
+    {% endif %}
     {% endwith %}
 
-    {% block content %}
-        
-    {% endblock %}
+    <main>
+        <!-- Navbar -->
+        <nav class="navbar navbar-expand-lg">
+            <div class="container-fluid px-0">
+                <a class="navbar-brand" href="{{ url_for('home.home_page')}}"><img class="logo"
+                        src="../../assets/images/logo.png" alt="" class=""></a>
+                <!-- Mobile view nav wrap -->
+
+                <div class="ms-auto d-flex align-items-center order-lg-3">
+
+                    <div>
+                        <a href="#" class="form-check form-switch theme-switch btn btn-light btn-icon rounded-circle">
+                            <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault">
+                            <label class="form-check-label" for="flexSwitchCheckDefault"></label>
+
+                        </a>
+                    </div>
+
+
+                </div>
+                <div>
+                    <!-- Button -->
+                    <button class="navbar-toggler collapsed" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#navbar-default" aria-controls="navbar-default" aria-expanded="false"
+                        aria-label="Toggle navigation">
+                        <span class="icon-bar top-bar mt-0"></span>
+                        <span class="icon-bar middle-bar"></span>
+                        <span class="icon-bar bottom-bar"></span>
+                    </button>
+                </div>
+                <!-- Collapse -->
+                <div class="collapse navbar-collapse" id="navbar-default">
+                    <ul class="navbar-nav">
+
+                        <li class="nav-item dropdown">
+                            <a class="nav-link" href="{{ url_for('home.home_page')}}" id="navbarPages"
+                                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Home
+                            </a>
+                        </li>
+
+                        <li class="nav-item dropdown">
+                            <a class="nav-link" href="#" id="navbarPages" data-bs-toggle="dropdown" aria-haspopup="true"
+                                aria-expanded="false">
+                                About
+                            </a>
+                        </li>
+
+                        <li class="nav-item dropdown">
+                            <a class="nav-link" href="#" id="navbarPages" data-bs-toggle="dropdown" aria-haspopup="true"
+                                aria-expanded="false">
+                                Help Center
+                            </a>
+                        </li>
+
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarAccount" data-bs-toggle="dropdown"
+                                aria-haspopup="true" aria-expanded="false">
+                                Accounts
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-arrow" aria-labelledby="navbarAccount">
+                                <li>
+                                    <h4 class="dropdown-header">Accounts</h4>
+                                </li>
+                                <li class="dropdown-submenu dropend">
+                                    <a class="dropdown-item dropdown-list-group-item dropdown-toggle" href="#">
+                                        Librarian
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        <li class="text-wrap">
+                                            <h5 class="dropdown-header text-dark">Librarian</h5>
+                                            <p class="dropdown-text mb-0">
+                                                Librarian dashboard to manage students, and books.
+                                            </p>
+                                        </li>
+                                        <li>
+                                            <hr class="mx-3">
+                                        </li>
+
+                                        {% if not current_user.is_authenticated %}
+                                        <li>
+                                            <a class="dropdown-item" href="{{ url_for('auth.librarian_sign_in')}}">
+                                                Sign In
+                                            </a>
+                                        </li>
+                                        {% endif %}
+
+                                        {% if current_user.is_authenticated %}
+                                        <li>
+                                            <a class="dropdown-item" href="{{ url_for('librarian.dashboard')}}">
+                                                Dashboard</a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="{{ url_for('auth.logout_librarian')}}">
+                                                Sign Out</a>
+                                        </li>
+                                        {% endif %}
+
+                                        <li>
+                                            <a class="dropdown-item" href="#">
+                                                Forgot Password
+                                            </a>
+                                        </li>
+
+                                    </ul>
+                                </li>
+                                <li class="dropdown-submenu dropend">
+                                    <a class="dropdown-item dropdown-list-group-item dropdown-toggle" href="#">
+                                        Students
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        <li class="text-wrap">
+                                            <h5 class="dropdown-header text-dark">Students</h5>
+                                            <p class="dropdown-text mb-0">
+                                                Students dashboard to manage issed books and fines.
+                                            </p>
+                                        </li>
+                                        <li>
+                                            <hr class="mx-3">
+                                        </li>
+
+                                        {% if not current_user.is_authenticated %}
+                                        <li>
+                                            <a class="dropdown-item" href="{{ url_for('auth.student_sign_in')}}">
+                                                Sign In
+                                            </a>
+                                        </li>
+                                        {% endif %}
+
+                                        {% if current_user.is_authenticated %}
+                                        <li>
+                                            <a class="dropdown-item" href="{{ url_for('student.dashboard')}}">
+                                                Dashboard</a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="{{ url_for('auth.logout_student')}}">
+                                                Sign Out</a>
+                                        </li>
+                                        {% endif %}
+
+                                    </ul>
+                                </li>
+                            </ul>
+                </div>
+
+            </div>
+        </nav>
+        {% block content %}
+
+        {% endblock %}
+    </main>
+
+
+    <!-- footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row align-items-center g-0 border-top py-2">
+                <!-- Desc -->
+                <div class="col-md-6 col-12 text-center text-md-start">
+                    <span>© <span id="copyright">
+                            <script>document.getElementById('copyright').appendChild(document.createTextNode(new Date().getFullYear()))
+
+                            </script>
+                        </span>©Library management system (Unicross) 2023</span>
+                </div>
+                <!-- Links -->
+                <div class="col-12 col-md-6">
+                    <nav class="nav nav-footer justify-content-center justify-content-md-end">
+                        <a class="nav-link active ps-0" href="#">Privacy</a>
+                        <a class="nav-link" href="#">Terms </a>
+                        <a class="nav-link" href="#">Feedback</a>
+                        <a class="nav-link" href="#">Support</a>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </footer>
 
     <script src="{{ url_for('admin.static', filename='js/script.js') }}"></script>
     <!-- bootstrap bundle and popper  -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.min.js" integrity="sha384-Rx+T1VzGupg4BHQYs2gCW9It+akI2MM/mndMCy36UVfodzcJcF0GGLxZIzObiEfa" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+        integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.min.js"
+        integrity="sha384-Rx+T1VzGupg4BHQYs2gCW9It+akI2MM/mndMCy36UVfodzcJcF0GGLxZIzObiEfa"
+        crossorigin="anonymous"></script>
 
     <!-- ----------------------------- -->
     <!-- Libs JS -->
@@ -88,4 +272,5 @@
     <!-- ----------------------------- -->
 
 </body>
+
 </html>

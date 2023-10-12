@@ -42,3 +42,16 @@
     height: 5.25rem;
     object-fit: cover
 }
+
+.logo{
+    width: 2.5rem;
+    height: 2.5rem;
+    object-fit: cover
+}
+
+.bg-home{
+    height: 85vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'auth/base.html' %}
 {% block title %}404 Error{% endblock%}
 {% block content %}
 <!-- Page Content -->
@@ -25,7 +25,7 @@
                 <p class="mb-5 lead px-4 px-md-0">Oops! Sorry, we couldn’t find the page you were looking for. If you
                     think this is a
                     problem with us, please <a href="#" class="btn-link">Contact us</a></p>
-                <a href="../index-2.html" class="btn btn-primary me-2">Back to Safety</a>
+                <a href="{{ url_for('home.home_page')}}" class="btn btn-primary me-2">Back to Safety</a>
             </div>
             <!-- img -->
             <div class="offset-xl-1 col-xl-6 col-lg-6 col-md-12 col-12 mt-8 mt-lg-0">

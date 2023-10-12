@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="bg-primary bg-home">
+    <div class="container">
+        <!-- Hero Section -->
+        <div class="row align-items-center g-0">
+            <div class="col-xl-5 col-lg-6 col-md-12">
+                <div class="py-7 py-lg-0">
+                    <h1 class="text-white display-4 fw-bold">Welcome to <span class="text-dark">Unicross</span> Library
+                        Management System
+                    </h1>
+                    <p class="text-white-50 mb-4 lead">
+                        Built for the Faculty of Engineering. Our system is designed to streamline and enhance the overall library
+                        experience for students, faculty, and staff.
+                    </p>
+                    <a href="pages/course-filter-list.html" class="btn btn-dark">Browse Books</a>
+                    <a href="{{ url_for('auth.librarian_sign_in')}}" class="btn btn-white">Are You a Librarian?</a>
+                </div>
+            </div>
+            <div class=" col-xl-7 col-lg-6 col-md-12 text-lg-end text-center">
+                <img src="../../assets/images/hero/hero-img.png" alt="heroimg" class="img-fluid">
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

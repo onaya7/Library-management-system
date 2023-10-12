@@ -22,8 +22,6 @@ auth = Blueprint("auth", __name__, template_folder="templates", static_folder="a
 
 @auth.route("/auth/student/sign-in", methods=["GET", "POST"])
 def student_sign_in():
-    image = generate_library_card(student_id=1)
-    print(image)
     form = StudentLoginForm()
     if form.validate_on_submit():
         matric_no = form.matric_no.data

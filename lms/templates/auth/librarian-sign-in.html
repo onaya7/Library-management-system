@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'auth/base.html' %}
 {% block title %}Auth{% endblock%}
 {% block content %}
 <!-- Page content -->
@@ -12,7 +12,7 @@
                     <!-- Card body -->
                     <div class="card-body p-6">
                         <div class="mb-4">
-                            <a href="../index-2.html"><img src="../../assets/images/logo.png" class="mb-4"
+                            <a href="{{ url_for('home.home_page')}}"><img src="../../assets/images/logo.png" class="mb-4"
                                     alt="logo-icon"></a>
                             <h1 class="mb-1 fw-bold">Librarian Login</h1>
                         </div>
