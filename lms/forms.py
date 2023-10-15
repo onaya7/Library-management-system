@@ -184,7 +184,7 @@ class EditBookForm(FlaskForm):
 
     def validate_img_upload(self, img_upload):
         img_ext = img_upload.data.filename.split(".")[-1].lower()
-        if img_ext not in ["jpg", "jpeg", "png", "mp4"]:
+        if img_ext not in ["jpg", "jpeg", "png"]:
             raise ValidationError(
                 "Invalid image format. Please use a jpg, jpeg or png image."
             )
@@ -241,7 +241,7 @@ class StudentForm(FlaskForm):
 
     def validate_img_upload(self, img_upload):
         img_ext = img_upload.data.filename.split(".")[-1].lower()
-        if img_ext not in ["jpg", "jpeg", "png", "mp4"]:
+        if img_ext not in ["jpg", "jpeg", "png"]:
             raise ValidationError(
                 "Invalid image format. Please use a jpg, jpeg or png image."
             )

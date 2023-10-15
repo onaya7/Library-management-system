@@ -8,9 +8,9 @@ from flask import (
     redirect,
     render_template,
     request,
+    send_file,
     send_from_directory,
     url_for,
-    send_file
 )
 from flask_login import current_user
 from werkzeug.utils import secure_filename
@@ -465,26 +465,29 @@ def add_student():
         img_upload = form.img_upload.data
         student_status = form.student_status.data
 
-        filename = secure_filename(img_upload.filename)
-        img_ext = filename.split(".")[-1].lower()
-        random_number = secrets.token_hex(10)
-        random_filename = f"{random_number}.{img_ext}"
-        images.save(img_upload, name=random_filename)
-
-        student = Student(
-            name=name,
-            matric_no=matric_no,
-            department=department,
-            email=email,
-            img_upload=random_filename,
-            student_status=student_status,
-        )
-        student.generate_password_hash(password)
-        db.session.add(student)
         try:
+            filename = secure_filename(img_upload.filename)
+            img_ext = filename.split(".")[-1].lower()
+            random_number = secrets.token_hex(10)
+            random_filename = f"{random_number}.{img_ext}"
+
+            images.save(img_upload, name=random_filename)
+
+            student = Student(
+                name=name,
+                matric_no=matric_no,
+                department=department,
+                email=email,
+                img_upload=random_filename,
+                student_status=student_status,
+            )
+            student.generate_password_hash(password)
+            db.session.add(student)
             db.session.commit()
+
             flash("Student added successfully", "success")
             return redirect(url_for("librarian.students"))
+
         except Exception as e:
             flash(f"An error occurred while adding a new student: {str(e)}", "danger")
             return redirect(url_for("librarian.add_student"))
@@ -767,7 +770,10 @@ def student_library_card(student_id):
     if image_buffer is None:
         flash("unable to generate library card buffer not found", "warning")
         return redirect(url_for("librarian.students"))
-    
-    return send_file(image_buffer, mimetype='image/png', as_attachment=True, download_name=f'{student.matric_no}_library_card.png')
-    
-    
+
+    return send_file(
+        image_buffer,
+        mimetype="image/png",
+        as_attachment=True,
+        download_name=f"{student.matric_no}_library_card.png",
+    )
