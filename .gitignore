@@ -18,6 +18,9 @@ webapp.db
 *.db
 *.db-journal
 
+# Exclude the upload folder
+lms/upload/
+
 # Logs
 *.log
 
