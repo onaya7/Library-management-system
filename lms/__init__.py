@@ -16,7 +16,7 @@ from lms.librarian import librarian
 from lms.student import student
 
 
-def create_app(config_name="production"):
+def create_app(config_name="development"):
     app = Flask(__name__)
 
     # setting up configuration from the development object
@@ -30,6 +30,7 @@ def create_app(config_name="production"):
 
     # flask_uploads
     app.config["UPLOADED_IMAGES_DEST"] = os.path.join(app.root_path, "upload")
+    app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 
     configure_uploads(app, images)
 
