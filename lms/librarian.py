@@ -473,7 +473,6 @@ def add_student():
 
         student = Student(
             name=name,
-            password=password,
             matric_no=matric_no,
             department=department,
             email=email,
