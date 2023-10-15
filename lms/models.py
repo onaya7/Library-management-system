@@ -6,7 +6,7 @@ from flask_login import UserMixin
 
 from lms.encryption import decode_jwt, generate_jwt
 from lms.extensions import db
-
+from sqlalchemy import LargeBinary
 
 class Book(UserMixin, db.Model):
     __tablename__ = "book"
@@ -91,7 +91,7 @@ class Student(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     alternative_id = db.Column(db.String(36), default=str(uuid.uuid4()), nullable=False)
     name = db.Column(db.String(100), nullable=False)
-    password = db.Column(db.String(60), nullable=False)
+    password = db.Column(LargeBinary, nullable=True)
     matric_no = db.Column(db.String(20), nullable=False)
     department = db.Column(db.String(50), nullable=False)
     email = db.Column(db.String(50), nullable=False)
@@ -135,7 +135,7 @@ class Librarian(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     alternative_id = db.Column(db.String(36), default=str(uuid.uuid4()), nullable=False)
     name = db.Column(db.String(100), nullable=False)
-    password = db.Column(db.String(266), nullable=False)
+    password = db.Column(LargeBinary, nullable=True)
     email = db.Column(db.String(50), nullable=False)
     phone = db.Column(db.BigInteger, nullable=False)
     joined_date = db.Column(db.DateTime, default=datetime.utcnow)
