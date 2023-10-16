@@ -117,7 +117,7 @@ class BookForm(FlaskForm):
         ],
     )
     publisher = StringField("Publisher", validators=[DataRequired()])
-    isbn = IntegerField("Isbn", validators=[DataRequired()])
+    isbn = StringField("Isbn", validators=[DataRequired()])
     img_upload = FileField(
         "Image Upload",
         validators=[

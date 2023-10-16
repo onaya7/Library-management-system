@@ -15,8 +15,6 @@ from lms.helpers import calculate_fine, generate_library_card
 from lms.models import (Author, Book, BookCategory, Fine, Issue, Reservation,
                         Student)
 
-from sqlalchemy import cast, Numeric, String
-
 librarian = Blueprint(
     "librarian", __name__, template_folder="templates", static_folder="assets"
 )
@@ -268,12 +266,9 @@ def search_books():
         query = form.query.data.lower().strip()
         # Perform case-insensitive search on both title and ISBN
         books = Book.query.filter(
-                db.or_(
-                    Book.title.ilike(f"%{query}%"),
-                    cast(Book.isbn, String).ilike(f"%{query}%"),  # Cast ISBN to text for comparison
-                    cast(Book.isbn, Numeric).ilike(f"%{query}%")  # Cast ISBN to numeric for comparison
-                )
-            ).paginate(per_page=5, error_out=False)
+            db.or_(Book.title.ilike(f"%{query}%"), Book.isbn.ilike(f"%{query}%"))
+        ).paginate(per_page=5, error_out=False)
+
         if not books.items:
             flash("No books found with the given title or ISBN.", "info")
         elif books.total == 0:
