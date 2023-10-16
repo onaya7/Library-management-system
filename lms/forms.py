@@ -173,7 +173,7 @@ class EditBookForm(FlaskForm):
         ],
     )
     publisher = StringField("Publisher")
-    isbn = IntegerField("Isbn")
+    isbn = StringField("Isbn")
     img_upload = FileField(
         "Image Upload",
         validators=[FileRequired(message="Please select an image.")],
