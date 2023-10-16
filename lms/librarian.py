@@ -318,6 +318,7 @@ def add_book():
             isbn=isbn,
             img_upload=random_filename,
             total_copies=total_copies,
+            available_copies=total_copies
         )
         db.session.add(book)
         try:
