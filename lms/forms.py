@@ -199,7 +199,6 @@ class EditBookForm(FlaskForm):
                 "Invalid image size. Please use an image smaller than 10MB."
             )
 
-
 class StudentForm(FlaskForm):
     name = StringField("Name", validators=[DataRequired(), Length(max=100)])
     password = PasswordField(

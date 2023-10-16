@@ -1,35 +1,21 @@
 import secrets
 from datetime import datetime
 
-from flask import (
-    Blueprint,
-    current_app,
-    flash,
-    redirect,
-    render_template,
-    request,
-    send_file,
-    send_from_directory,
-    url_for,
-)
+from flask import (Blueprint, current_app, flash, redirect, render_template,
+                   request, send_file, send_from_directory, url_for)
 from flask_login import current_user
 from werkzeug.utils import secure_filename
 
 from lms.decorator import role_required, session_expired_handler
 from lms.extensions import db
-from lms.forms import (
-    AuthorForm,
-    BookCategoryForm,
-    BookForm,
-    EditBookForm,
-    EditStudentForm,
-    IssueBookForm,
-    SearchForm,
-    StudentForm,
-    images,
-)
+from lms.forms import (AuthorForm, BookCategoryForm, BookForm, EditBookForm,
+                       EditStudentForm, IssueBookForm, SearchForm, StudentForm,
+                       images)
 from lms.helpers import calculate_fine, generate_library_card
-from lms.models import Author, Book, BookCategory, Fine, Issue, Reservation, Student
+from lms.models import (Author, Book, BookCategory, Fine, Issue, Reservation,
+                        Student)
+
+from sqlalchemy import cast, Numeric, String
 
 librarian = Blueprint(
     "librarian", __name__, template_folder="templates", static_folder="assets"
@@ -282,9 +268,12 @@ def search_books():
         query = form.query.data.lower().strip()
         # Perform case-insensitive search on both title and ISBN
         books = Book.query.filter(
-            db.or_(Book.title.ilike(f"%{query}%"), Book.isbn.ilike(f"%{query}%"))
-        ).paginate(per_page=5, error_out=False)
-
+                db.or_(
+                    Book.title.ilike(f"%{query}%"),
+                    cast(Book.isbn, String).ilike(f"%{query}%"),  # Cast ISBN to text for comparison
+                    cast(Book.isbn, Numeric).ilike(f"%{query}%")  # Cast ISBN to numeric for comparison
+                )
+            ).paginate(per_page=5, error_out=False)
         if not books.items:
             flash("No books found with the given title or ISBN.", "info")
         elif books.total == 0:
