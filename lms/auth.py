@@ -28,7 +28,7 @@ def student_sign_in():
         matric_no = form.matric_no.data
         password = form.password.data
         remember = form.remember.data
-
+    
         user = Student.query.filter_by(matric_no=matric_no).first()
         if user is not None:
             user_password = user.password

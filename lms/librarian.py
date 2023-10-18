@@ -64,8 +64,6 @@ def profile():
     return render_template("librarian/profile.html")
 
 """ Author section"""
-
-
 @librarian.route("/librarian/author", methods=["GET", "POST"])
 @session_expired_handler("librarian")
 @role_required("librarian")
