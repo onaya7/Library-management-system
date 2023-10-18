@@ -1,5 +1,8 @@
+from datetime import datetime, timedelta
+
 from flask import (
     Blueprint,
+    current_app,
     flash,
     make_response,
     redirect,
@@ -7,15 +10,13 @@ from flask import (
     request,
     session,
     url_for,
-    current_app
 )
 from flask_login import login_required, login_user, logout_user
 
 from lms.extensions import bcrypt
 from lms.forms import AdminLoginForm, LibrarianLoginForm, StudentLoginForm
-from lms.helpers import set_cookie, generate_library_card
+from lms.helpers import generate_library_card, set_cookie
 from lms.models import Librarian, Student
-
 
 auth = Blueprint("auth", __name__, template_folder="templates", static_folder="assets")
 
@@ -33,22 +34,33 @@ def student_sign_in():
             user_password = user.password
             password_check = bcrypt.check_password_hash(user_password, password)
             if password_check:
-                login_user(user, remember=remember)
-                token = user.generate_jwt()
-
-                # Create a response object and set the cookie
-                response = make_response(redirect(url_for("student.dashboard")))
-                response = set_cookie(response, token)
-                # Handle 'next' query parameter
-                next_page = request.args.get("next")
-                if next_page:
+                if remember:
+                    exp = datetime.utcnow() + timedelta(hours=2)
+                    token = user.generate_jwt(exp=exp)
+                    # Create a response object and set the cookie
+                    response = make_response(redirect(url_for("student.dashboard")))
+                    response = set_cookie(response, token)
+                    # Handle 'next' query parameter
+                    next_page = request.args.get("next")
+                    if next_page:
+                        flash("Logged in successfully", "success")
+                        return response
+                    # Flash message when redirecting to the next page
                     flash("Logged in successfully", "success")
                     return response
-
-                # Flash message when redirecting to the next page
-                flash("Logged in successfully", "success")
-
-                return response
+                else:
+                    token = user.generate_jwt()
+                    # Create a response object and set the cookie
+                    response = make_response(redirect(url_for("student.dashboard")))
+                    response = set_cookie(response, token)
+                    # Handle 'next' query parameter
+                    next_page = request.args.get("next")
+                    if next_page:
+                        flash("Logged in successfully", "success")
+                        return response
+                    # Flash message when redirecting to the next page
+                    flash("Logged in successfully", "success")
+                    return response
 
             else:
                 flash(
@@ -72,23 +84,33 @@ def librarian_sign_in():
             user_password = user.password
             password_check = bcrypt.check_password_hash(user_password, password)
             if password_check:
-                login_user(user, remember=remember)
-                token = user.generate_jwt()
-
-                # Create a response object and set the cookie
-                response = make_response(redirect(url_for("librarian.dashboard")))
-                response = set_cookie(response, token)
-                # Handle 'next' query parameter
-                next_page = request.args.get("next")
-                if next_page:
+                if remember:
+                    exp = datetime.utcnow() + timedelta(hours=2)
+                    token = user.generate_jwt(exp=exp)
+                    # Create a response object and set the cookie
+                    response = make_response(redirect(url_for("librarian.dashboard")))
+                    response = set_cookie(response, token)
+                    # Handle 'next' query parameter
+                    next_page = request.args.get("next")
+                    if next_page:
+                        flash("Logged in successfully", "success")
+                        return response
+                    # Flash message when redirecting to the next page
                     flash("Logged in successfully", "success")
                     return response
-
-                # Flash message when redirecting to the next page
-                flash("Logged in successfully", "success")
-
-                return response
-
+                else:
+                    token = user.generate_jwt()
+                    # Create a response object and set the cookie
+                    response = make_response(redirect(url_for("librarian.dashboard")))
+                    response = set_cookie(response, token)
+                    # Handle 'next' query parameter
+                    next_page = request.args.get("next")
+                    if next_page:
+                        flash("Logged in successfully", "success")
+                        return response
+                    # Flash message when redirecting to the next page
+                    flash("Logged in successfully", "success")
+                    return response
             else:
                 flash(
                     "Login Unsuccessful. Please check username and password", "danger"
@@ -141,7 +163,7 @@ def admin_sign_in():
 @login_required
 def logout_student():
     logout_user()
-      # Create a response object and remove the token cookie
+    # Create a response object and remove the token cookie
     response = make_response(redirect(url_for("auth.student_sign_in")))
     response.set_cookie("token", "", expires=0)
 
@@ -165,7 +187,7 @@ def logout_librarian():
 @login_required
 def logout_admin():
     logout_user()
-      # Create a response object and remove the token cookie
+    # Create a response object and remove the token cookie
     response = make_response(redirect(url_for("auth.admin_sign_in")))
     response.set_cookie("token", "", expires=0)
 
