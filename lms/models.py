@@ -3,10 +3,11 @@ from datetime import datetime, timedelta
 
 from flask_bcrypt import generate_password_hash
 from flask_login import UserMixin
+from sqlalchemy import LargeBinary
 
 from lms.encryption import decode_jwt, generate_jwt
 from lms.extensions import db
-from sqlalchemy import LargeBinary
+
 
 class Book(UserMixin, db.Model):
     __tablename__ = "book"

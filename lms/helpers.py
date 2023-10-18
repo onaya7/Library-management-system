@@ -80,12 +80,11 @@ def calculate_fine(issue_expiry_date):
 
 # function to generate library card
 def generate_library_card(student_id: int) -> int:
-    
     student = Student.query.get(student_id)
-    
+
     if student is None:
         return None
-    
+
     name = student.name
     matric_no = student.matric_no
     department = student.department
@@ -93,7 +92,6 @@ def generate_library_card(student_id: int) -> int:
     email = student.email
     expire_date = datetime.utcnow() + timedelta(days=365)
     expire_date = expire_date.strftime("%Y-%m-%d")
-    
 
     card_img_location = os.path.join(
         current_app.root_path, "assets/images/library_card_template_front.png"
@@ -115,14 +113,12 @@ def generate_library_card(student_id: int) -> int:
     draw.text(size(44.07, 35.0), matric_no, fill=(0, 0, 0), font=font)
     draw.text(size(44.07, 41.5), department, fill=(0, 0, 0), font=font)
     draw.text(size(44.07, 48.0), expire_date, fill=(0, 0, 0), font=font)
-    
 
-    qr_data = f"{name}-{matric_no}-{department}" 
+    qr_data = f"{name}-{matric_no}-{department}"
     qr_img = generate_qr_code(qr_data)
     qr_img = qr_img.convert("RGBA")  # Convert to RGBA to support transparency
-    qr_img = qr_img.resize(size(11.23, 10.99))  
+    qr_img = qr_img.resize(size(11.23, 10.99))
     card_template.paste(qr_img, size(0.89, 43.3), qr_img)
-
 
     # card_template.save(
     #     os.path.join(current_app.root_path, "assets/images/library_card.png")
@@ -134,14 +130,16 @@ def generate_library_card(student_id: int) -> int:
 
     return image_buffer
 
+
 # Function to calculate target size in pixels
-def size(target_width_mm:float, target_height_mm:float) -> tuple[int, int]:
+def size(target_width_mm: float, target_height_mm: float) -> tuple[int, int]:
     dpi = 300
     target_width = int(target_width_mm * dpi / 25.4)
     target_height = int(target_height_mm * dpi / 25.4)
-    
+
     return target_width, target_height
- 
+
+
 # Function to generate a code128 barcode
 def generate_qr_code(data):
     qr = qrcode.QRCode(

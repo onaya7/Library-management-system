@@ -1,9 +1,7 @@
 import os
-from datetime import timedelta
 
 from flask import Flask, flash, redirect, render_template, request, url_for
 from flask_uploads import configure_uploads
-
 
 from lms.admin import admin
 from lms.auth import auth
@@ -16,7 +14,7 @@ from lms.librarian import librarian
 from lms.student import student
 
 
-def create_app(config_name="development"):
+def create_app(config_name="production"):
     app = Flask(__name__)
 
     # setting up configuration from the development object
@@ -25,12 +23,9 @@ def create_app(config_name="development"):
 
     app.config["SESSION_TYPE"] = "filesystem"
 
-    # app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(minutes=15)
-    # app.config["REMEMBER_COOKIE_DURATION"] = timedelta(days=1)
-
     # flask_uploads
     app.config["UPLOADED_IMAGES_DEST"] = os.path.join(app.root_path, "upload")
-    app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
+    app.config["MAX_CONTENT_LENGTH"] = 16 * 1024 * 1024
 
     configure_uploads(app, images)
 

@@ -305,7 +305,7 @@ class EditStudentForm(FlaskForm):
 
 
 class IssueBookForm(FlaskForm):
-    book_isbn = IntegerField("Book ISBN", validators=[DataRequired()])
+    book_isbn = StringField("Book ISBN", validators=[DataRequired()])
     matric_no = StringField("Matriculation Number", validators=[DataRequired()])
     submit = SubmitField("Issue Book")
 
