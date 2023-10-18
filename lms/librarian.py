@@ -12,8 +12,8 @@ from lms.forms import (AuthorForm, BookCategoryForm, BookForm, EditBookForm,
                        EditStudentForm, IssueBookForm, SearchForm, StudentForm,
                        images)
 from lms.helpers import calculate_fine, generate_library_card
-from lms.models import (Author, Book, BookCategory, Fine, Issue, Reservation,
-                        Student)
+from lms.models import (Author, Book, BookCategory, Fine, Issue, LibraryCard,
+                        Reservation, Student, Librarian)
 
 librarian = Blueprint(
     "librarian", __name__, template_folder="templates", static_folder="assets"
@@ -53,7 +53,15 @@ def dashboard():
         fine=fine,
         reservation=reservation,
     )
-
+""" Profile section """
+@librarian.route("/librarian/profile", methods=["GET", "POST"])
+@session_expired_handler("librarian")
+def profile():
+    librarian = Librarian.query.filter_by(id=current_user.id).first()
+    if librarian is None:
+        flash("librarian not found.", "warning")
+        return redirect(url_for("librarian.profile"))
+    return render_template("librarian/profile.html")
 
 """ Author section"""
 
@@ -755,10 +763,22 @@ def student_library_card(student_id):
     if image_buffer is None:
         flash("unable to generate library card buffer not found", "warning")
         return redirect(url_for("librarian.students"))
-
+    
+    try:
+        library_card = LibraryCard(student_id=student.id)
+        library_card.set_expiry_date()
+        db.session.add(library_card)
+        student.library_card_generated = True
+        db.session.commit()
+    except Exception as e:
+        flash(f"An error occurred while generating library card: {str(e)}", "danger")
+        return redirect(url_for("librarian.students"))
+    
     return send_file(
         image_buffer,
         mimetype="image/png",
         as_attachment=True,
         download_name=f"{student.matric_no}_library_card.png",
     )
+    
+    

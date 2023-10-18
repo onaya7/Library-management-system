@@ -1,9 +1,9 @@
-from flask import Blueprint, redirect, render_template, url_for, flash
+from flask import Blueprint, flash, redirect, render_template, url_for
 from flask_login import current_user, login_required
 
 from lms.decorator import role_required, session_expired_handler
-from lms.models import *
 from lms.forms import SearchForm
+from lms.models import *
 
 student = Blueprint(
     "student", __name__, template_folder="templates", static_folder="assets"
@@ -212,9 +212,12 @@ def transaction():
 @student.route("/student/profile", methods=["GET", "POST"])
 @session_expired_handler("student")
 def profile():
+    student = Student.query.filter_by(matric_no=current_user.matric_no).first()
+    if student is None:
+        flash("Student not found.", "warning")
+        return redirect(url_for("student.profile"))
     return render_template("student/profile.html")
-
-
+    
 
 @student.route("/student/payment", methods=["GET", "POST"])
 @session_expired_handler("student")

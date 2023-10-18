@@ -99,6 +99,7 @@ class Student(UserMixin, db.Model):
     joined_date = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, nullable=True)
     student_status = db.Column(db.Boolean, default=True)
+    library_card_generated = db.Column(db.Boolean, default=False)
     library_card = db.relationship("LibraryCard", backref="student", uselist=False)
     fine = db.relationship("Fine", back_populates="student", uselist=False)
     issue = db.relationship("Issue", back_populates="student")
@@ -180,11 +181,11 @@ class LibraryCard(UserMixin, db.Model):
     expiry_date = db.Column(db.DateTime, nullable=True)
 
 
-    def set_expiry_date(self, date):
-        self.expiry_date = date + timedelta(days=365)  # Adding one year
+    def set_expiry_date(self):
+        self.expiry_date = datetime.utcnow()  + timedelta(days=365)  # Adding one year
 
     def has_expired(self):
-        return datetime.utcnow() > self.expiry_date
+        return datetime.utcnow > self.expiry_date
 
     def __repr__(self):
         return f"LibraryCard(id:'{self.id}', student_id:'{self.student_id}')"

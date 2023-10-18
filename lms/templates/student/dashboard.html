@@ -141,7 +141,7 @@
                 <div class="card-header d-flex align-items-center
                         justify-content-between card-header-height">
                     <h4 class="mb-0">Recently added books</h4>
-                    <a href="{{ url_for('librarian.books')}}" class="btn btn-outline-secondary btn-sm">View all</a>
+                    <a href="{{ url_for('student.books') }}" class="btn btn-outline-secondary btn-sm">View all</a>
                 </div>
                 <!-- Card body -->
                 <div class="card-body">
@@ -186,7 +186,7 @@
                 <div
                     class="card-header d-flex justify-content-between align-items-center border-bottom-0 card-header-height">
                     <h4 class="mb-0">Overdue's History</h4>
-                    <a href="{{ url_for('librarian.fine')}}" class="btn btn-outline-secondary btn-sm">View all</a>
+                    <a href="{{ url_for('student.fine')}}" class="btn btn-outline-secondary btn-sm">View all</a>
 
                 </div>
                 <!-- Table -->
@@ -257,7 +257,7 @@
                 <div
                     class="card-header d-flex justify-content-between align-items-center border-bottom-0 card-header-height">
                     <h4 class="mb-0">Recent Checkout's</h4>
-                    <a href="{{ url_for('librarian.issued_book')}}" class="btn btn-outline-secondary btn-sm">View
+                    <a href="{{ url_for('student.issue_history')}}" class="btn btn-outline-secondary btn-sm">View
                         all</a>
                 </div>
                 <!-- Table -->
