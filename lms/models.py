@@ -111,11 +111,11 @@ class Student(UserMixin, db.Model):
     def generate_password_hash(self, password):
         self.password = generate_password_hash(password)
 
-    def generate_jwt(self) -> str:
+    def generate_jwt(self, exp=datetime.utcnow() + timedelta(hours=1)) -> str:
         payload = dict()
         payload["id"] = self.alternative_id
         payload["role"] = "student"
-        payload["exp"] = datetime.utcnow() + timedelta(hours=1)
+        payload["exp"] = exp
         payload["iat"] = datetime.utcnow()
 
         return generate_jwt(payload)
@@ -147,14 +147,15 @@ class Librarian(UserMixin, db.Model):
     def generate_password_hash(self, password):
         self.password = generate_password_hash(password)
 
-    def generate_jwt(self) -> str:
+    def generate_jwt(self, exp=datetime.utcnow() + timedelta(hours=1)) -> str:
         payload = dict()
         payload["id"] = self.alternative_id
         payload["role"] = "librarian"
-        payload["exp"] = datetime.utcnow() + timedelta(hours=1)
+        payload["exp"] = exp
         payload["iat"] = datetime.utcnow()
 
         return generate_jwt(payload)
+      
 
     @staticmethod
     def decode_jwt(

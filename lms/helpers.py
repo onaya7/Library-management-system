@@ -51,7 +51,7 @@ def token_authentication(request) -> str:
 
 
 # function to set cookie
-def set_cookie(response: make_response, token, duration=3600) -> make_response:
+def set_cookie(response: make_response, token, duration=7200) -> make_response:
     cookie = dict()
 
     cookie["key"] = "token"

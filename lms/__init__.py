@@ -25,8 +25,8 @@ def create_app(config_name="development"):
 
     app.config["SESSION_TYPE"] = "filesystem"
 
-    app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(minutes=15)
-    app.config["REMEMBER_COOKIE_DURATION"] = timedelta(days=1)
+    # app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(minutes=15)
+    # app.config["REMEMBER_COOKIE_DURATION"] = timedelta(days=1)
 
     # flask_uploads
     app.config["UPLOADED_IMAGES_DEST"] = os.path.join(app.root_path, "upload")
