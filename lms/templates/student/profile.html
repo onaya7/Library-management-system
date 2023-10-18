@@ -80,6 +80,17 @@
                                 {{current_user.joined_date.strftime('%Y-%m-%d ') }}
                             </p>
 
+                            {% if current_user.library_card_generated is true %}
+                            <h4 class="mb-0"> Library card</h4>
+                            <p class="mb-4">
+                                Issued successfully
+                            </p>
+                            {% else %}
+                            <h4 class="mb-0"> Library card</h4>
+                            <p class="mb-4 text-danger ">
+                                Not issued
+                            </p>
+                            {% endif %}
                             
                             {% if current_user.is_student is true %}
                             <h4 class="mb-0"> Role</h4>

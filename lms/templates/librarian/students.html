@@ -79,6 +79,7 @@
                                             <th>Department</th>
                                             <th>Matric number</th>
                                             <th>Email</th>
+                                            <th>Library card</th>
                                             <th>Status</th>
                                             <th>Joined date</th>
                                             <th>Updated date</th>
@@ -179,6 +180,24 @@
                                                             <h5 class="mb-0 text-primary-hover">
                                                                 {{student.email}}
                                                             </h5>
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </td>
+
+                                            <td>
+                                                <a href="#" class="text-inherit">
+                                                    <div class="d-flex align-items-center">
+                                                        <div class="ms-3">
+                                                            {% if student.library_card_generated is true %}
+                                                            <h5 class="mb-0 text-primary-hover ">
+                                                                Issued
+                                                            </h5>
+                                                            {% else %}
+                                                            <h5 class="mb-0 text-primary-hover">
+                                                                Not Issued
+                                                            </h5>
+                                                            {% endif %}
                                                         </div>
                                                     </div>
                                                 </a>

@@ -78,8 +78,6 @@ def author():
 
 
 """ search section"""
-
-
 @librarian.route(f"/librarian/author/search", methods=["GET", "POST"])
 @session_expired_handler("librarian")
 @role_required("librarian")
