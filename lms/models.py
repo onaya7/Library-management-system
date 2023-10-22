@@ -276,7 +276,7 @@ class Payment(UserMixin, db.Model):
     __table_args__ = {"extend_existing": True}
     id = db.Column(db.Integer, primary_key=True)
     student_id = db.Column(db.Integer, db.ForeignKey("student.id"), nullable=False)
-    transaction_id = db.Column(db.String(50), nullable=False)
+    transaction_id = db.Column(db.Integer, nullable=False)
     transaction_ref = db.Column(db.String(100), nullable=False)
     status = db.Column(db.String, default="failed")
     amount = db.Column(db.Float, nullable=False)
