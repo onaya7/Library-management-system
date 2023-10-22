@@ -239,7 +239,6 @@ class Fine(UserMixin, db.Model):
     def __repr__(self):
         return f"Fine(id:'{self.id}', amount:'{self.amount}', student_id:'{self.student_id}')"
 
-
 class Reservation(UserMixin, db.Model):
     __tablename__ = "reservation"
     __table_args__ = {"extend_existing": True}
@@ -277,7 +276,9 @@ class Payment(UserMixin, db.Model):
     __table_args__ = {"extend_existing": True}
     id = db.Column(db.Integer, primary_key=True)
     student_id = db.Column(db.Integer, db.ForeignKey("student.id"), nullable=False)
-    status = db.Column(db.Boolean, default=False)
+    transaction_id = db.Column(db.String(50), nullable=False)
+    transaction_ref = db.Column(db.String(100), nullable=False)
+    status = db.Column(db.String, default="failed")
     amount = db.Column(db.Float, nullable=False)
     payment_date = db.Column(db.DateTime, default=datetime.utcnow)
     transactions = db.relationship("Transaction", back_populates="payment", lazy=True)
