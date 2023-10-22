@@ -176,8 +176,7 @@
                                                             </h5>
                                                             {% else %}
                                                             <h5 class="mb-0 text-primary-hover txt">
-                                                                <span class="badge bg-danger badge-dot me-1"></span>
-                                                                Not Paid                                                            
+                                                                <a href="{{ url_for('student.fine_payment', fine_id=fine.id) }}" class="btn btn-primary me-2">pay fine</a>                                                       
                                                             </h5>
                                                             {% endif %}
                                                         </div>

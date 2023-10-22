@@ -8,6 +8,7 @@ from PIL import Image, ImageDraw, ImageFont
 
 from lms.encryption import decode_jwt
 from lms.models import Librarian, Student
+import uuid
 
 
 # function to handle the login token
@@ -154,3 +155,19 @@ def generate_qr_code(data):
     qr_img = qr.make_image(fill_color="black", back_color="white")
 
     return qr_img
+
+#function to generate a unique transaction identifier for a transaction
+def generate_transaction_id():
+    # Generate a unique identifier
+    unique_id = str(uuid.uuid4()).replace("-", "")[:8]  # Using the first 8 characters of a UUID
+
+    # Get the current timestamp
+    timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
+
+    # Set a prefix for your transaction reference
+    prefix = "lms-tx"
+
+    # Combine the prefix, timestamp, and unique identifier to form the transaction reference
+    tx_ref = f"{prefix}-{timestamp}-{unique_id}"
+
+    return tx_ref

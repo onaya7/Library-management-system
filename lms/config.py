@@ -10,6 +10,8 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 class Config:
     SECRET_KEY = os.environ.get("SECRET_KEY")
     SQLALCHEMY_TRACK_MODIFICATION = False
+    FLW_SECRET_KEY = os.environ.get("FLW_SECRET_KEY")
+    FLW_SECRET_HASH = os.environ.get("FLW_SECRET_HASH")
 
     @staticmethod
     def init_app(app):
