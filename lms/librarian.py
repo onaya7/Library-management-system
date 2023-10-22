@@ -580,9 +580,9 @@ def search_issue():
 def issue_book():
     form = IssueBookForm()
     if form.validate_on_submit():
-        book_id = int(form.book_isbn.data)
+        book_id = form.book_isbn.data
         student_id = form.matric_no.data
-        librarian_id = int(current_user.id)
+        librarian_id = current_user.id
 
         book_id = Book.query.filter(
             Book.isbn == book_id, Book.available_copies > 0
