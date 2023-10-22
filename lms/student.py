@@ -384,12 +384,12 @@ def fine_payment_status():
             }
             response = requests.get(url=url, headers=headers)
             if response.status_code != 200:
-                flash(f"Hello an Error occurred during payment status processing: {str(e)}", "error")
+                flash(f"Hello an Error occurred during payment status processing: {str(e)}", "danger")
             data = response.json()
             fine_id = data["data"]["meta"]["fine_id"]
             fine = Fine.query.get(fine_id)
             if not fine:
-                flash("No fine found for the current user", "error")
+                flash("No fine found for the current user", "danger")
             if (
                 data["data"]["status"] == "successful"
                 and data["data"]["amount"] == fine.amount
@@ -422,17 +422,17 @@ def fine_payment_status():
                     db.session.add(transaction)
                     db.session.commit()
                 except Exception as e:
-                    flash(f"Please an Error occurred during payment status processing: {str(e)}", "error")
+                    flash(f"Please an Error occurred during payment status processing: {str(e)}", "danger")
                     return redirect(url_for("student.fine"))
                 flash("Payment successful", "success")
             else:
-                flash("Payment failed", "error")
+                flash("Payment failed", "danger")
             return redirect(url_for("student.fine"))
         else:
-            flash("Payment failed", "error")
+            flash("Payment failed", "danger")
             return redirect(url_for("student.fine"))
     except Exception as e:
-        flash(f"An error occurred during payment status processing: {str(e)}", "error")
+        flash(f"An error occurred during payment status processing: {str(e)}", "danger")
         return redirect(url_for("student.fine"))
 
 

@@ -278,7 +278,7 @@ class Payment(UserMixin, db.Model):
     student_id = db.Column(db.Integer, db.ForeignKey("student.id"), nullable=False)
     transaction_id = db.Column(db.Integer, nullable=False)
     transaction_ref = db.Column(db.String(100), nullable=False)
-    status = db.Column(db.String, default="failed")
+    status = db.Column(db.String(60), default="failed")
     amount = db.Column(db.Float, nullable=False)
     payment_date = db.Column(db.DateTime, default=datetime.utcnow)
     transactions = db.relationship("Transaction", back_populates="payment", lazy=True)
