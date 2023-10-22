@@ -422,7 +422,7 @@ def fine_payment_status():
                     db.session.add(transaction)
                     db.session.commit()
                 except Exception as e:
-                    flash("Error occurred during payment status processing", "error")
+                    flash(f"Error occurred during payment status processing: {str(e)}", "error")
                     return redirect(url_for("student.fine"))
                 flash("Payment successful", "success")
             else:
