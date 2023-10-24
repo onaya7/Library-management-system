@@ -149,7 +149,7 @@ class Librarian(UserMixin, db.Model):
     def generate_password_hash(self, password):
         self.password = generate_password_hash(password)
 
-    def generate_jwt(self, exp=datetime.utcnow() + timedelta(hours=1)) -> str:
+    def generate_jwt(self, exp) -> str:
         payload = dict()
         payload["id"] = self.alternative_id
         payload["role"] = "librarian"
