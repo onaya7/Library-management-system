@@ -446,7 +446,7 @@ def fine_payment_status():
                     fine.status = True
                     payment = Payment(
                         student_id=fine.student_id,
-                        issue_id=fine.issue_id,
+                        issue_id=fine.issue[0].id,
                         transaction_id=data["data"]["id"],
                         transaction_ref=data["data"]["tx_ref"],
                         amount=data["data"]["amount"],
