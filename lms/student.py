@@ -289,12 +289,10 @@ def search_transaction():
         query = form.query.data.lower().strip()
         payment = Payment.query.filter(
                 Payment.student_id == current_user.id, 
-                Payment.transaction_id.ilike(f"%{query}%"),
-                Payment.transaction_ref.ilike(f"%{query}%"),
-           
+                Payment.payment_date.ilike(f"%{query}%"),
         ).paginate(per_page=10, error_out=False)
         if not payment.items:
-            flash("No payment found with the given transaction details.", "info")
+            flash("No payment found with the given transaction date. try 2023-10-24", "info")
         elif payment.total == 0:
             flash("No results found.", "info")
 

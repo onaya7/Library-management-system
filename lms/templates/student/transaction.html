@@ -1,4 +1,4 @@
-{% extends 'librarian/base.html' %}
+{% extends 'student/base.html' %}
 {% block title %}Total Transaction{% endblock %}
 {% block content %}
 <section class="container-fluid p-4">
@@ -46,7 +46,7 @@
                             <span class="position-absolute ps-3 search-icon">
                                 <i class="fe fe-search"></i>
                             </span>
-                            {{ form.query(class="form-control ps-6", placeholder="Filter transaction by id, ref")}}
+                            {{ form.query(class="form-control ps-6", placeholder="Filter transaction by date eg: 2023-10-24")}}
                             {% if form.query.errors %}
                             <ul class="errors">
                                 {% for error in form.query.errors %}
