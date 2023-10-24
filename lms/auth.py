@@ -2,20 +2,18 @@ from datetime import datetime, timedelta
 
 from flask import (
     Blueprint,
-    current_app,
     flash,
     make_response,
     redirect,
     render_template,
     request,
-    session,
     url_for,
 )
 from flask_login import login_required, login_user, logout_user
 
 from lms.extensions import bcrypt
 from lms.forms import AdminLoginForm, LibrarianLoginForm, StudentLoginForm
-from lms.helpers import generate_library_card, set_cookie
+from lms.helpers import set_cookie
 from lms.models import Librarian, Student
 
 auth = Blueprint("auth", __name__, template_folder="templates", static_folder="assets")

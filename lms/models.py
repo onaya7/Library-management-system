@@ -9,6 +9,8 @@ from lms.encryption import decode_jwt, generate_jwt
 from lms.extensions import db
 
 
+def generate_alternative_id():
+    return str(uuid.uuid4())
 class Book(UserMixin, db.Model):
     __tablename__ = "book"
     __table_args__ = {"extend_existing": True}
@@ -88,7 +90,7 @@ class Student(UserMixin, db.Model):
     __tablename__ = "student"
     __table_args__ = {"extend_existing": True}
     id = db.Column(db.Integer, primary_key=True)
-    alternative_id = db.Column(db.String(36), default=str(uuid.uuid4()), nullable=False)
+    alternative_id = db.Column(db.String(36), default=generate_alternative_id, nullable=False)
     name = db.Column(db.String(100), nullable=False)
     password = db.Column(LargeBinary, nullable=True)
     matric_no = db.Column(db.String(20), nullable=False)
@@ -107,6 +109,7 @@ class Student(UserMixin, db.Model):
     payment = db.relationship("Payment", back_populates="student")
     library_card = db.relationship("LibraryCard", back_populates="student")
 
+        
     def generate_password_hash(self, password):
         self.password = generate_password_hash(password)
 
