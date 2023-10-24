@@ -54,7 +54,7 @@ def dashboard():
     author = Author.query.order_by(Author.name).paginate(per_page=5, error_out=False)
     book = Book.query.order_by(Book.id.desc()).paginate(per_page=3, error_out=False)
     student = Student.query.order_by(Student.id.desc()).paginate(
-        per_page=3, error_out=False
+        per_page=5, error_out=False
     )
     category = BookCategory.query.order_by(BookCategory.name).paginate(
         per_page=5, error_out=False

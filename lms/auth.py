@@ -26,7 +26,7 @@ def student_sign_in():
         matric_no = form.matric_no.data
         password = form.password.data
         remember = form.remember.data
-    
+
         user = Student.query.filter_by(matric_no=matric_no).first()
         if user is not None:
             user_password = user.password
@@ -73,30 +73,20 @@ def librarian_sign_in():
                 if remember:
                     exp = datetime.utcnow() + timedelta(hours=2)
                     token = user.generate_jwt(exp=exp)
-                    # Create a response object and set the cookie
-                    response = make_response(redirect(url_for("librarian.dashboard")))
-                    response = set_cookie(response, token)
-                    # Handle 'next' query parameter
-                    next_page = request.args.get("next")
-                    if next_page:
-                        flash("Logged in successfully", "success")
-                        return response
-                    # Flash message when redirecting to the next page
-                    flash("Logged in successfully", "success")
                     return response
                 else:
                     token = user.generate_jwt()
-                    # Create a response object and set the cookie
-                    response = make_response(redirect(url_for("librarian.dashboard")))
-                    response = set_cookie(response, token)
-                    # Handle 'next' query parameter
-                    next_page = request.args.get("next")
-                    if next_page:
-                        flash("Logged in successfully", "success")
-                        return response
-                    # Flash message when redirecting to the next page
+                # Create a response object and set the cookie
+                response = make_response(redirect(url_for("librarian.dashboard")))
+                response = set_cookie(response, token)
+                # Handle 'next' query parameter
+                next_page = request.args.get("next")
+                if next_page:
                     flash("Logged in successfully", "success")
                     return response
+                # Flash message when redirecting to the next page
+                flash("Logged in successfully", "success")
+                return response
             else:
                 flash(
                     "Login Unsuccessful. Please check username and password", "danger"

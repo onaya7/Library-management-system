@@ -59,11 +59,11 @@ def create_app(config_name="production"):
 
     @app.errorhandler(404)
     def page_not_found(e):
-        return render_template("auth/404.html")
+        return render_template("auth/404.html"), 404
 
     @app.errorhandler(500)
     def internal_server_error(e):
-        return render_template("auth/500.html")
+        return render_template("auth/500.html"), 500
 
     with app.app_context():
         pass
