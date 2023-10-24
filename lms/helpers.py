@@ -1,5 +1,6 @@
 import io
 import os
+import uuid
 from datetime import datetime, timedelta
 
 import qrcode
@@ -8,7 +9,6 @@ from PIL import Image, ImageDraw, ImageFont
 
 from lms.encryption import decode_jwt
 from lms.models import Librarian, Student
-import uuid
 
 
 # function to handle the login token
@@ -65,6 +65,7 @@ def set_cookie(response: make_response, token, duration=7200) -> make_response:
 
 # function to calculate fine
 
+
 def calculate_fine(issue_expiry_date, fine_rate=100):
     current_date = datetime.utcnow()
     if current_date > issue_expiry_date:
@@ -78,6 +79,7 @@ def calculate_fine(issue_expiry_date, fine_rate=100):
         return fine_amount
     else:
         return 0
+
 
 # function to generate library card
 def generate_library_card(student_id: int) -> int:
@@ -156,10 +158,13 @@ def generate_qr_code(data):
 
     return qr_img
 
-#function to generate a unique transaction identifier for a transaction
+
+# function to generate a unique transaction identifier for a transaction
 def generate_transaction_id():
     # Generate a unique identifier
-    unique_id = str(uuid.uuid4()).replace("-", "")[:8]  # Using the first 8 characters of a UUID
+    unique_id = str(uuid.uuid4()).replace("-", "")[
+        :8
+    ]  # Using the first 8 characters of a UUID
 
     # Get the current timestamp
     timestamp = datetime.now().strftime("%Y%m%d%H%M%S")

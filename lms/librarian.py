@@ -835,6 +835,8 @@ def transaction():
 
 
 """ search section"""
+
+
 @librarian.route("/librarian/transaction/search", methods=["GET", "POST"])
 @session_expired_handler("librarian")
 @role_required("librarian")

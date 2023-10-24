@@ -25,3 +25,4 @@ def decode_jwt(token: str, algorithm: str = "HS256") -> tuple:
         return False, "Invalid token."
     except Exception as e:
         return False, str(e)
+

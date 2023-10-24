@@ -246,6 +246,8 @@ def fine():
 
 
 """Fine  search section"""
+
+
 @student.route("/student/fine/search", methods=["GET", "POST"])
 @session_expired_handler("student")
 @role_required("student")
@@ -265,6 +267,8 @@ def search_fine():
 
 
 """ Transaction section"""
+
+
 @student.route("/student/transaction", methods=["GET", "POST"])
 @session_expired_handler("student")
 @role_required("student")
@@ -279,6 +283,8 @@ def transaction():
 
 
 """ search section"""
+
+
 @student.route("/student/transaction/search", methods=["GET", "POST"])
 @session_expired_handler("student")
 @role_required("student")
@@ -288,15 +294,19 @@ def search_transaction():
     if form.validate_on_submit():
         query = form.query.data.lower().strip()
         payment = Payment.query.filter(
-                Payment.student_id == current_user.id, 
-                Payment.payment_date.ilike(f"%{query}%"),
+            Payment.student_id == current_user.id,
+            Payment.payment_date.ilike(f"%{query}%"),
         ).paginate(per_page=10, error_out=False)
         if not payment.items:
-            flash("No payment found with the given transaction date. try 2023-10-24", "info")
+            flash(
+                "No payment found with the given transaction date. try 2023-10-24",
+                "info",
+            )
         elif payment.total == 0:
             flash("No results found.", "info")
 
     return render_template("student/transaction.html", form=form, payment=payment)
+
 
 @student.route("/student/profile", methods=["GET", "POST"])
 @session_expired_handler("student")
