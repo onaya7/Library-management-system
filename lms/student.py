@@ -17,13 +17,19 @@ student = Blueprint(
 @session_expired_handler("student")
 @role_required("student")
 def dashboard():
-    book = Book.query.order_by(Book.id.desc()).paginate(per_page=5, error_out=False)
+    book = Book.query.order_by(Book.id.desc()).paginate(per_page=3, error_out=False)
     category = BookCategory.query.order_by(BookCategory.id.desc()).paginate(
         per_page=5, error_out=False
     )
     issue = (
         Issue.query.filter_by(student_id=current_user.id)
         .order_by(Issue.issued_date.desc())
+        .paginate(per_page=5, error_out=False)
+    )
+
+    payment = (
+        Payment.query.filter_by(student_id=current_user.id)
+        .order_by(Payment.payment_date.desc())
         .paginate(per_page=5, error_out=False)
     )
     reserve = (
@@ -44,6 +50,7 @@ def dashboard():
         category=category,
         reserve=reserve,
         issue=issue,
+        payment=payment,
     )
 
 
@@ -239,8 +246,6 @@ def fine():
 
 
 """Fine  search section"""
-
-
 @student.route("/student/fine/search", methods=["GET", "POST"])
 @session_expired_handler("student")
 @role_required("student")
@@ -259,12 +264,41 @@ def search_fine():
     return render_template("student/fine.html", form=form, fine=fine)
 
 
+""" Transaction section"""
 @student.route("/student/transaction", methods=["GET", "POST"])
 @session_expired_handler("student")
 @role_required("student")
 def transaction():
-    return render_template("student/transaction.html")
+    form = SearchForm()
+    payment = (
+        Payment.query.filter_by(student_id=current_user.id)
+        .order_by(Payment.payment_date.desc())
+        .paginate(per_page=5, error_out=False)
+    )
+    return render_template("student/transaction.html", payment=payment, form=form)
 
+
+""" search section"""
+@student.route("/student/transaction/search", methods=["GET", "POST"])
+@session_expired_handler("student")
+@role_required("student")
+def search_transaction():
+    form = SearchForm()
+    payment = None
+    if form.validate_on_submit():
+        query = form.query.data.lower().strip()
+        payment = Payment.query.filter(
+                Payment.student_id == current_user.id, 
+                Payment.transaction_id.ilike(f"%{query}%"),
+                Payment.transaction_ref.ilike(f"%{query}%"),
+           
+        ).paginate(per_page=10, error_out=False)
+        if not payment.items:
+            flash("No payment found with the given transaction details.", "info")
+        elif payment.total == 0:
+            flash("No results found.", "info")
+
+    return render_template("student/transaction.html", form=form, payment=payment)
 
 @student.route("/student/profile", methods=["GET", "POST"])
 @session_expired_handler("student")
@@ -278,6 +312,8 @@ def profile():
 
 
 """Fine  payment section"""
+
+
 @student.route("/student/fine/payment/<int:fine_id>", methods=["GET", "POST"])
 @session_expired_handler("student")
 @role_required("student")
@@ -384,7 +420,10 @@ def fine_payment_status():
             }
             response = requests.get(url=url, headers=headers)
             if response.status_code != 200:
-                flash(f"Hello an Error occurred during payment status processing: {str(e)}", "danger")
+                flash(
+                    f"Hello an Error occurred during payment status processing: {str(e)}",
+                    "danger",
+                )
             data = response.json()
             fine_id = data["data"]["meta"]["fine_id"]
             fine = Fine.query.get(fine_id)
@@ -398,31 +437,20 @@ def fine_payment_status():
                 try:
                     fine.status = True
                     payment = Payment(
-                        student_id=current_user.id,
+                        student_id=fine.student_id,
+                        issue_id=fine.issue_id,
                         transaction_id=data["data"]["id"],
                         transaction_ref=data["data"]["tx_ref"],
                         amount=data["data"]["amount"],
-                        status="successful",
+                        status=data["data"]["status"],
                     )
                     db.session.add(payment)
                     db.session.commit()
-
-                    book_id = fine.issue[0].book_id
-                    student_id = fine.student_id
-                    issue_id = fine.issue[0].id
-                    fine_id = fine.id
-                    payment_id = payment.id
-                    transaction = Transaction(
-                        book_id=book_id,
-                        student_id=student_id,
-                        issue_id=issue_id,
-                        fine_id=fine_id,
-                        payment_id=payment_id,
-                    )
-                    db.session.add(transaction)
-                    db.session.commit()
                 except Exception as e:
-                    flash(f"Please an Error occurred during payment status processing: {str(e)}", "danger")
+                    flash(
+                        f"Please an Error occurred during payment status processing: {str(e)}",
+                        "danger",
+                    )
                     return redirect(url_for("student.fine"))
                 flash("Payment successful", "success")
             else:

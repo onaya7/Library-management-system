@@ -1,19 +1,46 @@
 import secrets
 from datetime import datetime
 
-from flask import (Blueprint, current_app, flash, redirect, render_template,
-                   request, send_file, send_from_directory, url_for)
+from flask import (
+    Blueprint,
+    current_app,
+    flash,
+    redirect,
+    render_template,
+    request,
+    send_file,
+    send_from_directory,
+    url_for,
+)
 from flask_login import current_user
 from werkzeug.utils import secure_filename
 
 from lms.decorator import role_required, session_expired_handler
 from lms.extensions import db
-from lms.forms import (AuthorForm, BookCategoryForm, BookForm, EditBookForm,
-                       EditStudentForm, IssueBookForm, SearchForm, StudentForm,
-                       images)
+from lms.forms import (
+    AuthorForm,
+    BookCategoryForm,
+    BookForm,
+    EditBookForm,
+    EditStudentForm,
+    IssueBookForm,
+    SearchForm,
+    StudentForm,
+    images,
+)
 from lms.helpers import calculate_fine, generate_library_card
-from lms.models import (Author, Book, BookCategory, Fine, Issue, LibraryCard,
-                        Reservation, Student, Librarian)
+from lms.models import (
+    Author,
+    Book,
+    BookCategory,
+    Fine,
+    Issue,
+    Librarian,
+    LibraryCard,
+    Payment,
+    Reservation,
+    Student,
+)
 
 librarian = Blueprint(
     "librarian", __name__, template_folder="templates", static_folder="assets"
@@ -25,9 +52,9 @@ librarian = Blueprint(
 @role_required("librarian")
 def dashboard():
     author = Author.query.order_by(Author.name).paginate(per_page=5, error_out=False)
-    book = Book.query.order_by(Book.id.desc()).paginate(per_page=5, error_out=False)
+    book = Book.query.order_by(Book.id.desc()).paginate(per_page=3, error_out=False)
     student = Student.query.order_by(Student.id.desc()).paginate(
-        per_page=5, error_out=False
+        per_page=3, error_out=False
     )
     category = BookCategory.query.order_by(BookCategory.name).paginate(
         per_page=5, error_out=False
@@ -40,9 +67,14 @@ def dashboard():
         .order_by(Fine.id.desc())
         .paginate(per_page=5, error_out=False)
     )
+
+    payment = Payment.query.order_by(Payment.payment_date.desc()).paginate(
+        per_page=5, error_out=False
+    )
     reservation = Reservation.query.order_by(
         Reservation.reservation_date.desc()
-    ).paginate(per_page=5, error_out=False)
+    ).paginate(per_page=4, error_out=False)
+
     return render_template(
         "librarian/dashboard.html",
         author=author,
@@ -52,8 +84,13 @@ def dashboard():
         issue=issue,
         fine=fine,
         reservation=reservation,
+        payment=payment,
     )
+
+
 """ Profile section """
+
+
 @librarian.route("/librarian/profile", methods=["GET", "POST"])
 @session_expired_handler("librarian")
 def profile():
@@ -63,7 +100,10 @@ def profile():
         return redirect(url_for("librarian.profile"))
     return render_template("librarian/profile.html")
 
+
 """ Author section"""
+
+
 @librarian.route("/librarian/author", methods=["GET", "POST"])
 @session_expired_handler("librarian")
 @role_required("librarian")
@@ -76,6 +116,8 @@ def author():
 
 
 """ search section"""
+
+
 @librarian.route(f"/librarian/author/search", methods=["GET", "POST"])
 @session_expired_handler("librarian")
 @role_required("librarian")
@@ -322,7 +364,7 @@ def add_book():
             isbn=isbn,
             img_upload=random_filename,
             total_copies=total_copies,
-            available_copies=total_copies
+            available_copies=total_copies,
         )
         db.session.add(book)
         try:
@@ -759,7 +801,7 @@ def student_library_card(student_id):
     if image_buffer is None:
         flash("unable to generate library card buffer not found", "warning")
         return redirect(url_for("librarian.students"))
-    
+
     try:
         library_card = LibraryCard(student_id=student.id)
         library_card.set_expiry_date()
@@ -769,12 +811,47 @@ def student_library_card(student_id):
     except Exception as e:
         flash(f"An error occurred while generating library card: {str(e)}", "danger")
         return redirect(url_for("librarian.students"))
-    
+
     return send_file(
         image_buffer,
         mimetype="image/png",
         as_attachment=True,
         download_name=f"{student.matric_no}_library_card.png",
     )
-    
-    
+
+
+""" Transaction section"""
+
+
+@librarian.route("/librarian/transaction", methods=["GET", "POST"])
+@session_expired_handler("librarian")
+@role_required("librarian")
+def transaction():
+    form = SearchForm()
+
+    payment = Payment.query.order_by(Payment.id).paginate(per_page=5, error_out=False)
+
+    return render_template("librarian/transaction.html", payment=payment, form=form)
+
+
+""" search section"""
+@librarian.route("/librarian/transaction/search", methods=["GET", "POST"])
+@session_expired_handler("librarian")
+@role_required("librarian")
+def search_transaction():
+    form = SearchForm()
+    payment = None
+    if form.validate_on_submit():
+        query = form.query.data.lower().strip()
+        payment = Payment.query.filter(
+            db.or_(
+                Payment.transaction_id.ilike(f"%{query}%"),
+                Payment.transaction_ref.ilike(f"%{query}%"),
+            )
+        ).paginate(per_page=10, error_out=False)
+        if not payment.items:
+            flash("No payment found with the given transaction details.", "info")
+        elif payment.total == 0:
+            flash("No results found.", "info")
+
+    return render_template("librarian/transaction.html", form=form, payment=payment)

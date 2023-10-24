@@ -14,7 +14,7 @@ from lms.librarian import librarian
 from lms.student import student
 
 
-def create_app(config_name="production"):
+def create_app(config_name="development"):
     app = Flask(__name__)
 
     # setting up configuration from the development object

@@ -173,14 +173,14 @@
     </div>
 
     <div class="row">
-        <div class="col-xl-6 col-lg-12 col-md-12 col-12 mb-4">
+        <div class="col-xl-4 col-lg-12 col-md-12 col-12 mb-4">
             <!-- Card -->
             <div class="card h-100">
                 <!-- Card header -->
                 <div class="card-header d-flex align-items-center
                         justify-content-between card-header-height">
                     <h4 class="mb-0">Recently added books</h4>
-                    <a href="{{ url_for('librarian.books')}}" class="btn btn-outline-secondary btn-sm">View all</a>
+                    <a href="{{ url_for('librarian.books')}}" class="btn btn-outline-secondary btn-sm">See all</a>
                 </div>
                 <!-- Card body -->
                 <div class="card-body">
@@ -215,14 +215,14 @@
             </div>
         </div>
 
-        <div class="col-xl-6 col-lg-12 col-md-12 col-12 mb-4">
+        <div class="col-xl-4 col-lg-12 col-md-12 col-12 mb-4">
             <!-- Card -->
             <div class="card h-100">
                 <!-- Card header -->
                 <div class="card-header d-flex align-items-center
                         justify-content-between card-header-height">
                     <h4 class="mb-0">Recently added students</h4>
-                    <a href="{{ url_for('librarian.students')}}" class="btn btn-outline-secondary btn-sm">View all</a>
+                    <a href="{{ url_for('librarian.students')}}" class="btn btn-outline-secondary btn-sm">See all</a>
                 </div>
                 <!-- Card body -->
                 <div class="card-body">
@@ -258,7 +258,60 @@
             </div>
         </div>
 
+
+        <div class="col-xl-4 col-lg-12 col-md-12 col-12 mb-4">
+            <!-- Card -->
+            <div class="card h-100">
+                <!-- Card header -->
+                <div class="card-header d-flex align-items-center
+                        justify-content-between card-header-height">
+                    <h4 class="mb-0">Transactions</h4>
+                    <a href="#" class="btn btn-outline-secondary btn-sm">See all</a>
+                </div>
+                <!-- Card body -->
+                <div class="card-body">
+                    <!-- List group flush -->
+                    <ul class="list-group list-group-flush">
+
+                        {% for payment in payment.items %}
+                        <!-- List group -->
+                        <li class="list-group-item px-0">
+                            <div class="row">
+                                <div class="col ps-0">
+                                    <a href="#">
+                                        <h5 class="text-primary-hover h7 txt">
+                                            {{payment.issue.books.title}}
+                                        </h5>
+
+                                        <h5 class="text-primary-hover h6">
+                                            ₦{{payment.amount}}
+                                        </h5>
+                                    </a>
+                                    <div class="d-flex align-items-center">
+                                        <img src="{{ url_for('librarian.upload', filename=payment.student.img_upload)}}"
+                                            alt="" class="rounded-circle avatar-xs me-2">
+                                        <span class="fs-6 me-3">{{payment.student.matric_no}} </span> <span
+                                            class="fs-6 me-3">{{payment.payment_date.strftime('%Y-%m-%d ')}}</span>
+
+                                        {% if payment.status == "successful" %}
+                                        <span class="fs-6 text-success">{{payment.status}}</span>
+                                        {% else %}
+                                        <span class="fs-6 text-danger">{{payment.status}}</span>
+                                        {% endif %}
+                                    </div>
+
+                                </div>
+                            </div>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+
     </div>
+
+    <!-- ---------------------------------------- -->
 
     <div class="row">
         <div class="col-lg-12 col-md-12 col-12">
@@ -268,7 +321,7 @@
                 <div
                     class="card-header d-flex justify-content-between align-items-center border-bottom-0 card-header-height">
                     <h4 class="mb-0">Overdue's History</h4>
-                    <a href="{{ url_for('librarian.fine')}}" class="btn btn-outline-secondary btn-sm">View all</a>
+                    <a href="{{ url_for('librarian.fine')}}" class="btn btn-outline-secondary btn-sm">See all</a>
 
                 </div>
                 <!-- Table -->

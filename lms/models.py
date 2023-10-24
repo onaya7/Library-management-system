@@ -32,8 +32,6 @@ class Book(UserMixin, db.Model):
     issue = db.relationship("Issue", back_populates="books")
     reserve = db.relationship("Reservation", back_populates="books")
 
-
-
     def edit_book_details(
         self,
         book_category_id,
@@ -101,13 +99,13 @@ class Student(UserMixin, db.Model):
     updated_at = db.Column(db.DateTime, nullable=True)
     student_status = db.Column(db.Boolean, default=True)
     library_card_generated = db.Column(db.Boolean, default=False)
-    library_card = db.relationship("LibraryCard", backref="student", uselist=False)
-    fine = db.relationship("Fine", back_populates="student", uselist=False)
+    is_student = db.Column(db.Boolean, default=True)
+    library_card = db.relationship("LibraryCard", back_populates="student")
+    fine = db.relationship("Fine", back_populates="student")
     issue = db.relationship("Issue", back_populates="student")
     reserve = db.relationship("Reservation", back_populates="student")
-    is_student = db.Column(db.Boolean, default=True)
-
-
+    payment = db.relationship("Payment", back_populates="student")
+    library_card = db.relationship("LibraryCard", back_populates="student")
 
     def generate_password_hash(self, password):
         self.password = generate_password_hash(password)
@@ -139,11 +137,11 @@ class Librarian(UserMixin, db.Model):
     name = db.Column(db.String(100), nullable=False)
     password = db.Column(LargeBinary, nullable=True)
     email = db.Column(db.String(50), nullable=False)
-    phone = db.Column(db.BigInteger, nullable=False)
+    phone = db.Column(db.String(100), nullable=False)
     joined_date = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, nullable=True)
     is_librarian = db.Column(db.Boolean, default=True)
-    is_admin = db.Column(db.Boolean, default=False)
+    issue = db.relationship("Issue", back_populates="librarian")
 
     def generate_password_hash(self, password):
         self.password = generate_password_hash(password)
@@ -156,7 +154,6 @@ class Librarian(UserMixin, db.Model):
         payload["iat"] = datetime.utcnow()
 
         return generate_jwt(payload)
-      
 
     @staticmethod
     def decode_jwt(
@@ -181,10 +178,10 @@ class LibraryCard(UserMixin, db.Model):
     student_id = db.Column(db.Integer, db.ForeignKey("student.id"), nullable=False)
     issued_date = db.Column(db.DateTime, default=datetime.utcnow)
     expiry_date = db.Column(db.DateTime, nullable=True)
-
+    student = db.relationship("Student", back_populates="library_card", lazy=True)
 
     def set_expiry_date(self):
-        self.expiry_date = datetime.utcnow()  + timedelta(days=365)  # Adding one year
+        self.expiry_date = datetime.utcnow() + timedelta(days=365)  # Adding one year
 
     def has_expired(self):
         return datetime.utcnow > self.expiry_date
@@ -192,7 +189,6 @@ class LibraryCard(UserMixin, db.Model):
     def __repr__(self):
         return f"LibraryCard(id:'{self.id}', student_id:'{self.student_id}')"
 
-    
 
 class Issue(UserMixin, db.Model):
     __tablename__ = "issue"
@@ -205,15 +201,17 @@ class Issue(UserMixin, db.Model):
     issued_date = db.Column(db.DateTime, default=datetime.utcnow)
     expiry_date = db.Column(db.DateTime, nullable=True)
     return_date = db.Column(db.DateTime, nullable=True)
-    fine = db.relationship("Fine", back_populates="issue")
     student = db.relationship("Student", back_populates="issue")
     books = db.relationship("Book", back_populates="issue")
-    transactions = db.relationship("Transaction", back_populates="issue", lazy=True)
+    fine = db.relationship("Fine", back_populates="issue")
+    librarian = db.relationship("Librarian", back_populates="issue")
+    payment = db.relationship("Payment", back_populates="issue")
 
     def add_fine_to_student(self, fine):
         self.fine_id = fine
+
     def set_expiry_date(self, date):
-        self.expiry_date = date + timedelta(minutes=5)  # Expires in 5min
+        self.expiry_date = date + timedelta(days=1)  # Expires in 1day
 
     def has_expired(self):
         return datetime.utcnow() > self.expiry_date
@@ -233,11 +231,12 @@ class Fine(UserMixin, db.Model):
     student_id = db.Column(db.Integer, db.ForeignKey("student.id"), nullable=False)
     matric_no = db.Column(db.String(20))
     status = db.Column(db.Boolean, default=False)
-    issue = db.relationship("Issue", back_populates="fine")
     student = db.relationship("Student", back_populates="fine")
-    
+    issue = db.relationship("Issue", back_populates="fine")
+
     def __repr__(self):
         return f"Fine(id:'{self.id}', amount:'{self.amount}', student_id:'{self.student_id}')"
+
 
 class Reservation(UserMixin, db.Model):
     __tablename__ = "reservation"
@@ -247,28 +246,11 @@ class Reservation(UserMixin, db.Model):
     student_id = db.Column(db.Integer, db.ForeignKey("student.id"), nullable=False)
     reservation_status = db.Column(db.Boolean, default=True)
     reservation_date = db.Column(db.DateTime, default=datetime.utcnow)
-    student = db.relationship("Student", back_populates="reserve")
     books = db.relationship("Book", back_populates="reserve")
-
-    
+    student = db.relationship("Student", back_populates="reserve")
 
     def __repr__(self):
         return f"Reservation(id:'{self.id}', book_id:'{self.book_id}', student_id:'{self.student_id}')"
-
-class Transaction(UserMixin, db.Model):
-    __tablename__ = "transaction"
-    __table_args__ = {"extend_existing": True}
-    id = db.Column(db.Integer, primary_key=True)
-    book_id = db.Column(db.Integer, db.ForeignKey("book.id"), nullable=False)
-    student_id = db.Column(db.Integer, db.ForeignKey("student.id"), nullable=False)
-    issue_id = db.Column(db.Integer, db.ForeignKey("issue.id"), nullable=False)
-    fine_id = db.Column(db.Integer, db.ForeignKey("fine.id"), nullable=True)
-    payment_id = db.Column(db.Integer, db.ForeignKey("payment.id"), nullable=False)
-    issue = db.relationship("Issue", back_populates="transactions", lazy=True)
-    payment = db.relationship("Payment", back_populates="transactions", lazy=True)
-
-    def __repr__(self):
-        return f"Transaction(id:'{self.id}', book_id:'{self.book_id}', student_id:'{self.student_id}', fine_id:'{self.fine_id}')"
 
 
 class Payment(UserMixin, db.Model):
@@ -276,13 +258,14 @@ class Payment(UserMixin, db.Model):
     __table_args__ = {"extend_existing": True}
     id = db.Column(db.Integer, primary_key=True)
     student_id = db.Column(db.Integer, db.ForeignKey("student.id"), nullable=False)
+    issue_id = db.Column(db.Integer, db.ForeignKey("issue.id"), nullable=False)
     transaction_id = db.Column(db.Integer, nullable=False)
     transaction_ref = db.Column(db.String(100), nullable=False)
-    status = db.Column(db.String(60), default="failed")
+    status = db.Column(db.String(60), nullable=True)
     amount = db.Column(db.Float, nullable=False)
     payment_date = db.Column(db.DateTime, default=datetime.utcnow)
-    transactions = db.relationship("Transaction", back_populates="payment", lazy=True)
-
+    student = db.relationship("Student", back_populates="payment", lazy=True)
+    issue = db.relationship("Issue", back_populates="payment", lazy=True)
 
     def __repr__(self):
-        return f"Payment(id:'{self.id}', amount:'{self.amount}', student_id:'{self.student_id}')"
+        return f"Payment(id:'{self.id}', amount:'{self.amount}', issue_id:'{self.issue_id}')"

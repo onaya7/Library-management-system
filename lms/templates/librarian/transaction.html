@@ -13,7 +13,7 @@
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb">
                             <li class="breadcrumb-item">
-                                <a href="{{ url_for('student.dashboard')}}">Dashboard</a>
+                                <a href="{{ url_for('librarian.dashboard')}}">Dashboard</a>
                             </li>
                             <li class="breadcrumb-item active" aria-current="page">
                                 Transactions
@@ -40,7 +40,7 @@
                     </div>
                     <div class="p-4 row">
                         <!-- Form -->
-                        <form action="{{ url_for('student.search_transaction') }}" method="post"
+                        <form action="{{ url_for('librarian.search_transaction') }}" method="post"
                             class="d-flex align-items-center col-12 col-md-8 col-lg-3">
                             {{ form.hidden_tag() }}
                             <span class="position-absolute ps-3 search-icon">
@@ -88,6 +88,7 @@
                                             </tr>
                                             {% else %}
                                             {% for payment in payment.items %}
+                                            <!-- Table body -->
                                             <tr>
                                                 <td>
                                                     <div class="form-check">
@@ -188,6 +189,7 @@
                                                         </div>
                                                     </a>
                                                 </td>
+
                                                 <td></td>
 
                                             </tr>
@@ -218,7 +220,7 @@
                                 {% if payment.has_prev %}
                                 <li class="page-item disabled">
                                     <a class="page-link mx-1 rounded"
-                                        href="{{ url_for('student.payment', page=payment.prev_num) }}"><i
+                                        href="{{ url_for('librarian.payment', page=payment.prev_num) }}"><i
                                             class="mdi mdi-chevron-left"></i></a>
                                 </li>
                                 {% endif %}
@@ -227,7 +229,7 @@
                                 {% if payment.page != number %}
                                 <li class="page-item">
                                     <a class="page-link mx-1 rounded"
-                                        href="{{ url_for('student.payment', page=number) }}">{{ number }}</a>
+                                        href="{{ url_for('librarian.payment', page=number) }}">{{ number }}</a>
                                 </li>
                                 {% else %}
                                 <li class="page-item active">
@@ -239,7 +241,7 @@
                                 {% if payment.has_next %}
                                 <li class="page-item">
                                     <a class="page-link mx-1 rounded"
-                                        href="{{ url_for('student.payment', page=payment.next_num) }}"><i
+                                        href="{{ url_for('librarian.payment', page=payment.next_num) }}"><i
                                             class="mdi mdi-chevron-right"></i></a>
                                 </li>
                                 {% endif %}

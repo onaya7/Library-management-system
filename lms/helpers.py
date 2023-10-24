@@ -64,20 +64,20 @@ def set_cookie(response: make_response, token, duration=7200) -> make_response:
 
 
 # function to calculate fine
-def calculate_fine(issue_expiry_date):
+
+def calculate_fine(issue_expiry_date, fine_rate=100):
     current_date = datetime.utcnow()
     if current_date > issue_expiry_date:
         days_overdue = (current_date - issue_expiry_date).days
-        print(days_overdue)
 
-        fine_per_day = 100  # Adjust this to your fine rate per day
-        fine_amount = fine_per_day * days_overdue
-        amount = fine_amount
-        return amount
+        if days_overdue > 0:
+            fine_amount = fine_rate * days_overdue
+        else:
+            fine_amount = 0
+
+        return fine_amount
     else:
-        amount = 0
-        return amount
-
+        return 0
 
 # function to generate library card
 def generate_library_card(student_id: int) -> int:
