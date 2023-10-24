@@ -34,9 +34,10 @@ def student_sign_in():
             if password_check:
                 if remember:
                     exp = datetime.utcnow() + timedelta(hours=2)
-                    token = user.generate_jwt(exp=exp)
+                    token = user.generate_jwt(exp)
                 else:
-                    token = user.generate_jwt()
+                    exp = datetime.utcnow() + timedelta(hours=1)
+                    token = user.generate_jwt(exp)
                 # Create a response object and set the cookie
                 response = make_response(redirect(url_for("student.dashboard")))
                 response = set_cookie(response, token)
@@ -72,7 +73,7 @@ def librarian_sign_in():
             if password_check:
                 if remember:
                     exp = datetime.utcnow() + timedelta(hours=2)
-                    token = user.generate_jwt(exp=exp)
+                    token = user.generate_jwt(exp)
                 else:
                     exp = datetime.utcnow() + timedelta(hours=1)
                     token = user.generate_jwt(exp)
