@@ -21,7 +21,7 @@ def create_app(config_name="production"):
     app.config.from_object(config[config_name])
     config[config_name].init_app(app)
 
-    app.config["SESSION_TYPE"] = "filesystem"
+    app.config["SQLALCHEMY_TRACK_MODIFICATION"] = False
 
     # flask_uploads
     app.config["UPLOADED_IMAGES_DEST"] = os.path.join(app.root_path, "upload")
