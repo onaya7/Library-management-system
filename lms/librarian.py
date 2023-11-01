@@ -770,12 +770,17 @@ def search_reserve():
     reserve = None
     if form.validate_on_submit():
         query = form.query.data.lower().strip()
+        try:
+            # Convert the user input into a valid date
+            reservation_date = datetime.strptime(query, "%Y-%m-%d").date()
+        except ValueError:
+            flash("Invalid date format. Please use YYYY-MM-DD.", "warning")
+            return render_template("librarian/reserve.html", form=form, reserve=reserve)
+
         reserve = Reservation.query.filter(
-            db.or_(
-                Reservation.reservation_status.ilike(f"%{query}%"),
-                Reservation.reservation_date.ilike(f"%{query}%"),
-            )
+            Reservation.reservation_date == reservation_date
         ).paginate(per_page=10, error_out=False)
+
         if not reserve.items:
             flash("No Book reservation found with the given date or status.", "info")
         elif reserve.total == 0:
