@@ -595,24 +595,31 @@ def issued_book():
     return render_template("librarian/issued_book.html", issue=issue, form=form)
 
 
-"""issued book search section"""
-
-
 @librarian.route("/librarian/issued_book/search", methods=["GET", "POST"])
 @session_expired_handler("librarian")
 @role_required("librarian")
 def search_issue():
     form = SearchForm()
     issue = None
+
     if form.validate_on_submit():
-        query = form.query.data.lower().strip()
-        issue = Issue.query.filter(Issue.issued_date.ilike(f"%{query}%")).paginate(
+        query = form.query.data.strip()
+        try:
+            # Convert the user input into a valid date
+            issued_date = datetime.strptime(query, "%Y-%m-%d").date()
+        except ValueError:
+            flash("Invalid date format. Please use YYYY-MM-DD.", "warning")
+            return render_template("librarian/issued_book.html", form=form, issue=issue)
+
+        issue = Issue.query.filter(Issue.issued_date == issued_date).paginate(
             per_page=10, error_out=False
         )
+
         if not issue.items:
             flash("No issue found with the given issued date.", "info")
         elif issue.total == 0:
             flash("No results found.", "info")
+
     return render_template("librarian/issued_book.html", form=form, issue=issue)
 
 

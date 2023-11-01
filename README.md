@@ -65,9 +65,10 @@ pip install -r requirements.txt
 1. **Create a .flaskenv file in the project root and configure the following:**
 
 ```bash
-FLASK_APP=app.py
+FLASK_APP=wsgi.py
 FLASK_ENV=development
 FLASK_DEBUG=TRUE
+FLASK_RUN_PORT=8080
 ```
 
 2. **Create a .env file in the project root and configure the following:**
@@ -92,7 +93,7 @@ flask db upgrade
 ```bash
 flask run
 ```
-Open your web browser and navigate to http://localhost:5000 to access the project.
+Open your web browser and navigate to http://localhost:8000 to access the project.
 
 ### Screenshots
 
