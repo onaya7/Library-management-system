@@ -117,9 +117,9 @@ def search_issue():
             flash("Invalid date format. Please use YYYY-MM-DD.", "warning")
             return render_template("student/issue_history.html", form=form, issue=issue)
 
-        issue = Issue.query.filter(db.func.date(Issue.issued_date) == issued_date).paginate(
-            per_page=10, error_out=False
-        )
+        issue = Issue.query.filter(
+            db.func.date(Issue.issued_date) == issued_date
+        ).paginate(per_page=10, error_out=False)
 
         if not issue.items:
             flash("No issue found with the given issued date.", "info")
@@ -309,13 +309,22 @@ def search_transaction():
     payment = None
     if form.validate_on_submit():
         query = form.query.data.lower().strip()
+        try:
+            # Convert the user input into a valid date
+            payment_date = datetime.strptime(query, "%Y-%m-%d").date()
+        except ValueError:
+            flash("Invalid date format. Please use YYYY-MM-DD.", "warning")
+            return render_template(
+                "student/transaction.html", form=form, payment=payment
+            )
+
         payment = Payment.query.filter(
             Payment.student_id == current_user.id,
-            Payment.payment_date.ilike(f"%{query}%"),
+            (db.func.date(Payment.payment_date) == payment_date),
         ).paginate(per_page=10, error_out=False)
         if not payment.items:
             flash(
-                "No payment found with the given transaction date. try 2023-10-24",
+                "No payment found with the given transaction date",
                 "info",
             )
         elif payment.total == 0:

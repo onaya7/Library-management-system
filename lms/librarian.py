@@ -611,10 +611,10 @@ def search_issue():
             flash("Invalid date format. Please use YYYY-MM-DD.", "warning")
             return render_template("librarian/issued_book.html", form=form, issue=issue)
 
-        issue = Issue.query.filter(db.func.date(Issue.issued_date) == issued_date).paginate(
-            per_page=10, error_out=False
-        )
-        
+        issue = Issue.query.filter(
+            db.func.date(Issue.issued_date) == issued_date
+        ).paginate(per_page=10, error_out=False)
+
         if not issue.items:
             flash("No issue found with the given issued date.", "info")
         elif issue.total == 0:
@@ -800,6 +800,8 @@ def upload(filename):
 
 
 """ generate library card for student section"""
+
+
 @librarian.route("/librarian/student_library_card/<int:student_id>")
 @session_expired_handler("librarian")
 def student_library_card(student_id):
@@ -855,11 +857,17 @@ def search_transaction():
     payment = None
     if form.validate_on_submit():
         query = form.query.data.lower().strip()
-        payment = Payment.query.filter(
-            db.or_(
-                Payment.transaction_id.ilike(f"%{query}%"),
-                Payment.transaction_ref.ilike(f"%{query}%"),
+        try:
+            # Convert the user input into a valid date
+            payment_date = datetime.strptime(query, "%Y-%m-%d").date()
+        except ValueError:
+            flash("Invalid date format. Please use YYYY-MM-DD.", "warning")
+            return render_template(
+                "librarian/transaction.html", form=form, payment=payment
             )
+
+        payment = Payment.query.filter(
+            (db.func.date(Payment.payment_date) == payment_date)
         ).paginate(per_page=10, error_out=False)
         if not payment.items:
             flash("No payment found with the given transaction details.", "info")
