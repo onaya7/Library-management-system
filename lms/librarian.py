@@ -611,10 +611,10 @@ def search_issue():
             flash("Invalid date format. Please use YYYY-MM-DD.", "warning")
             return render_template("librarian/issued_book.html", form=form, issue=issue)
 
-        issue = Issue.query.filter(Issue.issued_date == issued_date).paginate(
+        issue = Issue.query.filter(db.func.date(Issue.issued_date) == issued_date).paginate(
             per_page=10, error_out=False
         )
-
+        
         if not issue.items:
             flash("No issue found with the given issued date.", "info")
         elif issue.total == 0:
@@ -778,7 +778,7 @@ def search_reserve():
             return render_template("librarian/reserve.html", form=form, reserve=reserve)
 
         reserve = Reservation.query.filter(
-            Reservation.reservation_date == reservation_date
+            db.func.date(Reservation.reservation_date) == reservation_date
         ).paginate(per_page=10, error_out=False)
 
         if not reserve.items:
@@ -800,8 +800,6 @@ def upload(filename):
 
 
 """ generate library card for student section"""
-
-
 @librarian.route("/librarian/student_library_card/<int:student_id>")
 @session_expired_handler("librarian")
 def student_library_card(student_id):

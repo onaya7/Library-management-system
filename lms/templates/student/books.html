@@ -78,23 +78,16 @@
                                                         <span class="status bg-success"></span>
                                                     </a>
                                                 </div>
-                                                <h4 class="mb-0 txt">{{books.title}}</h4>
-                                                <p class="mb-0">
-                                                    <i class="fe fe-user me-1 fs-6"></i> {{books.author.name}}
-                                                </p>
+                                                <h4 class="mb-0 txt h5">{{books.title}}</h4>
                                             </div>
                                             
-                                            <div class="d-flex justify-content-between border-bottom py-2 mt-6">
-                                                <span>Category</span>
-                                                <span class="text-dark">{{books.category.name}}</span>
+                                            <div class="d-flex justify-content-between  py-2 mt-6">
+                                                <span>Book isbn no</span>
+                                                <span> {{books.isbn}} </span>
                                             </div>
-                                            <div class="d-flex justify-content-between border-bottom py-2">
-                                                <span>Publisher</span>
-                                                <span class="text-dark"> {{books.publisher}}</span>
-                                            </div>
-                                            <div class="d-flex justify-content-between pt-2">
+                                            <div class="d-flex justify-content-between py-2">
                                                 <span>Available copies</span>
-                                                <span> {{books.total_copies}} </span>
+                                                <span> {{books.available_copies}} </span>
                                             </div>
                                         </div>
                                     </div>
