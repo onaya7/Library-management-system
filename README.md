@@ -161,5 +161,5 @@ Please ensure your code adheres to the project's coding conventions and includes
 
 ## License
 
-CoinControl is released under the MIT License, which allows you to use, modify, and distribute the code freely. See the LICENSE file for more details.
+LMS is released under the MIT License, which allows you to use, modify, and distribute the code freely. See the LICENSE file for more details.
 [MIT LICENSE](https://github.com/onaya7/Library-management-system/blob/master/LICENSE.md).
